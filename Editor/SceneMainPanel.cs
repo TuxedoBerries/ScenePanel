@@ -153,7 +153,7 @@ namespace TuxedoBerries.ScenePanel
 			{
 				// Open
 				_colorStack.Push (entity.CurrentColor);
-				if (GUILayout.Button (entity.Name)) {
+				if (GUILayout.Button (entity.Name) && !entity.IsActive) {
 					OpenScene (entity);
 				}
 				_colorStack.Pop ();

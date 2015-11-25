@@ -20,6 +20,7 @@ namespace TuxedoBerries.ScenePanel
 		private SceneDatabaseProvider _provider;
 		private ColorStack _colorStack;
 		private FolderContainer _folders;
+		private ScrollableContainer _scrolls;
 		private string _search;
 		private float _deltaBetweenUpdates = 0;
 
@@ -35,6 +36,9 @@ namespace TuxedoBerries.ScenePanel
 				_colorStack = new ColorStack ();
 			if (_folders == null)
 				_folders = new FolderContainer ("SceneMainPanel", true);
+			if (_scrolls == null)
+				_scrolls = new ScrollableContainer ("SceneMainPanel", true);
+
 			this.titleContent.text = "Scene Panel";
 			this.titleContent.tooltip = "List of the scenes in the project.";
 		}
@@ -67,6 +71,11 @@ namespace TuxedoBerries.ScenePanel
 			DrawGeneralControls ();
 			DrawSearch ();
 			EditorGUILayout.Space ();
+			_scrolls.DrawScrollable ("main", DrawMainScroll);
+		}
+
+		private void DrawMainScroll()
+		{
 			_folders.DrawFoldable ("Favorites", DrawAllFavorites);
 			_folders.DrawFoldable ("All Scenes In Build", DrawAllInBuild);
 			_folders.DrawFoldable ("All Scenes", DrawAll);
@@ -79,18 +88,28 @@ namespace TuxedoBerries.ScenePanel
 
 		private void DrawGeneralControls()
 		{
-			var color = !EditorApplication.isPlaying ?
-				new Color (155f / 255f, 202f / 255f, 60f / 255f, 1) :
-				new Color (155f / 255f, 202f / 255f, 60f / 255f, 0.25f);
-
-			_colorStack.Push (color);
-			if (GUILayout.Button ("Play") && !EditorApplication.isPlaying) {
-				var first = _provider.FirstScene;
-				if (first != null && OpenScene (first)) {
-					EditorApplication.isPlaying = true;
+			EditorGUILayout.BeginHorizontal ();
+			{
+				// Play
+				var playColor = !EditorApplication.isPlaying ? ColorPalette.PlayButton_ON : ColorPalette.PlayButton_OFF;
+				_colorStack.Push (playColor);
+				if (GUILayout.Button ("Play") && !EditorApplication.isPlaying) {
+					var first = _provider.FirstScene;
+					if (first != null && OpenScene (first)) {
+						EditorApplication.isPlaying = true;
+					}
 				}
+				_colorStack.Pop ();
+
+				// Stop
+				var stopColor = EditorApplication.isPlaying ? ColorPalette.StopButton_ON : ColorPalette.StopButton_OFF;
+				_colorStack.Push (stopColor);
+				if (GUILayout.Button ("Stop") && EditorApplication.isPlaying) {
+					EditorApplication.isPlaying = false;
+				}
+				_colorStack.Pop ();
 			}
-			_colorStack.Pop ();
+			EditorGUILayout.EndHorizontal ();
 		}
 
 		private void DrawSearch()
@@ -119,25 +138,34 @@ namespace TuxedoBerries.ScenePanel
 		#region Lists
 		private void DrawAllFavorites()
 		{
-			var ienum = _provider.GetFavorites ();
-			while (ienum.MoveNext ()) {
-				DrawEntity (ienum.Current);
-			}
+			DrawIenum (_provider.GetFavorites ());
 		}
 
 		private void DrawAllInBuild()
 		{
-			var ienum = _provider.GetBuildScenes ();
-			while (ienum.MoveNext ()) {
-				DrawEntity (ienum.Current);
-			}
+			DrawIenum (_provider.GetBuildScenes ());
 		}
 
 		private void DrawAll()
 		{
-			var ienum = _provider.GetAllScenes ();
+			DrawIenum (_provider.GetAllScenes ());
+		}
+
+		private void DrawIenum(IEnumerator<ISceneEntity> ienum)
+		{
 			while (ienum.MoveNext ()) {
-				DrawEntity (ienum.Current);
+				var entity = ienum.Current;
+				// Apply Search
+				if (!PassFilter(entity))
+					continue;
+
+				EditorGUILayout.BeginHorizontal ();
+				{
+					// Space
+					GUILayout.Space (20);
+					DrawEntity (entity);
+				}
+				EditorGUILayout.EndHorizontal ();
 			}
 		}
 		#endregion
@@ -145,30 +173,131 @@ namespace TuxedoBerries.ScenePanel
 		#region Single Entity
 		private void DrawEntity(ISceneEntity entity)
 		{
-			// Apply Search
-			if (!PassFilter(entity))
-				return;
+			EditorGUILayout.BeginVertical ();
+			{
+				// Row 1
+				EditorGUILayout.BeginHorizontal ();
+				{
+					// Open
+					_colorStack.Push (entity.CurrentColor);
+					if (GUILayout.Button (entity.Name) && !entity.IsActive) {
+						OpenScene (entity);
+					}
+					_colorStack.Pop ();
 
+					// Fav
+					_colorStack.Push (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
+					if (GUILayout.Button ("Fav", GUILayout.Width (30))) {
+						_provider.SetAsFavorite (entity.FullPath, !entity.IsFavorite);
+					}
+					_colorStack.Pop ();
+
+					// Select
+					if (GUILayout.Button ("Select", GUILayout.Width (50))) {
+						Selection.activeObject = AssetDatabase.LoadMainAssetAtPath (entity.FullPath);
+						EditorGUIUtility.PingObject (Selection.activeObject);
+					}
+				}
+				EditorGUILayout.EndHorizontal ();
+
+				// Row 2 - More
+				_folders.DrawFoldable<ISceneEntity> (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
+			}
+			EditorGUILayout.EndVertical ();
+		}
+
+		private void DrawDetailEntity(ISceneEntity entity)
+		{
+			var col1Space = GUILayout.Width (128);
+			EditorGUILayout.BeginVertical ();
+			{
+				// Name
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Name", col1Space);
+					EditorGUILayout.LabelField (entity.Name);
+				}
+				EditorGUILayout.EndHorizontal ();
+				// Path
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Path", col1Space);
+					EditorGUILayout.SelectableLabel (entity.FullPath, GUILayout.Height(15));
+				}
+				EditorGUILayout.EndHorizontal ();
+				// In Build Check
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("In Build", col1Space);
+					EditorGUILayout.Toggle (entity.InBuild);
+				}
+				EditorGUILayout.EndHorizontal ();
+				// In Build Enabled Check
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("In Build Enabled", col1Space);
+					EditorGUILayout.Toggle (entity.IsEnabled);
+				}
+				EditorGUILayout.EndHorizontal ();
+				// In Build Enabled Check
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Current Scene", col1Space);
+					EditorGUILayout.Toggle (entity.IsActive);
+				}
+				EditorGUILayout.EndHorizontal ();
+
+				// Snapshot
+				DrawSnapshot(entity);
+			}
+			EditorGUILayout.EndVertical ();
+		}
+
+		private void DrawSnapshot(ISceneEntity entity)
+		{
+			var texture = _provider.GetTexture (entity);
+			var buttonLabel = (texture == null) ? "Take Snapshot" : "Update Snapshot";
+
+			var col1Space = GUILayout.Width (128);
+			EditorGUILayout.LabelField ("Snapshot: ", col1Space);
 			EditorGUILayout.BeginHorizontal ();
 			{
-				// Open
-				_colorStack.Push (entity.CurrentColor);
-				if (GUILayout.Button (entity.Name) && !entity.IsActive) {
-					OpenScene (entity);
-				}
-				_colorStack.Pop ();
+				GUILayout.Space (35);
+				// Display
+				EditorGUILayout.BeginVertical (col1Space);
+				{
+					// Take Snapshot
+					_colorStack.Push(entity.IsActive ? ColorPalette.SnapshotButton_ON : ColorPalette.SnapshotButton_OFF);
+					if (GUILayout.Button (buttonLabel, GUILayout.MaxWidth(128))) {
+						if (entity.IsActive) {
+							TakeSnapshot (entity);
+							texture = _provider.GetTexture (entity, true);
+						}
+					}
+					_colorStack.Pop ();
 
-				// Fav
-				_colorStack.Push (entity.IsFavorite ? new Color(1, 213f/255f, 4f/255f) : GUI.color);
-				if (GUILayout.Button ("Fav", GUILayout.Width(30))) {
-					_provider.SetAsFavorite (entity.FullPath, !entity.IsFavorite);
-				}
-				_colorStack.Pop ();
+					// Refresh
+					_colorStack.Push((texture != null) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
+					if (GUILayout.Button ("Refresh", GUILayout.MaxWidth(128))) {
+						if(texture != null)
+							texture = _provider.GetTexture (entity, true);
+					}
+					_colorStack.Pop ();
 
-				// Select
-				if (GUILayout.Button ("Select", GUILayout.Width(50))) {
-					Selection.activeObject = AssetDatabase.LoadMainAssetAtPath (entity.FullPath);
-					EditorGUIUtility.PingObject (Selection.activeObject);
+					// Open
+					_colorStack.Push((texture != null) ? ColorPalette.SnapshotOpenButton_ON : ColorPalette.SnapshotOpenButton_OFF);
+					if (GUILayout.Button ("Open Folder", GUILayout.MaxWidth(128))) {
+						if(texture != null)
+							EditorUtility.RevealInFinder (entity.SnapshotPath);
+					}
+					_colorStack.Pop ();
+				}
+				EditorGUILayout.EndVertical ();
+
+				if (texture != null) {
+					GUILayout.Label (texture, GUILayout.Height(128), GUILayout.MaxWidth(128));
+				} else {
+					EditorGUILayout.LabelField ("Empty Snapshot", col1Space);
 				}
 			}
 			EditorGUILayout.EndHorizontal ();
@@ -181,6 +310,18 @@ namespace TuxedoBerries.ScenePanel
 				EditorApplication.OpenScene (entity.FullPath);
 			}
 			return saved;
+		}
+
+		private void TakeSnapshot(ISceneEntity entity)
+		{
+			EnsureSnapshotFolders (entity);
+			Application.CaptureScreenshot (entity.SnapshotPath);
+			EditorApplication.ExecuteMenuItem ("Window/Game");
+		}
+
+		private void EnsureSnapshotFolders(ISceneEntity entity)
+		{
+			System.IO.Directory.CreateDirectory (System.IO.Path.GetDirectoryName(entity.SnapshotPath));
 		}
 		#endregion
 	}

@@ -8,6 +8,7 @@
 /// </summary>
 /// ------------------------------------------------
 using UnityEditor;
+using UnityEngine;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace TuxedoBerries.ScenePanel
 	public class SceneDatabaseProvider
 	{
 		private SortedDictionary<string, SceneEntity> _dict;
+		private Dictionary<string, Texture> _textureCache;
 		private Stack<SceneEntity> _recycled;
 		private SceneEntity _firstScene;
 		private SceneEntity _activeScene;
@@ -27,6 +29,7 @@ namespace TuxedoBerries.ScenePanel
 		public SceneDatabaseProvider()
 		{
 			_dict = new SortedDictionary<string, SceneEntity> ();
+			_textureCache = new Dictionary<string, Texture> ();
 			_recycled = new Stack<SceneEntity> ();
 			Refresh ();
 		}
@@ -139,6 +142,64 @@ namespace TuxedoBerries.ScenePanel
 			}
 			yield break;
 		}
+
+		#region Snapshots
+		/// <summary>
+		/// Gets the texture of the snapshot of the scene if any.
+		/// </summary>
+		/// <returns>The texture.</returns>
+		/// <param name="entity">Entity.</param>
+		public Texture GetTexture(ISceneEntity entity)
+		{
+			return GetTexture (entity, false);
+		}
+
+		/// <summary>
+		/// Gets the texture of the snapshot of the scene if any.
+		/// If refresh is true, it will force to update the texture.
+		/// </summary>
+		/// <returns>The texture.</returns>
+		/// <param name="entity">Entity.</param>
+		/// <param name="refresh">If set to <c>true</c> refresh.</param>
+		public Texture GetTexture(ISceneEntity entity, bool refresh)
+		{
+			// Force Refresh
+			if(refresh)
+				RefreshCache (entity);
+
+			// Refresh if not exist
+			if (!_textureCache.ContainsKey (entity.SnapshotPath))
+				RefreshCache (entity);
+
+			// Not exist
+			if (!_textureCache.ContainsKey (entity.SnapshotPath))
+				return null;
+
+			// Refresh cache if null
+			if(_textureCache [entity.SnapshotPath] == null)
+				RefreshCache (entity);
+
+			// Return cached
+			return _textureCache [entity.SnapshotPath];
+		}
+
+		private void RefreshCache(ISceneEntity entity)
+		{
+			if (!System.IO.File.Exists (entity.SnapshotPath))
+				return;
+			
+			var bytes = System.IO.File.ReadAllBytes (entity.SnapshotPath);
+			Texture2D texture = new Texture2D (2, 2);
+			texture.LoadImage (bytes);
+
+			// Refresh Cache
+			if (_textureCache.ContainsKey (entity.SnapshotPath)) {
+				_textureCache[entity.SnapshotPath] = texture;
+			} else {
+				_textureCache.Add (entity.SnapshotPath, texture);
+			}
+		}
+		#endregion
 
 		#region Helpers
 		/// <summary>

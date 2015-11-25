@@ -104,7 +104,7 @@ namespace TuxedoBerries.ScenePanel
 		private void SaveValue(string name, bool value)
 		{
 			if (_saveInPreferences) {
-				EditorPrefs.SetBool (string.Format ("{0}/{1}", _containerName, name), value);
+				EditorPrefs.SetBool (string.Format ("FolderContainer/{0}/{1}", _containerName, name), value);
 			}
 		}
 
@@ -116,7 +116,7 @@ namespace TuxedoBerries.ScenePanel
 		private bool GetDefaultValue(string name)
 		{
 			if (_saveInPreferences) {
-				return EditorPrefs.GetBool (string.Format ("{0}/{1}", _containerName, name));
+				return EditorPrefs.GetBool (string.Format ("FolderContainer/{0}/{1}", _containerName, name));
 			}
 
 			return true;

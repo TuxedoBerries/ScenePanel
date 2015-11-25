@@ -15,6 +15,8 @@ namespace TuxedoBerries.ScenePanel
 {
 	public class SceneEntity : ISceneEntity
 	{
+		private const string FAVORITE_KEY = "SceneEntity:Favorite:[{0}]";
+
 		private string _name;
 		private string _fullPath;
 		private bool _isActive;
@@ -88,12 +90,22 @@ namespace TuxedoBerries.ScenePanel
 		/// <value><c>true</c> if this instance is favorite; otherwise, <c>false</c>.</value>
 		public bool IsFavorite {
 			get {
-				if (!EditorPrefs.HasKey (string.Format ("SceneEntity:[{0}]", _fullPath)))
+				if (!EditorPrefs.HasKey (string.Format (FAVORITE_KEY, _fullPath)))
 					return false;
-				return EditorPrefs.GetBool (string.Format("SceneEntity:[{0}]", _fullPath));
+				return EditorPrefs.GetBool (string.Format(FAVORITE_KEY, _fullPath));
 			}
 			set {
-				EditorPrefs.SetBool (string.Format("SceneEntity:[{0}]", _fullPath), value);
+				EditorPrefs.SetBool (string.Format(FAVORITE_KEY, _fullPath), value);
+			}
+		}
+
+		/// <summary>
+		/// Gets the snapshot path.
+		/// </summary>
+		/// <value>The snapshot path.</value>
+		public string SnapshotPath {
+			get {
+				return string.Format ("SceneSnapshots/{0}.png", Name);
 			}
 		}
 
@@ -145,19 +157,20 @@ namespace TuxedoBerries.ScenePanel
 		/// <value>The color of the current.</value>
 		public Color CurrentColor {
 			get {
+				// TODO: Get colors from a Color Pallete
 				// Active Color
 				if (_isActive)
-					return new Color (141f/255f, 216f/255f, 248f/255f, 1);
+					return ColorPalette.SceneOpenButton_Active;
 
 				// Build Color
 				if (_inBuild) {
 					if (_isEnabled)
-						return new Color (0, 125f/255f, 143f/255f, 1f);
+						return ColorPalette.SceneOpenButton_InBuild_Enabled;
 					else
-						return new Color (0, 125f/255f, 143f/255f, 0.5f);
+						return ColorPalette.SceneOpenButton_InBuild_Disabled;
 				}
 
-				return GUI.color;
+				return ColorPalette.SceneOpenButton_Regular;
 			}
 		}
 	}

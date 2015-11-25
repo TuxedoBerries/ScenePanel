@@ -46,6 +46,14 @@ namespace TuxedoBerries.ScenePanel
 			get;
 		}
 
+		/// <summary>
+		/// Gets the snapshot path.
+		/// </summary>
+		/// <value>The snapshot path.</value>
+		string SnapshotPath {
+			get;
+		}
+
 		#region Only in Build
 		/// <summary>
 		/// Determine if the scene is in the build list or not.

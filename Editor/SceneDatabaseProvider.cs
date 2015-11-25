@@ -82,15 +82,6 @@ namespace TuxedoBerries.ScenePanel
 			return true;
 		}
 
-		public bool SetAsFavorite(string scenePath, bool value)
-		{
-			if (!_dict.ContainsKey (scenePath))
-				return false;
-
-			_dict [scenePath].IsFavorite = value;
-			return true;
-		}
-
 		/// <summary>
 		/// Gets the SceneEntity with the specified scenePath.
 		/// </summary>

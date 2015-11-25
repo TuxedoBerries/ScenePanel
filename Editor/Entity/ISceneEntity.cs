@@ -36,6 +36,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <value><c>true</c> if this instance is favorite; otherwise, <c>false</c>.</value>
 		bool IsFavorite {
 			get;
+			set;
 		}
 
 		/// <summary>

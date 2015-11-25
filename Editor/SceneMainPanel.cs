@@ -23,6 +23,7 @@ namespace TuxedoBerries.ScenePanel
 		private ScrollableContainer _scrolls;
 		private string _search;
 		private float _deltaBetweenUpdates = 0;
+		private SceneEntityDrawer _drawer;
 
 		private void CheckProvider()
 		{
@@ -38,6 +39,12 @@ namespace TuxedoBerries.ScenePanel
 				_folders = new FolderContainer ("SceneMainPanel", true);
 			if (_scrolls == null)
 				_scrolls = new ScrollableContainer ("SceneMainPanel", true);
+			if (_drawer == null) {
+				_drawer = new SceneEntityDrawer ();
+				_drawer.SetColorStack (_colorStack);
+				_drawer.SetFolderContainer (_folders);
+				_drawer.SetDataProvider (_provider);
+			}
 
 			this.titleContent.text = "Scene Panel";
 			this.titleContent.tooltip = "List of the scenes in the project.";
@@ -95,7 +102,7 @@ namespace TuxedoBerries.ScenePanel
 				_colorStack.Push (playColor);
 				if (GUILayout.Button ("Play") && !EditorApplication.isPlaying) {
 					var first = _provider.FirstScene;
-					if (first != null && OpenScene (first)) {
+					if (first != null && SceneEntityDrawer.OpenScene (first)) {
 						EditorApplication.isPlaying = true;
 					}
 				}
@@ -163,166 +170,12 @@ namespace TuxedoBerries.ScenePanel
 				{
 					// Space
 					GUILayout.Space (20);
-					DrawEntity (entity);
+					_drawer.DrawEntity (entity);
 				}
 				EditorGUILayout.EndHorizontal ();
 			}
 		}
 		#endregion
 
-		#region Single Entity
-		private void DrawEntity(ISceneEntity entity)
-		{
-			EditorGUILayout.BeginVertical ();
-			{
-				// Row 1
-				EditorGUILayout.BeginHorizontal ();
-				{
-					// Open
-					_colorStack.Push (entity.CurrentColor);
-					if (GUILayout.Button (entity.Name) && !entity.IsActive) {
-						OpenScene (entity);
-					}
-					_colorStack.Pop ();
-
-					// Fav
-					_colorStack.Push (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
-					if (GUILayout.Button ("Fav", GUILayout.Width (30))) {
-						_provider.SetAsFavorite (entity.FullPath, !entity.IsFavorite);
-					}
-					_colorStack.Pop ();
-
-					// Select
-					if (GUILayout.Button ("Select", GUILayout.Width (50))) {
-						Selection.activeObject = AssetDatabase.LoadMainAssetAtPath (entity.FullPath);
-						EditorGUIUtility.PingObject (Selection.activeObject);
-					}
-				}
-				EditorGUILayout.EndHorizontal ();
-
-				// Row 2 - More
-				_folders.DrawFoldable<ISceneEntity> (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
-			}
-			EditorGUILayout.EndVertical ();
-		}
-
-		private void DrawDetailEntity(ISceneEntity entity)
-		{
-			var col1Space = GUILayout.Width (128);
-			EditorGUILayout.BeginVertical ();
-			{
-				// Name
-				EditorGUILayout.BeginHorizontal ();
-				{
-					EditorGUILayout.LabelField ("Name", col1Space);
-					EditorGUILayout.LabelField (entity.Name);
-				}
-				EditorGUILayout.EndHorizontal ();
-				// Path
-				EditorGUILayout.BeginHorizontal ();
-				{
-					EditorGUILayout.LabelField ("Path", col1Space);
-					EditorGUILayout.SelectableLabel (entity.FullPath, GUILayout.Height(15));
-				}
-				EditorGUILayout.EndHorizontal ();
-				// In Build Check
-				EditorGUILayout.BeginHorizontal ();
-				{
-					EditorGUILayout.LabelField ("In Build", col1Space);
-					EditorGUILayout.Toggle (entity.InBuild);
-				}
-				EditorGUILayout.EndHorizontal ();
-				// In Build Enabled Check
-				EditorGUILayout.BeginHorizontal ();
-				{
-					EditorGUILayout.LabelField ("In Build Enabled", col1Space);
-					EditorGUILayout.Toggle (entity.IsEnabled);
-				}
-				EditorGUILayout.EndHorizontal ();
-				// In Build Enabled Check
-				EditorGUILayout.BeginHorizontal ();
-				{
-					EditorGUILayout.LabelField ("Current Scene", col1Space);
-					EditorGUILayout.Toggle (entity.IsActive);
-				}
-				EditorGUILayout.EndHorizontal ();
-
-				// Snapshot
-				DrawSnapshot(entity);
-			}
-			EditorGUILayout.EndVertical ();
-		}
-
-		private void DrawSnapshot(ISceneEntity entity)
-		{
-			var texture = _provider.GetTexture (entity);
-			var buttonLabel = (texture == null) ? "Take Snapshot" : "Update Snapshot";
-
-			var col1Space = GUILayout.Width (128);
-			EditorGUILayout.LabelField ("Snapshot: ", col1Space);
-			EditorGUILayout.BeginHorizontal ();
-			{
-				GUILayout.Space (35);
-				// Display
-				EditorGUILayout.BeginVertical (col1Space);
-				{
-					// Take Snapshot
-					_colorStack.Push(entity.IsActive ? ColorPalette.SnapshotButton_ON : ColorPalette.SnapshotButton_OFF);
-					if (GUILayout.Button (buttonLabel, GUILayout.MaxWidth(128))) {
-						if (entity.IsActive) {
-							TakeSnapshot (entity);
-							texture = _provider.GetTexture (entity, true);
-						}
-					}
-					_colorStack.Pop ();
-
-					// Refresh
-					_colorStack.Push((texture != null) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
-					if (GUILayout.Button ("Refresh", GUILayout.MaxWidth(128))) {
-						if(texture != null)
-							texture = _provider.GetTexture (entity, true);
-					}
-					_colorStack.Pop ();
-
-					// Open
-					_colorStack.Push((texture != null) ? ColorPalette.SnapshotOpenButton_ON : ColorPalette.SnapshotOpenButton_OFF);
-					if (GUILayout.Button ("Open Folder", GUILayout.MaxWidth(128))) {
-						if(texture != null)
-							EditorUtility.RevealInFinder (entity.SnapshotPath);
-					}
-					_colorStack.Pop ();
-				}
-				EditorGUILayout.EndVertical ();
-
-				if (texture != null) {
-					GUILayout.Label (texture, GUILayout.Height(128), GUILayout.MaxWidth(128));
-				} else {
-					EditorGUILayout.LabelField ("Empty Snapshot", col1Space);
-				}
-			}
-			EditorGUILayout.EndHorizontal ();
-		}
-
-		private bool OpenScene(ISceneEntity entity)
-		{
-			bool saved = EditorApplication.SaveCurrentSceneIfUserWantsTo ();
-			if (saved) {
-				EditorApplication.OpenScene (entity.FullPath);
-			}
-			return saved;
-		}
-
-		private void TakeSnapshot(ISceneEntity entity)
-		{
-			EnsureSnapshotFolders (entity);
-			Application.CaptureScreenshot (entity.SnapshotPath);
-			EditorApplication.ExecuteMenuItem ("Window/Game");
-		}
-
-		private void EnsureSnapshotFolders(ISceneEntity entity)
-		{
-			System.IO.Directory.CreateDirectory (System.IO.Path.GetDirectoryName(entity.SnapshotPath));
-		}
-		#endregion
 	}
 }

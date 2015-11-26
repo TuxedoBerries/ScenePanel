@@ -85,7 +85,7 @@ namespace TuxedoBerries.ScenePanel
 			DrawGeneralControls ();
 			DrawSearch ();
 			_folders.DrawFoldable ("History", DrawHistory);
-			_folders.DrawFoldable ("Tools", DrawUtils);
+			_folders.DrawFoldable ("Tools", DrawScrollableUtils);
 			EditorGUILayout.Space ();
 			EditorGUILayout.LabelField ("Scenes");
 			_scrolls.DrawScrollable ("main", DrawMainScroll);
@@ -145,28 +145,53 @@ namespace TuxedoBerries.ScenePanel
 			return false;
 		}
 
+		private void DrawScrollableUtils()
+		{
+			_scrolls.DrawScrollable ("tools", DrawUtils);
+		}
+
 		private void DrawUtils()
 		{
 			EditorGUILayout.BeginHorizontal ();
 			{
-				if (GUILayout.Button ("Generate JSON")) {
-					Debug.Log (_provider.GenerateJSON ());
-				}
-				if (GUILayout.Button ("Save to JSON File")) {
-					var path = EditorUtility.SaveFilePanel ("Save scene list", "", "scenes.json", "json");
-					if (!string.IsNullOrEmpty (path)) {
-						bool saved = false;
-						try{
-							System.IO.File.WriteAllText (path, _provider.GenerateJSON ());
-							saved = true;
-						}catch(System.Exception e){
-							Debug.LogErrorFormat ("Exception trying to write file: {0}", e.Message);
+				EditorGUILayout.BeginVertical (GUILayout.Width(120));
+				{
+					EditorGUILayout.LabelField ("Scenes List", GUILayout.Width(80));
+					EditorGUILayout.BeginHorizontal ();
+					{
+						GUILayout.Space (35);
+						EditorGUILayout.BeginVertical (GUILayout.Width(120));
+						{
+							if (GUILayout.Button ("Generate JSON", GUILayout.Width(120))) {
+								Debug.Log (_provider.GenerateJSON ());
+							}
+							if (GUILayout.Button ("Save to JSON File", GUILayout.Width(120))) {
+								var path = EditorUtility.SaveFilePanel ("Save scene list", "", "scenes.json", "json");
+								if (!string.IsNullOrEmpty (path)) {
+									bool saved = false;
+									try{
+										System.IO.File.WriteAllText (path, _provider.GenerateJSON ());
+										saved = true;
+									}catch(System.Exception e){
+										Debug.LogErrorFormat ("Exception trying to write file: {0}", e.Message);
+									}
+									if (saved) {
+										EditorUtility.DisplayDialog ("Scene list", "File successfully saved", "ok");
+									}
+								}
+							}
 						}
-						if (saved) {
-							EditorUtility.DisplayDialog ("Scene list", "File successfully saved", "ok");
-						}
+						EditorGUILayout.EndVertical ();
 					}
+					EditorGUILayout.EndHorizontal ();
 				}
+				EditorGUILayout.EndVertical ();
+
+				EditorGUILayout.BeginVertical ();
+				{
+					_drawer.DrawSnapshot (_provider.CurrentActive);
+				}
+				EditorGUILayout.EndVertical ();
 			}
 			EditorGUILayout.EndHorizontal ();
 		}

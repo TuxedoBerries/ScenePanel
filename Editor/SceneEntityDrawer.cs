@@ -130,7 +130,7 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.EndVertical ();
 		}
 
-		private void DrawSnapshot(ISceneEntity entity)
+		public void DrawSnapshot(ISceneEntity entity)
 		{
 			var texture = GetTexture (entity, false);
 			var buttonLabel = (texture == null) ? "Take Snapshot" : "Update Snapshot";
@@ -140,6 +140,7 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.BeginHorizontal ();
 			{
 				GUILayout.Space (35);
+
 				// Display
 				EditorGUILayout.BeginVertical (col1Space);
 				{
@@ -148,7 +149,6 @@ namespace TuxedoBerries.ScenePanel
 					if (GUILayout.Button (buttonLabel, GUILayout.MaxWidth(128))) {
 						if (entity.IsActive) {
 							TakeSnapshot (entity);
-							texture = GetTexture (entity, true);
 						}
 					}
 					PopColor ();
@@ -237,6 +237,7 @@ namespace TuxedoBerries.ScenePanel
 			EnsureSnapshotFolders (entity);
 			Application.CaptureScreenshot (entity.SnapshotPath);
 			EditorApplication.ExecuteMenuItem ("Window/Game");
+			EditorUtility.DisplayDialog ("Snapshot", "Snapshot successfully saved", "ok");
 		}
 
 		private void EnsureSnapshotFolders(ISceneEntity entity)

@@ -80,14 +80,6 @@ namespace TuxedoBerries.ScenePanel
 			get;
 		}
 		#endregion
-
-		/// <summary>
-		/// Gets the current color representation of the scene.
-		/// </summary>
-		/// <value>The color of the current.</value>
-		Color CurrentColor {
-			get;
-		}
 	}
 }
 

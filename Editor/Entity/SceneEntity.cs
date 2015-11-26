@@ -8,6 +8,7 @@
 /// </summary>
 /// ------------------------------------------------
 using System;
+using System.Text;
 using UnityEngine;
 using UnityEditor;
 
@@ -152,26 +153,67 @@ namespace TuxedoBerries.ScenePanel
 		#endregion
 
 		/// <summary>
-		/// Gets the current color representation of the scene.
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="TuxedoBerries.ScenePanel.SceneEntity"/>.
 		/// </summary>
-		/// <value>The color of the current.</value>
-		public Color CurrentColor {
-			get {
-				// TODO: Get colors from a Color Pallete
-				// Active Color
-				if (_isActive)
-					return ColorPalette.SceneOpenButton_Active;
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="TuxedoBerries.ScenePanel.SceneEntity"/>.</returns>
+		public override string ToString ()
+		{
+			var builder = new StringBuilder ();
+			builder.Append ("{");
+			// Name
+			builder.Append ("\"name\":");
+			builder.Append ("\"");
+			builder.Append (Name);
+			builder.Append ("\",");
+			// Full Path
+			builder.Append ("\"full_path\":");
+			builder.Append ("\"");
+			builder.Append (FullPath);
+			builder.Append ("\",");
+			// SnapshotPath
+			builder.Append ("\"snapshot_path\":");
+			builder.Append ("\"");
+			builder.Append (SnapshotPath);
+			builder.Append ("\",");
+			// IsActive
+			builder.Append ("\"is_active\":");
+			builder.Append (IsActive.ToString().ToLower());
+			builder.Append (",");
+			// IsFavorite
+			builder.Append ("\"is_favorite\":");
+			builder.Append (IsFavorite.ToString().ToLower());
+			builder.Append (",");
+			// InBuild
+			builder.Append ("\"in_build\":");
+			builder.Append (InBuild.ToString().ToLower());
+			builder.Append (",");
+			// IsEnabled
+			builder.Append ("\"is_enabled\":");
+			builder.Append (IsEnabled.ToString().ToLower());
+			builder.Append (",");
+			// BuildIndex
+			builder.Append ("\"build_index\":");
+			builder.Append (BuildIndex);
 
-				// Build Color
-				if (_inBuild) {
-					if (_isEnabled)
-						return ColorPalette.SceneOpenButton_InBuild_Enabled;
-					else
-						return ColorPalette.SceneOpenButton_InBuild_Disabled;
-				}
+			builder.Append ("}");
+			return builder.ToString ();
+		}
 
-				return ColorPalette.SceneOpenButton_Regular;
+		public static Color GetColor(ISceneEntity entity)
+		{
+			// Active Color
+			if (entity.IsActive)
+				return ColorPalette.SceneOpenButton_Active;
+
+			// Build Color
+			if (entity.InBuild) {
+				if (entity.IsEnabled)
+					return ColorPalette.SceneOpenButton_InBuild_Enabled;
+				else
+					return ColorPalette.SceneOpenButton_InBuild_Disabled;
 			}
+
+			return ColorPalette.SceneOpenButton_Regular;
 		}
 	}
 }

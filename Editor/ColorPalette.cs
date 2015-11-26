@@ -42,6 +42,10 @@ namespace TuxedoBerries.ScenePanel
 		// Open Snapshot Folder Button
 		public static Color SnapshotOpenButton_ON = Color.white;
 		public static Color SnapshotOpenButton_OFF = new Color (1f, 1f, 1f, 0.25f);
+
+		// History Arrow Button
+		public static Color HistoryArrowButton_ON = Color.white;
+		public static Color HistoryArrowButton_OFF = new Color (1f, 1f, 1f, 0.25f);
 	}
 }
 

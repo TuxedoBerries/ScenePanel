@@ -11,6 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 
 namespace TuxedoBerries.ScenePanel
@@ -51,6 +52,16 @@ namespace TuxedoBerries.ScenePanel
 		public ISceneEntity FirstScene {
 			get {
 				return _firstScene;
+			}
+		}
+
+		/// <summary>
+		/// Gets the current active.
+		/// </summary>
+		/// <value>The current active.</value>
+		public ISceneEntity CurrentActive {
+			get {
+				return _activeScene;
 			}
 		}
 
@@ -132,6 +143,31 @@ namespace TuxedoBerries.ScenePanel
 				yield return data;
 			}
 			yield break;
+		}
+
+		/// <summary>
+		/// Generates a JSON representation of the scenes.
+		/// </summary>
+		/// <returns>The JSON string.</returns>
+		public string GenerateJSON()
+		{
+			var builder = new StringBuilder ();
+			builder.Append ("{");
+
+			int total = _dict.Count;
+			int current = 0;
+			foreach (var data in _dict.Values) {
+				builder.Append ("\"");
+				builder.Append (data.Name);
+				builder.Append ("\":");
+				builder.Append (data.ToString());
+
+				++current;
+				if(current < total)
+					builder.Append (",");
+			}
+			builder.Append ("}");
+			return builder.ToString ();
 		}
 
 		#region Snapshots

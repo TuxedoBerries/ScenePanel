@@ -19,16 +19,20 @@ namespace TuxedoBerries.ScenePanel
 		private const float UPDATE_POINT = 1.0f;
 		private SceneDatabaseProvider _provider;
 		private ColorStack _colorStack;
+		private ButtonContainer _buttonFolders;
 		private FolderContainer _folders;
 		private ScrollableContainer _scrolls;
 		private string _search;
 		private float _deltaBetweenUpdates = 0;
 		private SceneEntityDrawer _drawer;
+		private SceneHistory _history;
 
 		private void CheckProvider()
 		{
 			if(_provider == null)
 				_provider = new SceneDatabaseProvider ();
+			if (_history == null)
+				_history = new SceneHistory ();
 		}
 
 		private void CheckGUIElements()
@@ -37,12 +41,14 @@ namespace TuxedoBerries.ScenePanel
 				_colorStack = new ColorStack ();
 			if (_folders == null)
 				_folders = new FolderContainer ("SceneMainPanel", true);
+			if (_buttonFolders == null)
+				_buttonFolders = new ButtonContainer ("SceneMainPanel", true);
 			if (_scrolls == null)
 				_scrolls = new ScrollableContainer ("SceneMainPanel", true);
 			if (_drawer == null) {
 				_drawer = new SceneEntityDrawer ();
 				_drawer.SetColorStack (_colorStack);
-				_drawer.SetFolderContainer (_folders);
+				_drawer.SetButtonContainer (_buttonFolders);
 				_drawer.SetDataProvider (_provider);
 			}
 
@@ -53,6 +59,7 @@ namespace TuxedoBerries.ScenePanel
 		private void UpdateCurrent()
 		{
 			_provider.SetAsActive (EditorApplication.currentScene);
+			_history.Push (_provider.CurrentActive);
 		}
 
 		private void Update()
@@ -77,15 +84,11 @@ namespace TuxedoBerries.ScenePanel
 			DrawTitle ();
 			DrawGeneralControls ();
 			DrawSearch ();
+			_folders.DrawFoldable ("History", DrawHistory);
+			_folders.DrawFoldable ("Tools", DrawUtils);
 			EditorGUILayout.Space ();
+			EditorGUILayout.LabelField ("Scenes");
 			_scrolls.DrawScrollable ("main", DrawMainScroll);
-		}
-
-		private void DrawMainScroll()
-		{
-			_folders.DrawFoldable ("Favorites", DrawAllFavorites);
-			_folders.DrawFoldable ("All Scenes In Build", DrawAllInBuild);
-			_folders.DrawFoldable ("All Scenes", DrawAll);
 		}
 
 		private void DrawTitle()
@@ -140,6 +143,80 @@ namespace TuxedoBerries.ScenePanel
 				return true;
 			
 			return false;
+		}
+
+		private void DrawUtils()
+		{
+			EditorGUILayout.BeginHorizontal ();
+			{
+				if (GUILayout.Button ("Generate JSON")) {
+					Debug.Log (_provider.GenerateJSON ());
+				}
+				if (GUILayout.Button ("Save to JSON File")) {
+					var path = EditorUtility.SaveFilePanel ("Save scene list", "", "scenes.json", "json");
+					if (!string.IsNullOrEmpty (path)) {
+						bool saved = false;
+						try{
+							System.IO.File.WriteAllText (path, _provider.GenerateJSON ());
+							saved = true;
+						}catch(System.Exception e){
+							Debug.LogErrorFormat ("Exception trying to write file: {0}", e.Message);
+						}
+						if (saved) {
+							EditorUtility.DisplayDialog ("Scene list", "File successfully saved", "ok");
+						}
+					}
+				}
+			}
+			EditorGUILayout.EndHorizontal ();
+		}
+
+		private void DrawHistory()
+		{
+			EditorGUILayout.BeginHorizontal ();
+			{
+				EditorGUILayout.BeginVertical (GUILayout.Width(90));
+				{
+					EditorGUILayout.BeginHorizontal ();
+					{
+						_colorStack.Push ((_history.BackCount > 1) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
+						if (GUILayout.Button ("<=", GUILayout.Width(42))) {
+							var item = _history.Back ();
+							SceneEntityDrawer.OpenScene (item);
+						}
+						_colorStack.Pop ();
+
+						_colorStack.Push ((_history.FowardCount > 0) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
+						if (GUILayout.Button ("=>", GUILayout.Width(42))) {
+							var item = _history.Forward ();
+							SceneEntityDrawer.OpenScene (item);
+						}
+						_colorStack.Pop ();
+					}
+
+					_colorStack.Push ((_history.Count > 1) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
+					EditorGUILayout.EndHorizontal ();
+					if (GUILayout.Button ("Clear History", GUILayout.Width(90))) {
+						_history.Clear ();
+					}
+					_colorStack.Pop ();
+				}
+				EditorGUILayout.EndVertical ();
+				EditorGUILayout.BeginVertical ();
+				{
+					EditorGUILayout.Popup ("Back History: ", 0, _history.GetBackStack ());
+					EditorGUILayout.Popup ("Forward History: ", 0, _history.GetForwardStack ());
+				}
+				EditorGUILayout.EndVertical ();
+			}
+			EditorGUILayout.EndHorizontal ();
+		}
+
+		private void DrawMainScroll()
+		{
+			_folders.DrawFoldable ("Favorites", DrawAllFavorites);
+			_folders.DrawFoldable ("All Scenes In Build", DrawAllInBuild);
+			_folders.DrawFoldable ("All Scenes", DrawAll);
 		}
 
 		#region Lists

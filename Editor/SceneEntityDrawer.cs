@@ -6,6 +6,7 @@ namespace TuxedoBerries.ScenePanel
 	public class SceneEntityDrawer
 	{
 		private ColorStack _colorStack;
+		private ButtonContainer _buttonContainer;
 		private FolderContainer _folders;
 		private SceneDatabaseProvider _provider;
 
@@ -16,6 +17,11 @@ namespace TuxedoBerries.ScenePanel
 		public void SetColorStack(ColorStack colorStack)
 		{
 			_colorStack = colorStack;
+		}
+
+		public void SetButtonContainer(ButtonContainer container)
+		{
+			_buttonContainer = container;
 		}
 
 		public void SetFolderContainer(FolderContainer folders)
@@ -40,7 +46,7 @@ namespace TuxedoBerries.ScenePanel
 				EditorGUILayout.BeginHorizontal ();
 				{
 					// Open
-					PushColor (entity.CurrentColor);
+					PushColor (SceneEntity.GetColor(entity));
 					if (GUILayout.Button (entity.Name) && !entity.IsActive) {
 						OpenScene (entity);
 					}
@@ -53,6 +59,10 @@ namespace TuxedoBerries.ScenePanel
 					}
 					PopColor ();
 
+					if (_buttonContainer != null) {
+						_buttonContainer.DrawButton (string.Format ("{0} Details", entity.Name), "Details", GUILayout.Width (50));
+					}
+
 					// Select
 					if (GUILayout.Button ("Select", GUILayout.Width (50))) {
 						Selection.activeObject = AssetDatabase.LoadMainAssetAtPath (entity.FullPath);
@@ -62,10 +72,12 @@ namespace TuxedoBerries.ScenePanel
 				EditorGUILayout.EndHorizontal ();
 
 				// Row 2 - More
-				if (_folders == null) {
-					DrawDetailEntity (entity);
-				} else {
+				if (_buttonContainer != null) {
+					_buttonContainer.DrawContent (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
+				} else if (_folders != null) {
 					_folders.DrawFoldable<ISceneEntity> (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
+				} else {
+					DrawDetailEntity (entity);
 				}
 			}
 			EditorGUILayout.EndVertical ();
@@ -80,7 +92,7 @@ namespace TuxedoBerries.ScenePanel
 				EditorGUILayout.BeginHorizontal ();
 				{
 					EditorGUILayout.LabelField ("Name", col1Space);
-					EditorGUILayout.LabelField (entity.Name);
+					EditorGUILayout.SelectableLabel (entity.Name, GUILayout.Height(15));
 				}
 				EditorGUILayout.EndHorizontal ();
 				// Path
@@ -175,9 +187,25 @@ namespace TuxedoBerries.ScenePanel
 		/// <param name="entity">Entity.</param>
 		public static bool OpenScene(ISceneEntity entity)
 		{
+			if (entity == null)
+				return false;
+			
+			return OpenScene(entity.FullPath);
+		}
+
+		/// <summary>
+		/// Opens the scene in editor.
+		/// </summary>
+		/// <returns><c>true</c>, if scene was opened, <c>false</c> otherwise.</returns>
+		/// <param name="scene">Scene.</param>
+		public static bool OpenScene(string scene)
+		{
+			if (string.IsNullOrEmpty(scene))
+				return false;
+			
 			bool saved = EditorApplication.SaveCurrentSceneIfUserWantsTo ();
 			if (saved) {
-				EditorApplication.OpenScene (entity.FullPath);
+				EditorApplication.OpenScene (scene);
 			}
 			return saved;
 		}

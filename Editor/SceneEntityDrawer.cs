@@ -8,6 +8,7 @@ namespace TuxedoBerries.ScenePanel
 		private ColorStack _colorStack;
 		private ButtonContainer _buttonContainer;
 		private TextureDatabaseProvider _textureProvider;
+		private int _screenShotScale = 1;
 
 		public SceneEntityDrawer()
 		{
@@ -158,14 +159,34 @@ namespace TuxedoBerries.ScenePanel
 			}
 			EditorGUILayout.EndHorizontal ();
 
-			// Show current view size
-			EditorGUILayout.BeginHorizontal ();
-			{
-				EditorGUILayout.LabelField ("Current View Size: ", col1Space);
-				var size = SceneMainPanelUtility.GetGameViewSize ();
-				EditorGUILayout.LabelField (string.Format ("{0}x{1}", size.x, size.y));
+			EditorGUILayout.Space ();
+			if (entity.IsActive) {
+				// Show current view size
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Current View Size: ", col1Space);
+					var size = SceneMainPanelUtility.GetGameViewSize ();
+					EditorGUILayout.LabelField (string.Format ("{0}x{1}", size.x, size.y));
+				}
+				EditorGUILayout.EndHorizontal ();
+
+				// Show current scale
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Screenshot Scale: ", col1Space);
+					_screenShotScale = EditorGUILayout.IntSlider (_screenShotScale, 1, 10);
+				}
+				EditorGUILayout.EndHorizontal ();
+
+				// Show current scale
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Estimated Size: ", col1Space);
+					var size = SceneMainPanelUtility.GetGameViewSize ();
+					EditorGUILayout.LabelField (string.Format ("{0}x{1}", size.x * _screenShotScale, size.y * _screenShotScale));
+				}
+				EditorGUILayout.EndHorizontal ();
 			}
-			EditorGUILayout.EndHorizontal ();
 
 			EditorGUILayout.BeginHorizontal ();
 			{
@@ -178,7 +199,7 @@ namespace TuxedoBerries.ScenePanel
 					var cameraTexture = _textureProvider.GetRelativeTexture (".icons/icon_camera.png");
 					if (GUILayout.Button (new GUIContent(cameraTexture, "Take a screenshot of the current scene. The size is the same as the Game View Panel"), GUILayout.MaxWidth(128))) {
 						if (entity.IsActive) {
-							SceneMainPanelUtility.TakeSnapshot (entity);
+							SceneMainPanelUtility.TakeSnapshot (entity, _screenShotScale);
 						}
 					}
 					_colorStack.Pop ();

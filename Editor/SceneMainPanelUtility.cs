@@ -49,10 +49,10 @@ namespace TuxedoBerries.ScenePanel
 		/// Takes a snapshot of the current visible screen and save it.
 		/// </summary>
 		/// <param name="entity">Entity.</param>
-		public static void TakeSnapshot(ISceneEntity entity)
+		public static void TakeSnapshot(ISceneEntity entity, int scale)
 		{
 			Directory.CreateDirectory (System.IO.Path.GetDirectoryName(entity.ScreenshotPath));
-			Application.CaptureScreenshot (entity.ScreenshotPath);
+			Application.CaptureScreenshot (entity.ScreenshotPath, scale);
 			EditorApplication.ExecuteMenuItem ("Window/Game");
 			EditorUtility.DisplayDialog ("Snapshot", "Snapshot successfully saved", "ok");
 		}
@@ -85,10 +85,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <returns>The game view size.</returns>
 		public static Vector2 GetGameViewSize()
 		{
-			System.Type T = System.Type.GetType("UnityEditor.GameView,UnityEditor");
-			System.Reflection.MethodInfo GetSizeOfMainGameView = T.GetMethod("GetSizeOfMainGameView",System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-			System.Object Res = GetSizeOfMainGameView.Invoke(null,null);
-			return (Vector2)Res;
+			return Handles.GetMainGameViewSize ();
 		}
 	}
 }

@@ -158,6 +158,15 @@ namespace TuxedoBerries.ScenePanel
 			}
 			EditorGUILayout.EndHorizontal ();
 
+			// Show current view size
+			EditorGUILayout.BeginHorizontal ();
+			{
+				EditorGUILayout.LabelField ("Current View Size: ", col1Space);
+				var size = SceneMainPanelUtility.GetGameViewSize ();
+				EditorGUILayout.LabelField (string.Format ("{0}x{1}", size.x, size.y));
+			}
+			EditorGUILayout.EndHorizontal ();
+
 			EditorGUILayout.BeginHorizontal ();
 			{
 				GUILayout.Space (20);

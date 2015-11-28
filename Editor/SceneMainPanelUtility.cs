@@ -78,6 +78,18 @@ namespace TuxedoBerries.ScenePanel
 
 			return ColorPalette.SceneOpenButton_Regular;
 		}
+
+		/// <summary>
+		/// Gets the size of the Game View screen.
+		/// </summary>
+		/// <returns>The game view size.</returns>
+		public static Vector2 GetGameViewSize()
+		{
+			System.Type T = System.Type.GetType("UnityEditor.GameView,UnityEditor");
+			System.Reflection.MethodInfo GetSizeOfMainGameView = T.GetMethod("GetSizeOfMainGameView",System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+			System.Object Res = GetSizeOfMainGameView.Invoke(null,null);
+			return (Vector2)Res;
+		}
 	}
 }
 

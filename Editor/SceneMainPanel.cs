@@ -26,13 +26,18 @@ namespace TuxedoBerries.ScenePanel
 		private float _deltaBetweenUpdates = 0;
 		private SceneEntityDrawer _drawer;
 		private SceneHistory _history;
+		private bool _stopStack = false;
+		private bool _justLoaded = true;
 
 		private void CheckProvider()
 		{
 			if(_provider == null)
 				_provider = new SceneDatabaseProvider ();
-			if (_history == null)
+			if (_history == null) {
 				_history = new SceneHistory ();
+				_history.Load ();
+				_justLoaded = true;
+			}
 		}
 
 		private void CheckGUIElements()
@@ -59,10 +64,40 @@ namespace TuxedoBerries.ScenePanel
 		private void UpdateCurrent()
 		{
 			_provider.SetAsActive (EditorApplication.currentScene);
+
+			if (EditorApplication.isPlaying || Application.isPlaying) {
+				_stopStack = true;
+			}
+			
+			SaveCurrentHistory ();
+		}
+
+		private void SaveCurrentHistory()
+		{
+			// Add to history only if we are in Edit mode
+			if (EditorApplication.isPlaying || Application.isPlaying)
+				return;
+			if (_stopStack)
+				return;
+			
 			_history.Push (_provider.CurrentActive);
 		}
 
-		private void Update()
+		private void GetBackFromPlayMode()
+		{
+			// Restore only if nothing is moving
+			if (EditorApplication.isPlaying || Application.isPlaying)
+				return;
+			if (!_justLoaded)
+				return;
+			
+			var item = _history.CurrentScene;
+			SceneEntityDrawer.OpenScene (item);
+			_justLoaded = false;
+			_stopStack = false;
+		}
+
+		private void OnInspectorUpdate()
 		{
 			// Fixed Update
 			_deltaBetweenUpdates += 0.1f;
@@ -76,8 +111,10 @@ namespace TuxedoBerries.ScenePanel
 
 		private void OnGUI()
 		{
+			_deltaBetweenUpdates = 0;
 			CheckProvider ();
 			CheckGUIElements ();
+			GetBackFromPlayMode ();
 			UpdateCurrent ();
 
 			_colorStack.Reset ();
@@ -103,11 +140,19 @@ namespace TuxedoBerries.ScenePanel
 				// Play
 				var playColor = !EditorApplication.isPlaying ? ColorPalette.PlayButton_ON : ColorPalette.PlayButton_OFF;
 				_colorStack.Push (playColor);
-				if (GUILayout.Button ("Play") && !EditorApplication.isPlaying) {
+				if (GUILayout.Button ("Play From Start") && !EditorApplication.isPlaying) {
 					var first = _provider.FirstScene;
 					if (first != null && SceneEntityDrawer.OpenScene (first)) {
+						_stopStack = true;
 						EditorApplication.isPlaying = true;
 					}
+				}
+				_colorStack.Pop ();
+
+				// Play Current
+				_colorStack.Push (playColor);
+				if (GUILayout.Button ("Play") && !EditorApplication.isPlaying) {
+					EditorApplication.isPlaying = true;
 				}
 				_colorStack.Pop ();
 

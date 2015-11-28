@@ -11,19 +11,21 @@ using UnityEditor;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class ButtonContainer
+	public class ButtonContainer : IEditorPreferenceSection
 	{
 		private Dictionary<string, bool> _folders;
 		private string _containerName;
 		private bool _saveInPreferences;
+		private EditorPreferenceHandlerChannel _channel;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.ButtonContainer"/> class.
 		/// </summary>
-		public ButtonContainer () : this("", false)
+		public ButtonContainer () : this("ButtonContainer", false)
 		{
 		}
 
@@ -31,7 +33,7 @@ namespace TuxedoBerries.ScenePanel
 		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.ButtonContainer"/> class.
 		/// </summary>
 		/// <param name="containerName">Container name.</param>
-		public ButtonContainer (string containerName) : this("ButtonContainer", false)
+		public ButtonContainer (string containerName) : this(containerName, false)
 		{
 		}
 
@@ -45,6 +47,27 @@ namespace TuxedoBerries.ScenePanel
 			_containerName = containerName;
 			_saveInPreferences = saveInPreferences;
 			_folders = new Dictionary<string, bool> ();
+			_channel = EditorPreferenceHandler.GetChannel (this);
+		}
+
+		/// <summary>
+		/// Gets the type of the implementation.
+		/// </summary>
+		/// <value>The type of the implementation.</value>
+		public System.Type ImplementationType {
+			get {
+				return typeof(ButtonContainer);
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the section.
+		/// </summary>
+		/// <value>The name.</value>
+		public string Name {
+			get {
+				return _containerName;
+			}
 		}
 
 		/// <summary>
@@ -70,6 +93,7 @@ namespace TuxedoBerries.ScenePanel
 			CheckNew (name);
 			if (GUILayout.Button (label, options)) {
 				_folders [name] = !_folders [name];
+				SaveValue (name, _folders [name]);
 			}
 		}
 
@@ -123,7 +147,7 @@ namespace TuxedoBerries.ScenePanel
 		private void SaveValue(string name, bool value)
 		{
 			if (_saveInPreferences) {
-				EditorPrefs.SetBool (string.Format ("ButtonContainer/{0}/{1}", _containerName, name), value);
+				_channel.SetValue (name, value);
 			}
 		}
 
@@ -135,7 +159,7 @@ namespace TuxedoBerries.ScenePanel
 		private bool GetDefaultValue(string name)
 		{
 			if (_saveInPreferences) {
-				return EditorPrefs.GetBool (string.Format ("ButtonContainer/{0}/{1}", _containerName, name));
+				return _channel.GetBool (name);
 			}
 
 			return true;

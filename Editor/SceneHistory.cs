@@ -8,21 +8,45 @@
 /// </summary>
 /// ------------------------------------------------
 using System;
+using System.Text;
 using System.Collections.Generic;
+using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class SceneHistory
+	public class SceneHistory : IEditorPreferenceSection
 	{
-		private Stack<ISceneEntity> _backHistory;
+		private Stack<ISceneFileEntity> _backHistory;
 		private string[] _backCache;
-		private Stack<ISceneEntity> _forwardHistory;
+		private Stack<ISceneFileEntity> _forwardHistory;
 		private string[] _forwardCache;
+		private EditorPreferenceHandlerChannel _channel;
 
 		public SceneHistory ()
 		{
-			_backHistory = new Stack<ISceneEntity> ();
-			_forwardHistory = new Stack<ISceneEntity> ();
+			_backHistory = new Stack<ISceneFileEntity> ();
+			_forwardHistory = new Stack<ISceneFileEntity> ();
+			_channel = EditorPreferenceHandler.GetChannel (this);
+		}
+
+		/// <summary>
+		/// Gets the type of the implementation.
+		/// </summary>
+		/// <value>The type of the implementation.</value>
+		public System.Type ImplementationType {
+			get {
+				return typeof(SceneHistory);
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the section.
+		/// </summary>
+		/// <value>The name.</value>
+		public string Name {
+			get {
+				return "SceneHistory";
+			}
 		}
 
 		/// <summary>
@@ -74,7 +98,7 @@ namespace TuxedoBerries.ScenePanel
 				if (_backHistory.Count <= 0)
 					return null;
 
-				return _backHistory.Peek ().Name;
+				return _backHistory.Peek ().FullPath;
 			}
 		}
 
@@ -118,13 +142,14 @@ namespace TuxedoBerries.ScenePanel
 		/// Push the specified scene.
 		/// </summary>
 		/// <param name="scene">Scene.</param>
-		public void Push(ISceneEntity scene)
+		public void Push(ISceneFileEntity scene)
 		{
 			// Add if empty
 			if (_backHistory.Count <= 0) {
 				_backHistory.Push (scene);
 				_forwardHistory.Clear ();
 				ClearStringCache ();
+				Save ();
 				return;
 			}
 
@@ -138,26 +163,44 @@ namespace TuxedoBerries.ScenePanel
 			_backHistory.Push (scene);
 			ClearStringCache ();
 			_forwardHistory.Clear ();
+			Save ();
 		}
 
 		/// <summary>
-		/// Go Back.
+		/// Go back in the stack and restack the element in the Forward histoy.
 		/// </summary>
-		public ISceneEntity Back()
+		public ISceneFileEntity Back()
+		{
+			return Back (true);
+		}
+
+		/// <summary>
+		/// Go back in the stack.
+		/// If restack is tryu, restack the element in the Forward histoy.
+		/// </summary>
+		/// <param name="restack">If set to <c>true</c> restack.</param>
+		public ISceneFileEntity Back(bool restack)
 		{
 			if (_backHistory.Count <= 1)
 				return null;
 			
 			var item = _backHistory.Pop ();
-			_forwardHistory.Push (item);
+			if (restack) {
+				_forwardHistory.Push (item);
+			}
 			ClearStringCache ();
 
 			if (_backHistory.Count <= 0)
 				return null;
+
+			Save ();
 			return _backHistory.Peek ();
 		}
 
-		public ISceneEntity Forward()
+		/// <summary>
+		/// Go Gorward.
+		/// </summary>
+		public ISceneFileEntity Forward()
 		{
 			if (_forwardHistory.Count <= 0)
 				return null;
@@ -168,6 +211,8 @@ namespace TuxedoBerries.ScenePanel
 
 			if (_backHistory.Count <= 0)
 				return null;
+
+			Save ();
 			return _backHistory.Peek ();
 		}
 
@@ -175,6 +220,64 @@ namespace TuxedoBerries.ScenePanel
 		{
 			_backCache = null;
 			_forwardCache = null;
+		}
+
+		public void Save()
+		{
+			SaveHistory ("_backHistory", _backHistory);
+			SaveHistory ("_forwardHistory", _forwardHistory);
+		}
+
+		private void SaveHistory(string name, Stack<ISceneFileEntity> stack)
+		{
+			// Generate Back History
+			var builder = new StringBuilder ();
+			var ienum = stack.GetEnumerator ();
+			int total = stack.Count;
+			int currentCount = 0;
+
+			while (ienum.MoveNext ()) {
+				var current = ienum.Current;
+				builder.Append (current.Name);
+				builder.Append (",");
+				builder.Append (current.FullPath);
+				if (++currentCount < total) {
+					builder.Append (";");
+				}
+			}
+
+			var data = builder.ToString ();
+			_channel.SetValue (name, data);
+		}
+
+		public void Load()
+		{
+			LoadHistory ("_backHistory", _backHistory);
+			LoadHistory ("_forwardHistory", _forwardHistory);
+			ClearStringCache ();
+		}
+
+		private void LoadHistory(string name, Stack<ISceneFileEntity> stack)
+		{
+			var data = _channel.GetString (name);
+			if(string.IsNullOrEmpty(data)){
+				return;
+			}
+
+			stack.Clear ();
+
+			var tempStack = new Stack<ISceneFileEntity> ();
+			var array = data.Split (';');
+			foreach (var element in array) {
+				var arrayElement = element.Split (',');
+
+				var sceneElement = new SceneFileEntity (arrayElement [0], arrayElement [1]);
+				tempStack.Push (sceneElement);
+			}
+
+			foreach (var item in tempStack) {
+				stack.Push (item);
+			}
 		}
 	}
 }

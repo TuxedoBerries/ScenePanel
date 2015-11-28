@@ -11,14 +11,16 @@ using UnityEditor;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class ScrollableContainer
+	public class ScrollableContainer : IEditorPreferenceSection
 	{
 		private Dictionary<string, Vector2> _areas;
 		private string _containerName;
 		private bool _saveInPreferences;
+		private EditorPreferenceHandlerChannel _channel;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.ScrollableContainer"/> class.
@@ -45,6 +47,27 @@ namespace TuxedoBerries.ScenePanel
 			_areas = new Dictionary<string, Vector2> ();
 			_containerName = containerName;
 			_saveInPreferences = saveInPreferences;
+			_channel = EditorPreferenceHandler.GetChannel (this);
+		}
+
+		/// <summary>
+		/// Gets the type of the implementation.
+		/// </summary>
+		/// <value>The type of the implementation.</value>
+		public System.Type ImplementationType {
+			get {
+				return typeof(ScrollableContainer);
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the section.
+		/// </summary>
+		/// <value>The name.</value>
+		public string Name {
+			get {
+				return _containerName;
+			}
 		}
 
 		/// <summary>
@@ -55,8 +78,12 @@ namespace TuxedoBerries.ScenePanel
 		public void DrawScrollable(string name, Action action)
 		{
 			CheckNew (name);
+			var oldValue = _areas [name];
 			_areas[name] = EditorGUILayout.BeginScrollView (_areas[name]);
-			SaveValue (name, _areas[name]);
+			// Save if needed
+			if (oldValue != _areas [name]) {
+				SaveValue (name, _areas[name]);
+			}
 			{
 				if (action != null)
 					action.Invoke ();
@@ -74,8 +101,12 @@ namespace TuxedoBerries.ScenePanel
 		public void DrawScrollable<T>(string name, Action<T> action, T param)
 		{
 			CheckNew (name);
+			var oldValue = _areas [name];
 			_areas[name] = EditorGUILayout.BeginScrollView (_areas[name]);
-			SaveValue (name, _areas[name]);
+			// Save if needed
+			if (oldValue != _areas [name]) {
+				SaveValue (name, _areas[name]);
+			}
 			{
 				if (action != null)
 					action.Invoke (param);
@@ -103,7 +134,7 @@ namespace TuxedoBerries.ScenePanel
 		private void SaveValue(string name, Vector2 value)
 		{
 			if (_saveInPreferences) {
-				EditorPrefs.SetString (string.Format ("ScrollableContainer/{0}/{1}", _containerName, name), string.Format ("{0};{1}", value.x, value.y));
+				_channel.SetValue (name, string.Format ("{0};{1}", value.x, value.y));
 			}
 		}
 
@@ -115,7 +146,7 @@ namespace TuxedoBerries.ScenePanel
 		private Vector2 GetDefaultValue(string name)
 		{
 			if (_saveInPreferences) {
-				var pair = EditorPrefs.GetString (string.Format ("ScrollableContainer/{0}/{1}", _containerName, name));
+				var pair = _channel.GetString (name);
 				if (string.IsNullOrEmpty (pair))
 					return Vector2.zero;
 				

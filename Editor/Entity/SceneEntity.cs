@@ -11,10 +11,11 @@ using System;
 using System.Text;
 using UnityEngine;
 using UnityEditor;
+using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class SceneEntity : ISceneEntity
+	public class SceneEntity : ISceneEntity, ISceneFileEntity, IEditorPreferenceSection
 	{
 		private const string FAVORITE_KEY = "SceneEntity:Favorite:[{0}]";
 
@@ -25,9 +26,14 @@ namespace TuxedoBerries.ScenePanel
 		private bool _inBuild;
 		private bool _isEnabled;
 		private int _index;
+		// Cached
+		private string _snapshotPath;
+
+		private EditorPreferenceHandlerChannel _channel;
 
 		public SceneEntity ()
 		{
+			_channel = EditorPreferenceHandler.GetChannel (this);
 			Clear ();
 		}
 
@@ -38,11 +44,38 @@ namespace TuxedoBerries.ScenePanel
 		{
 			_name = "";
 			_fullPath = "";
+			_snapshotPath = "";
 
 			_inBuild = false;
 			_isActive = false;
 			_isEnabled = false;
 			_index = -1;
+		}
+
+		/// <summary>
+		/// Copy the specified entity.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		public void Copy(SceneEntity entity)
+		{
+			_name = entity.Name;
+			_fullPath = entity.FullPath;
+			_snapshotPath = entity.SnapshotPath;
+
+			_inBuild = entity.InBuild;
+			_isActive = entity.IsActive;
+			_isEnabled = entity.IsEnabled;
+			_index = entity.BuildIndex;
+		}
+
+		/// <summary>
+		/// Gets the type of the implementation.
+		/// </summary>
+		/// <value>The type of the implementation.</value>
+		public System.Type ImplementationType {
+			get {
+				return typeof(SceneEntity);
+			}
 		}
 
 		/// <summary>
@@ -55,6 +88,7 @@ namespace TuxedoBerries.ScenePanel
 			}
 			set {
 				_name = value;
+				_snapshotPath = string.Format ("SceneSnapshots/{0}.png", _name);
 			}
 		}
 
@@ -91,12 +125,10 @@ namespace TuxedoBerries.ScenePanel
 		/// <value><c>true</c> if this instance is favorite; otherwise, <c>false</c>.</value>
 		public bool IsFavorite {
 			get {
-				if (!EditorPrefs.HasKey (string.Format (FAVORITE_KEY, _fullPath)))
-					return false;
-				return EditorPrefs.GetBool (string.Format(FAVORITE_KEY, _fullPath));
+				return _channel.GetBool ("Favorite");
 			}
 			set {
-				EditorPrefs.SetBool (string.Format(FAVORITE_KEY, _fullPath), value);
+				_channel.SetValue ("Favorite", value);
 			}
 		}
 
@@ -106,7 +138,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <value>The snapshot path.</value>
 		public string SnapshotPath {
 			get {
-				return string.Format ("SceneSnapshots/{0}.png", Name);
+				return _snapshotPath;
 			}
 		}
 

@@ -19,8 +19,9 @@ namespace TuxedoBerries.ScenePanel
 	public class SceneDatabaseProvider
 	{
 		private SortedDictionary<string, SceneEntity> _dict;
+		private List<SceneEntity> _buildListByIndex;
 		private Dictionary<string, Texture> _textureCache;
-		private Stack<SceneEntity> _recycled;
+		private Stack<SceneEntity> _pool;
 		private SceneEntity _firstScene;
 		private SceneEntity _activeScene;
 
@@ -30,8 +31,9 @@ namespace TuxedoBerries.ScenePanel
 		public SceneDatabaseProvider()
 		{
 			_dict = new SortedDictionary<string, SceneEntity> ();
+			_pool = new Stack<SceneEntity> ();
+			_buildListByIndex = new List<SceneEntity> ();
 			_textureCache = new Dictionary<string, Texture> ();
-			_recycled = new Stack<SceneEntity> ();
 			Refresh ();
 		}
 
@@ -40,9 +42,10 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		public void Refresh()
 		{
-			Recycle ();
-			GenerateDictionary ();
+			_buildListByIndex.Clear ();
+			RefreshDictionary ();
 			AddBuildData ();
+			_buildListByIndex.Sort (SortByIndex);
 		}
 
 		/// <summary>
@@ -109,10 +112,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <returns>The build scenes.</returns>
 		public IEnumerator<ISceneEntity> GetBuildScenes()
 		{
-			foreach (var data in _dict.Values) {
-				if (!data.InBuild)
-					continue;
-
+			foreach (var data in _buildListByIndex) {
 				yield return data;
 			}
 			yield break;
@@ -230,27 +230,35 @@ namespace TuxedoBerries.ScenePanel
 
 		#region Helpers
 		/// <summary>
-		/// Recycle the old scenes.
-		/// </summary>
-		private void Recycle()
-		{
-			foreach (var entity in _dict.Values) {
-				_recycled.Push (entity);
-			}
-			_dict.Clear ();
-		}
-
-		/// <summary>
 		/// Generates the dictionary of scenes.
 		/// </summary>
-		private void GenerateDictionary()
+		private void RefreshDictionary()
 		{
 			var assets = AssetDatabase.GetAllAssetPaths ();
+			// Copy old keys
+			var oldKeys = new HashSet<string> ();
+			foreach (string key in _dict.Keys) {
+				oldKeys.Add (key);
+			}
+
+			// Update Dictionary
 			foreach (var asset in assets) {
 				if (asset.EndsWith (".unity")) {
 					var entity = GenerateEntity (asset);
-					_dict.Add (asset, entity);
+					if (_dict.ContainsKey (asset)) {
+						_dict [asset].Copy (entity);
+						oldKeys.Remove (asset);
+						ReturnToPool (entity);
+					} else {
+						_dict.Add (asset, entity);
+					}
 				}
+			}
+
+			// Check removed
+			foreach (string key in oldKeys) {
+				Debug.LogFormat ("Scene [{0}] was removed", key);
+				_dict.Remove (key);
 			}
 		}
 
@@ -273,7 +281,22 @@ namespace TuxedoBerries.ScenePanel
 				if (i == 0) {
 					_firstScene = entity;
 				}
+				// Add to list
+				if (entity.InBuild)
+					_buildListByIndex.Add (entity);
 			}
+		}
+
+		private int SortByIndex(SceneEntity entityA, SceneEntity entityB)
+		{
+			if (entityA == null && entityB == null)
+				return 0;
+			if (entityA == null)
+				return -1;
+			if (entityB == null)
+				return 1;
+
+			return entityA.BuildIndex - entityB.BuildIndex;
 		}
 
 		/// <summary>
@@ -283,7 +306,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <param name="assetPath">Asset path.</param>
 		private SceneEntity GenerateEntity(string assetPath)
 		{
-			var entity = GetEmptyEntity ();
+			var entity = GetFromPool ();
 			entity.FullPath = assetPath;
 			entity.Name = Path.GetFileNameWithoutExtension (assetPath);
 			entity.IsEnabled = false;
@@ -293,18 +316,22 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		/// <summary>
-		/// Gets an empty entity.
+		/// Returns to pool.
 		/// </summary>
-		/// <returns>The empty entity.</returns>
-		private SceneEntity GetEmptyEntity()
+		/// <param name="entity">Entity.</param>
+		private void ReturnToPool(SceneEntity entity)
 		{
-			if (_recycled.Count > 0) {
-				var entity = _recycled.Pop ();
-				entity.Clear ();
-				return entity;
+			entity.Clear ();
+			_pool.Push (entity);
+		}
+
+		private SceneEntity GetFromPool()
+		{
+			if (_pool.Count <= 0) {
+				return new SceneEntity ();
 			}
 
-			return new SceneEntity ();
+			return _pool.Pop ();
 		}
 		#endregion
 	}

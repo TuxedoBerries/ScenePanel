@@ -12,23 +12,8 @@ using UnityEngine;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public interface ISceneEntity
+	public interface ISceneEntity : ISceneFileEntity
 	{
-		/// <summary>
-		/// Gets the name of the scene.
-		/// </summary>
-		/// <value>The name.</value>
-		string Name {
-			get;
-		}
-
-		/// <summary>
-		/// Gets the full path of the scene.
-		/// </summary>
-		/// <value>The full path.</value>
-		string FullPath {
-			get;
-		}
 
 		/// <summary>
 		/// Gets a value indicating whether this scene is marked as favorite.

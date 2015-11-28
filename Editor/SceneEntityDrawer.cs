@@ -181,15 +181,15 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		/// <summary>
-		/// Opens the scene in editor.
+		/// Opens the scene.
 		/// </summary>
 		/// <returns><c>true</c>, if scene was opened, <c>false</c> otherwise.</returns>
 		/// <param name="entity">Entity.</param>
-		public static bool OpenScene(ISceneEntity entity)
+		public static bool OpenScene(ISceneFileEntity entity)
 		{
 			if (entity == null)
 				return false;
-			
+
 			return OpenScene(entity.FullPath);
 		}
 

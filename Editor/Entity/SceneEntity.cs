@@ -21,6 +21,7 @@ namespace TuxedoBerries.ScenePanel
 
 		private string _name;
 		private string _fullPath;
+		private string _guid;
 		private bool _isActive;
 		// Only in build
 		private bool _inBuild;
@@ -44,6 +45,7 @@ namespace TuxedoBerries.ScenePanel
 		{
 			_name = "";
 			_fullPath = "";
+			_guid = "";
 			_screenshotPath = "";
 
 			_inBuild = false;
@@ -61,6 +63,7 @@ namespace TuxedoBerries.ScenePanel
 			_name = entity.Name;
 			_fullPath = entity.FullPath;
 			_screenshotPath = entity.ScreenshotPath;
+			_guid = entity.GUID;
 
 			_inBuild = entity.InBuild;
 			_isActive = entity.IsActive;
@@ -102,6 +105,19 @@ namespace TuxedoBerries.ScenePanel
 			}
 			set {
 				_fullPath = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets the GUID.
+		/// </summary>
+		/// <value>The GUID.</value>
+		public string GUID {
+			get {
+				return _guid;
+			}
+			set {
+				_guid = value;
 			}
 		}
 
@@ -201,6 +217,11 @@ namespace TuxedoBerries.ScenePanel
 			builder.Append ("\"full_path\":");
 			builder.Append ("\"");
 			builder.Append (FullPath);
+			builder.Append ("\",");
+			// GUID
+			builder.Append ("\"guid\":");
+			builder.Append ("\"");
+			builder.Append (GUID);
 			builder.Append ("\",");
 			// SnapshotPath
 			builder.Append ("\"screenshot_path\":");

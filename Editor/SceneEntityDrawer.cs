@@ -78,21 +78,28 @@ namespace TuxedoBerries.ScenePanel
 				// Name
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Name", col1Space);
-					EditorGUILayout.SelectableLabel (entity.Name, GUILayout.Height(15));
+					EditorGUILayout.LabelField ("Name:", col1Space);
+					EditorGUILayout.SelectableLabel (entity.Name, GUILayout.Height(16));
 				}
 				EditorGUILayout.EndHorizontal ();
 				// Path
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Path", col1Space);
-					EditorGUILayout.SelectableLabel (entity.FullPath, GUILayout.Height(15));
+					EditorGUILayout.LabelField ("Path:", col1Space);
+					EditorGUILayout.SelectableLabel (entity.FullPath, GUILayout.Height(16));
+				}
+				EditorGUILayout.EndHorizontal ();
+				// Path
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("GUID:", col1Space);
+					EditorGUILayout.SelectableLabel (entity.GUID.ToUpper(), GUILayout.Height(16));
 				}
 				EditorGUILayout.EndHorizontal ();
 				// In Build Check
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("In Build", col1Space);
+					EditorGUILayout.LabelField ("In Build:", col1Space);
 					EditorGUILayout.Toggle (entity.InBuild);
 				}
 				EditorGUILayout.EndHorizontal ();
@@ -101,7 +108,7 @@ namespace TuxedoBerries.ScenePanel
 				// In Build Enabled Check
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Build Enabled", col1Space);
+					EditorGUILayout.LabelField ("Build Enabled:", col1Space);
 					EditorGUILayout.Toggle (entity.IsEnabled);
 				}
 				EditorGUILayout.EndHorizontal ();
@@ -109,7 +116,7 @@ namespace TuxedoBerries.ScenePanel
 				// In Build index
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Build Index", col1Space);
+					EditorGUILayout.LabelField ("Build Index:", col1Space);
 					EditorGUILayout.LabelField (entity.BuildIndex.ToString());
 				}
 				EditorGUILayout.EndHorizontal ();
@@ -118,7 +125,7 @@ namespace TuxedoBerries.ScenePanel
 				// In Build Enabled Check
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Current Scene", col1Space);
+					EditorGUILayout.LabelField ("Current Scene:", col1Space);
 					EditorGUILayout.Toggle (entity.IsActive);
 				}
 				EditorGUILayout.EndHorizontal ();
@@ -139,11 +146,13 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.BeginHorizontal ();
 			{
 				EditorGUILayout.LabelField ("Screenshot: ", col1Space);
+				string displayText;
 				if (texture != null) {
-					EditorGUILayout.LabelField (entity.ScreenshotPath);
+					displayText = entity.ScreenshotPath;
 				} else {
-					EditorGUILayout.LabelField ("--");
+					displayText = "--";
 				}
+				EditorGUILayout.SelectableLabel (displayText, GUILayout.Height(16));
 			}
 			EditorGUILayout.EndHorizontal ();
 
@@ -151,11 +160,13 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.BeginHorizontal ();
 			{
 				EditorGUILayout.LabelField ("Screenshot Size: ", col1Space);
+				string displayText;
 				if (texture != null) {
-					EditorGUILayout.LabelField (string.Format ("{0}x{1}", texture.width, texture.height));
+					displayText = string.Format ("{0} x {1}", texture.width, texture.height);
 				} else {
-					EditorGUILayout.LabelField ("--");
+					displayText = "--";
 				}
+				EditorGUILayout.LabelField (displayText);
 			}
 			EditorGUILayout.EndHorizontal ();
 
@@ -166,7 +177,7 @@ namespace TuxedoBerries.ScenePanel
 				{
 					EditorGUILayout.LabelField ("Current View Size: ", col1Space);
 					var size = SceneMainPanelUtility.GetGameViewSize ();
-					EditorGUILayout.LabelField (string.Format ("{0}x{1}", size.x, size.y));
+					EditorGUILayout.LabelField (string.Format ("{0} x {1}", size.x, size.y));
 				}
 				EditorGUILayout.EndHorizontal ();
 
@@ -183,7 +194,7 @@ namespace TuxedoBerries.ScenePanel
 				{
 					EditorGUILayout.LabelField ("Estimated Size: ", col1Space);
 					var size = SceneMainPanelUtility.GetGameViewSize ();
-					EditorGUILayout.LabelField (string.Format ("{0}x{1}", size.x * _screenShotScale, size.y * _screenShotScale));
+					EditorGUILayout.LabelField (string.Format ("{0} x {1}", size.x * _screenShotScale, size.y * _screenShotScale));
 				}
 				EditorGUILayout.EndHorizontal ();
 			}

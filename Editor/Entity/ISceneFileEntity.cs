@@ -29,5 +29,13 @@ namespace TuxedoBerries.ScenePanel
 		string FullPath {
 			get;
 		}
+
+		/// <summary>
+		/// Gets the GUID.
+		/// </summary>
+		/// <value>The GUID.</value>
+		string GUID {
+			get;
+		}
 	}
 }

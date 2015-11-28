@@ -82,6 +82,13 @@ namespace TuxedoBerries.ScenePanel
 		/// <param name="scenePath">Scene path.</param>
 		public bool SetAsActive(string scenePath)
 		{
+			// Same Scene
+			if (_activeScene != null && string.Equals (_activeScene.FullPath, scenePath)) {
+				_activeScene.IsActive = true;
+				return false;
+			}
+
+			// Not exist
 			if (!_dict.ContainsKey (scenePath))
 				return false;
 
@@ -89,6 +96,7 @@ namespace TuxedoBerries.ScenePanel
 			if (_activeScene != null)
 				_activeScene.IsActive = false;
 
+			// Set new active scene
 			_activeScene = _dict [scenePath];
 			_activeScene.IsActive = true;
 			return true;
@@ -247,8 +255,9 @@ namespace TuxedoBerries.ScenePanel
 		private SceneEntity GenerateEntity(string assetPath)
 		{
 			var entity = GetFromPool ();
-			entity.FullPath = assetPath;
 			entity.Name = Path.GetFileNameWithoutExtension (assetPath);
+			entity.FullPath = assetPath;
+			entity.GUID = AssetDatabase.AssetPathToGUID (assetPath);
 			entity.IsEnabled = false;
 			entity.InBuild = false;
 

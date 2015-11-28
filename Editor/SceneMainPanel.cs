@@ -352,16 +352,19 @@ namespace TuxedoBerries.ScenePanel
 		#region Lists
 		private void DrawAllFavorites()
 		{
+			EditorGUILayout.HelpBox ("All the favorites scenes are displayed here\nDisplay order is: Alphabetical", MessageType.Info);
 			DrawIenum (_provider.GetFavorites ());
 		}
 
 		private void DrawAllInBuild()
 		{
+			EditorGUILayout.HelpBox ("All the scenes included in the build are here.\nDisplay order is: By Build Index", MessageType.Info);
 			DrawIenum (_provider.GetBuildScenes ());
 		}
 
 		private void DrawAll()
 		{
+			EditorGUILayout.HelpBox ("All the scenes in the project are here.\nDisplay order is: Alphabetical", MessageType.Info);
 			DrawIenum (_provider.GetAllScenes ());
 		}
 

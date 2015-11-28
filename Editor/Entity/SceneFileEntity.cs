@@ -18,6 +18,7 @@ namespace TuxedoBerries.ScenePanel
 
 		private string _name;
 		private string _fullPath;
+		private string _guid;
 
 		public SceneFileEntity() : this ("", "") { }
 
@@ -56,6 +57,19 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		/// <summary>
+		/// Gets the GUID.
+		/// </summary>
+		/// <value>The GUID.</value>
+		public string GUID {
+			get {
+				return _guid;
+			}
+			set {
+				_guid = value;
+			}
+		}
+
+		/// <summary>
 		/// Returns a <see cref="System.String"/> that represents the current <see cref="TuxedoBerries.ScenePanel.SceneFileEntity"/>.
 		/// </summary>
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="TuxedoBerries.ScenePanel.SceneFileEntity"/>.</returns>
@@ -72,6 +86,11 @@ namespace TuxedoBerries.ScenePanel
 			builder.Append ("\"full_path\":");
 			builder.Append ("\"");
 			builder.Append (FullPath);
+			builder.Append ("\",");
+			// GUID
+			builder.Append ("\"guid\":");
+			builder.Append ("\"");
+			builder.Append (GUID);
 			builder.Append ("\"");
 
 			builder.Append ("}");

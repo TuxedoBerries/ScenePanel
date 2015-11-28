@@ -33,10 +33,10 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		/// <summary>
-		/// Gets the snapshot path.
+		/// Gets the screenshot path.
 		/// </summary>
 		/// <value>The snapshot path.</value>
-		string SnapshotPath {
+		string ScreenshotPath {
 			get;
 		}
 

@@ -27,7 +27,7 @@ namespace TuxedoBerries.ScenePanel
 		private bool _isEnabled;
 		private int _index;
 		// Cached
-		private string _snapshotPath;
+		private string _screenshotPath;
 
 		private EditorPreferenceHandlerChannel _channel;
 
@@ -44,7 +44,7 @@ namespace TuxedoBerries.ScenePanel
 		{
 			_name = "";
 			_fullPath = "";
-			_snapshotPath = "";
+			_screenshotPath = "";
 
 			_inBuild = false;
 			_isActive = false;
@@ -60,7 +60,7 @@ namespace TuxedoBerries.ScenePanel
 		{
 			_name = entity.Name;
 			_fullPath = entity.FullPath;
-			_snapshotPath = entity.SnapshotPath;
+			_screenshotPath = entity.ScreenshotPath;
 
 			_inBuild = entity.InBuild;
 			_isActive = entity.IsActive;
@@ -88,7 +88,7 @@ namespace TuxedoBerries.ScenePanel
 			}
 			set {
 				_name = value;
-				_snapshotPath = string.Format ("SceneSnapshots/{0}.png", _name);
+				_screenshotPath = string.Format ("Screenshots/{0}.png", _name);
 			}
 		}
 
@@ -136,9 +136,9 @@ namespace TuxedoBerries.ScenePanel
 		/// Gets the snapshot path.
 		/// </summary>
 		/// <value>The snapshot path.</value>
-		public string SnapshotPath {
+		public string ScreenshotPath {
 			get {
-				return _snapshotPath;
+				return _screenshotPath;
 			}
 		}
 
@@ -203,9 +203,9 @@ namespace TuxedoBerries.ScenePanel
 			builder.Append (FullPath);
 			builder.Append ("\",");
 			// SnapshotPath
-			builder.Append ("\"snapshot_path\":");
+			builder.Append ("\"screenshot_path\":");
 			builder.Append ("\"");
-			builder.Append (SnapshotPath);
+			builder.Append (ScreenshotPath);
 			builder.Append ("\",");
 			// IsActive
 			builder.Append ("\"is_active\":");
@@ -229,23 +229,6 @@ namespace TuxedoBerries.ScenePanel
 
 			builder.Append ("}");
 			return builder.ToString ();
-		}
-
-		public static Color GetColor(ISceneEntity entity)
-		{
-			// Active Color
-			if (entity.IsActive)
-				return ColorPalette.SceneOpenButton_Active;
-
-			// Build Color
-			if (entity.InBuild) {
-				if (entity.IsEnabled)
-					return ColorPalette.SceneOpenButton_InBuild_Enabled;
-				else
-					return ColorPalette.SceneOpenButton_InBuild_Disabled;
-			}
-
-			return ColorPalette.SceneOpenButton_Regular;
 		}
 	}
 }

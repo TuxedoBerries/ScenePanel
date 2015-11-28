@@ -31,6 +31,10 @@ namespace TuxedoBerries.ScenePanel
 		public static Color SceneOpenButton_InBuild_Disabled = new Color (98f / 255f, 192f / 255f, 220f / 255f, 0.5f);
 		public static Color SceneOpenButton_Regular = Color.white;
 
+		// In Build fields
+		public static Color InBuildField_ON = Color.white;
+		public static Color InBuildField_OFF = new Color (1f, 1f, 1f, 0.25f);
+
 		// Take Snapshot Button
 		public static Color SnapshotButton_ON = Color.white;
 		public static Color SnapshotButton_OFF = new Color (1f, 1f, 1f, 0.25f);

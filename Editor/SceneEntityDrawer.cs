@@ -7,31 +7,17 @@ namespace TuxedoBerries.ScenePanel
 	{
 		private ColorStack _colorStack;
 		private ButtonContainer _buttonContainer;
-		private FolderContainer _folders;
-		private SceneDatabaseProvider _provider;
+		private TextureDatabaseProvider _textureProvider;
 
 		public SceneEntityDrawer()
 		{
+			_colorStack = new ColorStack ();
+			_buttonContainer = new ButtonContainer ("SceneEntityDrawer", true);
 		}
 
-		public void SetColorStack(ColorStack colorStack)
+		public void SetTextureProvider(TextureDatabaseProvider provider)
 		{
-			_colorStack = colorStack;
-		}
-
-		public void SetButtonContainer(ButtonContainer container)
-		{
-			_buttonContainer = container;
-		}
-
-		public void SetFolderContainer(FolderContainer folders)
-		{
-			_folders = folders;
-		}
-
-		public void SetDataProvider(SceneDatabaseProvider provider)
-		{
-			_provider = provider;
+			_textureProvider = provider;
 		}
 
 		/// <summary>
@@ -40,24 +26,26 @@ namespace TuxedoBerries.ScenePanel
 		/// <param name="entity">Entity.</param>
 		public void DrawEntity(ISceneEntity entity)
 		{
+			_colorStack.Reset ();
 			EditorGUILayout.BeginVertical ();
 			{
 				// Row 1
 				EditorGUILayout.BeginHorizontal ();
 				{
 					// Open
-					PushColor (SceneEntity.GetColor(entity));
+					_colorStack.Push (SceneMainPanelUtility.GetColor(entity));
 					if (GUILayout.Button (entity.Name) && !entity.IsActive) {
-						OpenScene (entity);
+						SceneMainPanelUtility.OpenScene (entity);
 					}
-					PopColor ();
+					_colorStack.Pop ();
 
 					// Fav
-					PushColor (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
-					if (GUILayout.Button ("Fav", GUILayout.Width (30))) {
+					_colorStack.Push (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
+					var stopTexture = _textureProvider.GetRelativeTexture (".icons/icon_star.png");
+					if (GUILayout.Button (stopTexture, GUILayout.Width (30))) {
 						entity.IsFavorite = !entity.IsFavorite;
 					}
-					PopColor ();
+					_colorStack.Pop ();
 
 					if (_buttonContainer != null) {
 						_buttonContainer.DrawButton (string.Format ("{0} Details", entity.Name), "Details", GUILayout.Width (50));
@@ -74,8 +62,6 @@ namespace TuxedoBerries.ScenePanel
 				// Row 2 - More
 				if (_buttonContainer != null) {
 					_buttonContainer.DrawContent (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
-				} else if (_folders != null) {
-					_folders.DrawFoldable<ISceneEntity> (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
 				} else {
 					DrawDetailEntity (entity);
 				}
@@ -83,7 +69,7 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.EndVertical ();
 		}
 
-		private void DrawDetailEntity(ISceneEntity entity)
+		public void DrawDetailEntity(ISceneEntity entity)
 		{
 			var col1Space = GUILayout.Width (128);
 			EditorGUILayout.BeginVertical ();
@@ -109,13 +95,25 @@ namespace TuxedoBerries.ScenePanel
 					EditorGUILayout.Toggle (entity.InBuild);
 				}
 				EditorGUILayout.EndHorizontal ();
+
+				_colorStack.Push (entity.InBuild ? ColorPalette.InBuildField_ON : ColorPalette.InBuildField_OFF);
 				// In Build Enabled Check
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("In Build Enabled", col1Space);
+					EditorGUILayout.LabelField ("Build Enabled", col1Space);
 					EditorGUILayout.Toggle (entity.IsEnabled);
 				}
 				EditorGUILayout.EndHorizontal ();
+
+				// In Build index
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Build Index", col1Space);
+					EditorGUILayout.LabelField (entity.BuildIndex.ToString());
+				}
+				EditorGUILayout.EndHorizontal ();
+				_colorStack.Pop ();
+
 				// In Build Enabled Check
 				EditorGUILayout.BeginHorizontal ();
 				{
@@ -132,117 +130,87 @@ namespace TuxedoBerries.ScenePanel
 
 		public void DrawSnapshot(ISceneEntity entity)
 		{
+			_colorStack.Reset ();
 			var texture = GetTexture (entity, false);
-			var buttonLabel = (texture == null) ? "Take Snapshot" : "Update Snapshot";
 
 			var col1Space = GUILayout.Width (128);
-			EditorGUILayout.LabelField ("Snapshot: ", col1Space);
+			// In Build Enabled Check
 			EditorGUILayout.BeginHorizontal ();
 			{
-				GUILayout.Space (35);
+				EditorGUILayout.LabelField ("Screenshot: ", col1Space);
+				if (texture != null) {
+					EditorGUILayout.LabelField (entity.ScreenshotPath);
+				} else {
+					EditorGUILayout.LabelField ("--");
+				}
+			}
+			EditorGUILayout.EndHorizontal ();
 
+			// In Build Enabled Check
+			EditorGUILayout.BeginHorizontal ();
+			{
+				EditorGUILayout.LabelField ("Screenshot Size: ", col1Space);
+				if (texture != null) {
+					EditorGUILayout.LabelField (string.Format ("{0}x{1}", texture.width, texture.height));
+				} else {
+					EditorGUILayout.LabelField ("--");
+				}
+			}
+			EditorGUILayout.EndHorizontal ();
+
+			EditorGUILayout.BeginHorizontal ();
+			{
+				GUILayout.Space (20);
 				// Display
 				EditorGUILayout.BeginVertical (col1Space);
 				{
 					// Take Snapshot
-					PushColor (entity.IsActive ? ColorPalette.SnapshotButton_ON : ColorPalette.SnapshotButton_OFF);
-					if (GUILayout.Button (buttonLabel, GUILayout.MaxWidth(128))) {
+					_colorStack.Push (entity.IsActive ? ColorPalette.SnapshotButton_ON : ColorPalette.SnapshotButton_OFF);
+					var cameraTexture = _textureProvider.GetRelativeTexture (".icons/icon_camera.png");
+					if (GUILayout.Button (new GUIContent(cameraTexture, "Take a screenshot of the current scene. The size is the same as the Game View Panel"), GUILayout.MaxWidth(128))) {
 						if (entity.IsActive) {
-							TakeSnapshot (entity);
+							SceneMainPanelUtility.TakeSnapshot (entity);
 						}
 					}
-					PopColor ();
+					_colorStack.Pop ();
 
 					// Refresh
-					PushColor ((texture != null) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
+					_colorStack.Push ((texture != null) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
 					if (GUILayout.Button ("Refresh", GUILayout.MaxWidth(128))) {
 						if(texture != null)
 							texture = GetTexture (entity, true);
 					}
-					PopColor ();
+					_colorStack.Pop ();
 
 					// Open
-					PushColor ((texture != null) ? ColorPalette.SnapshotOpenButton_ON : ColorPalette.SnapshotOpenButton_OFF);
+					_colorStack.Push ((texture != null) ? ColorPalette.SnapshotOpenButton_ON : ColorPalette.SnapshotOpenButton_OFF);
 					if (GUILayout.Button ("Open Folder", GUILayout.MaxWidth(128))) {
 						if(texture != null)
-							EditorUtility.RevealInFinder (entity.SnapshotPath);
+							EditorUtility.RevealInFinder (entity.ScreenshotPath);
 					}
-					PopColor ();
+					_colorStack.Pop ();
 				}
 				EditorGUILayout.EndVertical ();
 
-				if (texture != null) {
-					GUILayout.Label (texture, GUILayout.Height(128), GUILayout.MaxWidth(128));
-				} else {
-					EditorGUILayout.LabelField ("Empty Snapshot", col1Space);
+				EditorGUILayout.BeginVertical (col1Space);
+				{
+					if (texture != null) {
+						GUILayout.Label (texture, GUILayout.Height(128), GUILayout.MaxWidth(128));
+					} else {
+						EditorGUILayout.LabelField ("Empty Screenshot", col1Space);
+					}
 				}
+				EditorGUILayout.EndVertical ();
 			}
 			EditorGUILayout.EndHorizontal ();
 		}
 
-		/// <summary>
-		/// Opens the scene.
-		/// </summary>
-		/// <returns><c>true</c>, if scene was opened, <c>false</c> otherwise.</returns>
-		/// <param name="entity">Entity.</param>
-		public static bool OpenScene(ISceneFileEntity entity)
-		{
-			if (entity == null)
-				return false;
-
-			return OpenScene(entity.FullPath);
-		}
-
-		/// <summary>
-		/// Opens the scene in editor.
-		/// </summary>
-		/// <returns><c>true</c>, if scene was opened, <c>false</c> otherwise.</returns>
-		/// <param name="scene">Scene.</param>
-		public static bool OpenScene(string scene)
-		{
-			if (string.IsNullOrEmpty(scene))
-				return false;
-			
-			bool saved = EditorApplication.SaveCurrentSceneIfUserWantsTo ();
-			if (saved) {
-				EditorApplication.OpenScene (scene);
-			}
-			return saved;
-		}
-
 		#region Helpers
-		private void PushColor(Color color)
-		{
-			if (_colorStack == null)
-				return;
-			_colorStack.Push (color);
-		}
-
-		private void PopColor()
-		{
-			if (_colorStack == null)
-				return;
-			_colorStack.Pop ();
-		}
-
 		private Texture GetTexture(ISceneEntity entity, bool refresh)
 		{
-			if (_provider == null)
+			if (_textureProvider == null)
 				return null;
-			return _provider.GetTexture (entity, refresh);
-		}
-
-		private void TakeSnapshot(ISceneEntity entity)
-		{
-			EnsureSnapshotFolders (entity);
-			Application.CaptureScreenshot (entity.SnapshotPath);
-			EditorApplication.ExecuteMenuItem ("Window/Game");
-			EditorUtility.DisplayDialog ("Snapshot", "Snapshot successfully saved", "ok");
-		}
-
-		private void EnsureSnapshotFolders(ISceneEntity entity)
-		{
-			System.IO.Directory.CreateDirectory (System.IO.Path.GetDirectoryName(entity.SnapshotPath));
+			return _textureProvider.GetTexture (entity.ScreenshotPath, refresh);
 		}
 		#endregion
 	}

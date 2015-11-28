@@ -27,7 +27,7 @@ namespace TuxedoBerries.ScenePanel
 		public void Reset()
 		{
 			_stackColor.Clear ();
-			_stackColor.Push (GUI.color);
+			_stackColor.Push (Color.white);
 		}
 
 		#region Main Color

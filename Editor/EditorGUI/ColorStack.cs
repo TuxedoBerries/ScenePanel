@@ -15,23 +15,24 @@ namespace TuxedoBerries.ScenePanel
 	public class ColorStack
 	{
 		private Stack<Color> _stackColor;
+		private Color _startingColor;
 
 		public ColorStack ()
 		{
 			_stackColor = new Stack<Color> ();
+			_startingColor = Color.white;
 		}
 
+		#region Main Color
 		/// <summary>
 		/// Reset the colors.
 		/// </summary>
 		public void Reset()
 		{
 			_stackColor.Clear ();
-			_stackColor.Push (Color.white);
 			ApplyCurrentColor ();
 		}
 
-		#region Main Color
 		/// <summary>
 		/// Push the specified color to GUI.
 		/// </summary>
@@ -51,18 +52,18 @@ namespace TuxedoBerries.ScenePanel
 				_stackColor.Pop ();
 			ApplyCurrentColor ();
 		}
+		#endregion
 
 		private void ApplyCurrentColor()
 		{
 			if (_stackColor.Count <= 0) {
-				GUI.color = Color.gray;
+				GUI.color = _startingColor;
 				return;
 			}
 
 			var color = _stackColor.Peek ();
 			GUI.color = color;
 		}
-		#endregion
 	}
 }
 

@@ -41,18 +41,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		}
 
 		/// <summary>
-		/// Raises the inspector update event.
-		/// </summary>
-		public void OnInspectorUpdate()
-		{
-			if (_performStep) {
-				EditorApplication.Step ();
-				EditorApplication.isPaused = true;
-				_performStep = false;
-			}
-		}
-
-		/// <summary>
 		/// Draws the general controls.
 		/// - Play from start
 		/// - Play
@@ -107,6 +95,13 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				_colorStack.Pop ();
 			}
 			EditorGUILayout.EndHorizontal ();
+
+			// Perform at the end
+			if (_performStep) {
+				EditorApplication.Step ();
+				EditorApplication.isPaused = true;
+				_performStep = false;
+			}
 		}
 
 		/// <summary>

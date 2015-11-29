@@ -17,110 +17,56 @@ using TuxedoBerries.ScenePanel.Constants;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class SceneMainPanel : EditorWindow, IEditorPreferenceSection
+	public class SceneMainPanel : EditorWindow
 	{
 		private const float UPDATE_POINT = 1.0f;
 		private const string PANEL_NAME = "SceneMainPanel";
 
 		private SceneDatabaseProvider _provider;
-		private TextureDatabaseProvider _textureProvider;
-		private ColorStack _colorStack;
 		private FolderContainer _folders;
 		private ScrollableContainer _scrolls;
 		private string _search;
 		private float _deltaBetweenUpdates = 0;
-		private SceneHistory _history;
-		private bool _justLoaded = true;
-		private EditorPreferenceHandlerChannel _channel;
 
 		// Drawers
 		private SceneEntityDrawer _drawer;
 		private GameplayControlsDrawer _controlsDrawer;
+		private SceneHistoryDrawer _historyDrawer;
 
-		/// <summary>
-		/// Gets the type of the implementation.
-		/// </summary>
-		/// <value>The type of the implementation.</value>
-		public System.Type ImplementationType {
-			get {
-				return typeof(SceneMainPanel);
-			}
-		}
-
-		/// <summary>
-		/// Gets the name of the section.
-		/// </summary>
-		/// <value>The name.</value>
-		public string Name {
-			get {
-				return PANEL_NAME;
-			}
-		}
-
-		private void CheckProvider()
+		private void CheckComponents()
 		{
+			this.titleContent.text = "Scene Panel";
+			this.titleContent.tooltip = "List of the scenes in the project.";
+
+			// Database
 			if(_provider == null)
 				_provider = new SceneDatabaseProvider ();
-			if (_textureProvider == null)
-				_textureProvider = new TextureDatabaseProvider ();
-			if (_history == null) {
-				_history = new SceneHistory ();
-				_history.Load ();
-				_justLoaded = true;
-			}
-			if (_channel == null) {
-				_channel = EditorPreferenceHandler.GetChannel (this);
-				_restoreOnStop = _channel.GetBool ("restoreScene");
-			}
-		}
 
-		private void CheckGUIElements()
-		{
-			if (_colorStack == null)
-				_colorStack = new ColorStack ();
+			// GUI
 			if (_folders == null)
 				_folders = new FolderContainer ("SceneMainPanel", true);
 			if (_scrolls == null)
 				_scrolls = new ScrollableContainer ("SceneMainPanel", true);
+
+			// Drawers
 			if (_drawer == null)
 				_drawer = new SceneEntityDrawer ();
 			if (_controlsDrawer == null)
 				_controlsDrawer = new GameplayControlsDrawer ();
-
-			this.titleContent.text = "Scene Panel";
-			this.titleContent.tooltip = "List of the scenes in the project.";
+			if (_historyDrawer == null)
+				_historyDrawer = new SceneHistoryDrawer ();
 		}
 
 		private void UpdateCurrent()
 		{
 			_provider.SetAsActive (EditorApplication.currentScene);
-			_controlsDrawer.UpdateFirstScene (_provider.FirstScene);
-			
-			SaveCurrentHistory ();
-		}
 
-		private void SaveCurrentHistory()
-		{
-			// Add to history only if we are in Edit mode
 			if (_controlsDrawer.IsPlaying)
 				return;
-			
-			_history.Push (_provider.CurrentActive);
-		}
 
-		private void GetBackFromPlayMode()
-		{
-			// Restore only if nothing is moving
-			if (EditorApplication.isPlaying || Application.isPlaying)
-				return;
-			if (!_justLoaded)
-				return;
-			if (!_restoreOnStop)
-				return;
-
-			var item = _history.CurrentScene;
-			SceneMainPanelUtility.OpenScene (item);
-			_justLoaded = false;
+			_historyDrawer.RestoreFromPlay ();
+			_controlsDrawer.UpdateFirstScene (_provider.FirstScene);
+			_historyDrawer.UpdateCurrentHistory (_provider.CurrentActive);
 		}
 
 		private void OnInspectorUpdate()
@@ -133,24 +79,19 @@ namespace TuxedoBerries.ScenePanel
 					_provider.Refresh ();
 				Repaint ();
 			}
-			if(_controlsDrawer != null)
-				_controlsDrawer.OnInspectorUpdate ();
 		}
 
 		private void OnGUI()
 		{
 			_deltaBetweenUpdates = 0;
-			CheckProvider ();
-			CheckGUIElements ();
-			GetBackFromPlayMode ();
+			CheckComponents ();
 			UpdateCurrent ();
 
-			_colorStack.Reset ();
 			DrawTitle ();
 			_controlsDrawer.DrawGeneralControls ();
 			EditorGUILayout.Space ();
 			DrawSearch ();
-			_folders.DrawFoldable ("History", DrawHistory);
+			_folders.DrawFoldable ("History", _historyDrawer.DrawHistory);
 			_folders.DrawFoldable ("Tools", DrawScrollableUtils);
 			EditorGUILayout.Space ();
 			EditorGUILayout.LabelField ("Scenes");
@@ -164,7 +105,6 @@ namespace TuxedoBerries.ScenePanel
 
 		private void DrawSearch()
 		{
-			_colorStack.Reset ();
 			EditorGUILayout.BeginHorizontal ();
 			{
 				EditorGUILayout.LabelField ("Filter", GUILayout.Width (50));
@@ -223,72 +163,6 @@ namespace TuxedoBerries.ScenePanel
 					_drawer.DrawDetailEntity (_provider.CurrentActive);
 				}
 				EditorGUILayout.EndVertical ();
-			}
-			EditorGUILayout.EndHorizontal ();
-		}
-
-
-		private int _backSelected = 0;
-		private int _forwardSelected = 0;
-		private bool _restoreOnStop = true;
-		private void DrawHistory()
-		{
-			_restoreOnStop = EditorGUILayout.Toggle ("Restore Scene On Stop", _restoreOnStop);
-			_channel.SetValue ("restoreScene", _restoreOnStop);
-			EditorGUILayout.BeginHorizontal ();
-			{
-				GUILayout.Space (20);
-				EditorGUILayout.BeginVertical (GUILayout.Width(90));
-				{
-					EditorGUILayout.BeginHorizontal ();
-					{
-						_colorStack.Push ((_history.BackCount > 1) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
-						var arrowback = _textureProvider.GetRelativeTexture (IconSet.ARROW_BACK_ICON);
-						if (GUILayout.Button (arrowback, GUILayout.Width(42))) {
-							var item = _history.Back ();
-							SceneMainPanelUtility.OpenScene (item);
-						}
-						_colorStack.Pop ();
-
-						_colorStack.Push ((_history.FowardCount > 0) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
-						var arrowForward = _textureProvider.GetRelativeTexture (IconSet.ARROW_FORWARD_ICON);
-						if (GUILayout.Button (arrowForward, GUILayout.Width(42))) {
-							var item = _history.Forward ();
-							SceneMainPanelUtility.OpenScene (item);
-						}
-						_colorStack.Pop ();
-					}
-
-					_colorStack.Push ((_history.Count > 1) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
-					EditorGUILayout.EndHorizontal ();
-					if (GUILayout.Button ("Clear History", GUILayout.Width(90))) {
-						_history.Clear ();
-					}
-					_colorStack.Pop ();
-				}
-				EditorGUILayout.EndVertical ();
-				EditorGUILayout.BeginVertical ();
-				{
-					_backSelected = EditorGUILayout.Popup ("Back History: ", _backSelected, _history.GetBackStack ());
-					_forwardSelected = EditorGUILayout.Popup ("Forward History: ", _forwardSelected, _history.GetForwardStack ());
-				}
-				EditorGUILayout.EndVertical ();
-
-				// Check Selection
-				if (_backSelected != 0) {
-					for (int i = 0; i < _backSelected; ++i) {
-						_history.Back ();
-					}
-					SceneMainPanelUtility.OpenScene (_history.CurrentScene);
-					_backSelected = 0;
-				}
-				if (_forwardSelected != 0) {
-					for (int i = 0; i <= _forwardSelected; ++i) {
-						_history.Forward ();
-					}
-					SceneMainPanelUtility.OpenScene (_history.CurrentScene);
-					_forwardSelected = 0;
-				}
 			}
 			EditorGUILayout.EndHorizontal ();
 		}

@@ -14,13 +14,13 @@ using TuxedoBerries.ScenePanel.Constants;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
-	public class SceneHistoryDrawer : IEditorPreferenceSection
+	public class SceneHistoryDrawer
 	{
 		private const string CLASS_NAME = "SceneHistoryDrawer";
 		private const string RESTORE_VAR = "restoreScene";
 		private ColorStack _colorStack;
 		private SceneHistory _history;
-		private EditorPreferenceHandlerChannel _channel;
+		private IPreferenceChannel _channel;
 		private TextureDatabaseProvider _textureProvider;
 
 		private int _backSelected = 0;
@@ -33,31 +33,11 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			_history = new SceneHistory ();
 			_history.Load ();
 
-			_channel = EditorPreferenceHandler.GetChannel (this);
+			_channel = EditorPreferenceHandler.GetChannel (this, CLASS_NAME);
 			_restoreOnStop = _channel.GetBool (RESTORE_VAR);
 
 			_colorStack = new ColorStack ();
 			_textureProvider = new TextureDatabaseProvider ();
-		}
-
-		/// <summary>
-		/// Gets the type of the implementation.
-		/// </summary>
-		/// <value>The type of the implementation.</value>
-		public System.Type ImplementationType {
-			get {
-				return typeof(SceneHistoryDrawer);
-			}
-		}
-
-		/// <summary>
-		/// Gets the name of the section.
-		/// </summary>
-		/// <value>The name.</value>
-		public string Name {
-			get {
-				return CLASS_NAME;
-			}
 		}
 
 		/// <summary>

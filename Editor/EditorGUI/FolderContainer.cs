@@ -14,12 +14,12 @@ using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class FolderContainer : IEditorPreferenceSection
+	public class FolderContainer
 	{
 		private Dictionary<string, bool> _folders;
 		private string _containerName;
 		private bool _saveInPreferences;
-		private EditorPreferenceHandlerChannel _channel;
+		private IPreferenceChannel _channel;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.FolderContainer"/> class.
@@ -46,27 +46,7 @@ namespace TuxedoBerries.ScenePanel
 			_containerName = containerName;
 			_saveInPreferences = saveInPreferences;
 			_folders = new Dictionary<string, bool> ();
-			_channel = EditorPreferenceHandler.GetChannel (this);
-		}
-
-		/// <summary>
-		/// Gets the type of the implementation.
-		/// </summary>
-		/// <value>The type of the implementation.</value>
-		public System.Type ImplementationType {
-			get {
-				return typeof(FolderContainer);
-			}
-		}
-
-		/// <summary>
-		/// Gets the name of the section.
-		/// </summary>
-		/// <value>The name.</value>
-		public string Name {
-			get {
-				return _containerName;
-			}
+			_channel = EditorPreferenceHandler.GetChannel (this, _containerName);
 		}
 
 		/// <summary>

@@ -167,6 +167,7 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.EndHorizontal ();
 		}
 
+		#region Lists
 		private void DrawMainScroll()
 		{
 			_folders.DrawFoldable ("Favorites", DrawAllFavorites);
@@ -174,7 +175,6 @@ namespace TuxedoBerries.ScenePanel
 			_folders.DrawFoldable ("All Scenes", DrawAll);
 		}
 
-		#region Lists
 		private void DrawAllFavorites()
 		{
 			EditorGUILayout.HelpBox ("All the favorites scenes are displayed here\nDisplay order is: Alphabetical", MessageType.Info);

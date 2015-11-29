@@ -15,7 +15,7 @@ using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class SceneEntity : ISceneEntity, ISceneFileEntity, IEditorPreferenceSection
+	public class SceneEntity : ISceneEntity, ISceneFileEntity
 	{
 		private const string FAVORITE_KEY = "SceneEntity:Favorite:[{0}]";
 
@@ -29,12 +29,10 @@ namespace TuxedoBerries.ScenePanel
 		private int _index;
 		// Cached
 		private string _screenshotPath;
-
-		private EditorPreferenceHandlerChannel _channel;
+		private IPreferenceChannel _channel;
 
 		public SceneEntity ()
 		{
-			_channel = EditorPreferenceHandler.GetChannel (this);
 			Clear ();
 		}
 
@@ -72,16 +70,6 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		/// <summary>
-		/// Gets the type of the implementation.
-		/// </summary>
-		/// <value>The type of the implementation.</value>
-		public System.Type ImplementationType {
-			get {
-				return typeof(SceneEntity);
-			}
-		}
-
-		/// <summary>
 		/// Gets the name of the scene.
 		/// </summary>
 		/// <value>The name.</value>
@@ -91,6 +79,7 @@ namespace TuxedoBerries.ScenePanel
 			}
 			set {
 				_name = value;
+				_channel = EditorPreferenceHandler.GetChannel (this, _name);
 				_screenshotPath = string.Format ("Screenshots/{0}.png", _name);
 			}
 		}
@@ -141,9 +130,13 @@ namespace TuxedoBerries.ScenePanel
 		/// <value><c>true</c> if this instance is favorite; otherwise, <c>false</c>.</value>
 		public bool IsFavorite {
 			get {
+				if (_channel == null)
+					return false;
 				return _channel.GetBool ("Favorite");
 			}
 			set {
+				if (_channel == null)
+					return;
 				_channel.SetValue ("Favorite", value);
 			}
 		}

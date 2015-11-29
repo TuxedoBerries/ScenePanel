@@ -11,58 +11,60 @@ using System;
 
 namespace TuxedoBerries.ScenePanel.PreferenceHandler
 {
-	public class EditorPreferenceHandlerChannel
+	public class EditorPreferenceChannel : IPreferenceChannel
 	{
 		private EditorPreferenceHandler _instance;
-		private IEditorPreferenceSection _source;
+		private System.Type _className;
+		private string _instanceName;
 
-		public EditorPreferenceHandlerChannel (EditorPreferenceHandler instance, IEditorPreferenceSection source)
+		public EditorPreferenceChannel (EditorPreferenceHandler instance, System.Type className, string instanceName)
 		{
 			_instance = instance;
-			_source = source;
+			_className = className;
+			_instanceName = instanceName;
 		}
 
 		#region Get Values
 		public bool GetBool(string name)
 		{
-			return _instance.GetBool (_source, name);
+			return _instance.GetBool (_className, _instanceName, name);
 		}
 
 		public int GetInt(string name)
 		{
-			return _instance.GetInt (_source, name);
+			return _instance.GetInt (_className, _instanceName, name);
 		}
 
 		public float GetFloat(string name)
 		{
-			return _instance.GetFloat (_source, name);
+			return _instance.GetFloat (_className, _instanceName, name);
 		}
 
 		public string GetString(string name)
 		{
-			return _instance.GetString (_source, name);
+			return _instance.GetString (_className, _instanceName, name);
 		}
 		#endregion
 
 		#region Set Values
 		public void SetValue(string name, bool value)
 		{
-			_instance.SetValue (_source, name, value);
+			_instance.SetValue (_className, _instanceName, name, value);
 		}
 
 		public void SetValue(string name, int value)
 		{
-			_instance.SetValue (_source, name, value);
+			_instance.SetValue (_className, _instanceName, name, value);
 		}
 
 		public void SetValue(string name, float value)
 		{
-			_instance.SetValue (_source, name, value);
+			_instance.SetValue (_className, _instanceName, name, value);
 		}
 
 		public void SetValue(string name, string value)
 		{
-			_instance.SetValue (_source, name, value);
+			_instance.SetValue (_className, _instanceName, name, value);
 		}
 		#endregion
 	}

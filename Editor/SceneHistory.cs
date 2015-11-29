@@ -14,39 +14,19 @@ using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class SceneHistory : IEditorPreferenceSection
+	public class SceneHistory
 	{
 		private Stack<ISceneFileEntity> _backHistory;
 		private string[] _backCache;
 		private Stack<ISceneFileEntity> _forwardHistory;
 		private string[] _forwardCache;
-		private EditorPreferenceHandlerChannel _channel;
+		private IPreferenceChannel _channel;
 
 		public SceneHistory ()
 		{
 			_backHistory = new Stack<ISceneFileEntity> ();
 			_forwardHistory = new Stack<ISceneFileEntity> ();
 			_channel = EditorPreferenceHandler.GetChannel (this);
-		}
-
-		/// <summary>
-		/// Gets the type of the implementation.
-		/// </summary>
-		/// <value>The type of the implementation.</value>
-		public System.Type ImplementationType {
-			get {
-				return typeof(SceneHistory);
-			}
-		}
-
-		/// <summary>
-		/// Gets the name of the section.
-		/// </summary>
-		/// <value>The name.</value>
-		public string Name {
-			get {
-				return "SceneHistory";
-			}
 		}
 
 		/// <summary>

@@ -98,6 +98,21 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		/// <summary>
+		/// Draws the button.
+		/// </summary>
+		/// <param name="name">Name.</param>
+		/// <param name="content">Content.</param>
+		/// <param name="options">Options.</param>
+		public void DrawButton (string name, GUIContent content, params GUILayoutOption[] options)
+		{
+			CheckNew (name);
+			if (GUILayout.Button (content, options)) {
+				_folders [name] = !_folders [name];
+				SaveValue (name, _folders [name]);
+			}
+		}
+
+		/// <summary>
 		/// Draws the content.
 		/// </summary>
 		/// <param name="name">Name.</param>

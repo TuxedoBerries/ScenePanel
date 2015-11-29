@@ -1,24 +1,32 @@
-﻿using UnityEngine;
+﻿/// ------------------------------------------------
+/// <summary>
+/// Scene Entity Drawer
+/// Purpose: 	Draws everything related with Scene Entity.
+/// Author:		Juan Silva
+/// Date: 		November 22, 2015
+/// Copyright (c) Tuxedo Berries All rights reserved.
+/// </summary>
+/// ------------------------------------------------
+using UnityEngine;
 using UnityEditor;
+using TuxedoBerries.ScenePanel.Constants;
 
-namespace TuxedoBerries.ScenePanel
+namespace TuxedoBerries.ScenePanel.Drawers
 {
 	public class SceneEntityDrawer
 	{
 		private ColorStack _colorStack;
 		private ButtonContainer _buttonContainer;
 		private TextureDatabaseProvider _textureProvider;
+		private GUIContentCache _contentCache;
 		private int _screenShotScale = 1;
 
 		public SceneEntityDrawer()
 		{
 			_colorStack = new ColorStack ();
 			_buttonContainer = new ButtonContainer ("SceneEntityDrawer", true);
-		}
-
-		public void SetTextureProvider(TextureDatabaseProvider provider)
-		{
-			_textureProvider = provider;
+			_textureProvider = new TextureDatabaseProvider ();
+			_contentCache = new GUIContentCache ();
 		}
 
 		/// <summary>
@@ -35,25 +43,25 @@ namespace TuxedoBerries.ScenePanel
 				{
 					// Open
 					_colorStack.Push (SceneMainPanelUtility.GetColor(entity));
-					if (GUILayout.Button (entity.Name) && !entity.IsActive) {
+					if (GUILayout.Button (GetContent(entity)) && !entity.IsActive) {
 						SceneMainPanelUtility.OpenScene (entity);
 					}
 					_colorStack.Pop ();
 
 					// Fav
 					_colorStack.Push (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
-					var stopTexture = _textureProvider.GetRelativeTexture (".icons/icon_star.png");
-					if (GUILayout.Button (stopTexture, GUILayout.Width (30))) {
+					if (GUILayout.Button (GetContentIcon(IconSet.STAR_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (30))) {
 						entity.IsFavorite = !entity.IsFavorite;
 					}
 					_colorStack.Pop ();
 
+					// Detail
 					if (_buttonContainer != null) {
-						_buttonContainer.DrawButton (string.Format ("{0} Details", entity.Name), "Details", GUILayout.Width (50));
+						_buttonContainer.DrawButton (string.Format ("{0} Details", entity.Name), GetContent("Details", TooltipSet.DETAIL_BUTTON_TOOLTIP), GUILayout.Width (50));
 					}
 
 					// Select
-					if (GUILayout.Button ("Select", GUILayout.Width (50))) {
+					if (GUILayout.Button (GetContent("Select", TooltipSet.SELECT_BUTTON_TOOLTIP), GUILayout.Width (50))) {
 						Selection.activeObject = AssetDatabase.LoadMainAssetAtPath (entity.FullPath);
 						EditorGUIUtility.PingObject (Selection.activeObject);
 					}
@@ -70,6 +78,10 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.EndVertical ();
 		}
 
+		/// <summary>
+		/// Draws the detail of the entity.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
 		public void DrawDetailEntity(ISceneEntity entity)
 		{
 			var col1Space = GUILayout.Width (128);
@@ -136,6 +148,10 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.EndVertical ();
 		}
 
+		/// <summary>
+		/// Draws the snapshot section of the entity.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
 		public void DrawSnapshot(ISceneEntity entity)
 		{
 			_colorStack.Reset ();
@@ -207,8 +223,7 @@ namespace TuxedoBerries.ScenePanel
 				{
 					// Take Snapshot
 					_colorStack.Push (entity.IsActive ? ColorPalette.SnapshotButton_ON : ColorPalette.SnapshotButton_OFF);
-					var cameraTexture = _textureProvider.GetRelativeTexture (".icons/icon_camera.png");
-					if (GUILayout.Button (new GUIContent(cameraTexture, "Take a screenshot of the current scene. The size is the same as the Game View Panel"), GUILayout.MaxWidth(128))) {
+					if (GUILayout.Button (GetContentIcon(IconSet.CAMERA_ICON, TooltipSet.SCREENSHOT_BUTTON_TOOLTIP), GUILayout.MaxWidth(128))) {
 						if (entity.IsActive) {
 							SceneMainPanelUtility.TakeSnapshot (entity, _screenShotScale);
 						}
@@ -217,7 +232,7 @@ namespace TuxedoBerries.ScenePanel
 
 					// Refresh
 					_colorStack.Push ((texture != null) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
-					if (GUILayout.Button ("Refresh", GUILayout.MaxWidth(128))) {
+					if (GUILayout.Button (GetContent("Refresh", TooltipSet.SCREENSHOT_REFRESH_BUTTON_TOOLTIP), GUILayout.MaxWidth(128))) {
 						if(texture != null)
 							texture = GetTexture (entity, true);
 					}
@@ -225,7 +240,7 @@ namespace TuxedoBerries.ScenePanel
 
 					// Open
 					_colorStack.Push ((texture != null) ? ColorPalette.SnapshotOpenButton_ON : ColorPalette.SnapshotOpenButton_OFF);
-					if (GUILayout.Button ("Open Folder", GUILayout.MaxWidth(128))) {
+					if (GUILayout.Button (GetContent("Open Folder", TooltipSet.SCREENSHOT_OPEN_FOLDER_BUTTON_TOOLTIP), GUILayout.MaxWidth(128))) {
 						if(texture != null)
 							EditorUtility.RevealInFinder (entity.ScreenshotPath);
 					}
@@ -247,6 +262,29 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		#region Helpers
+		private GUIContent GetContent(ISceneEntity scene)
+		{
+			if(!_contentCache.Contains(scene.Name)){
+				var tooltip = string.Format(TooltipSet.SCENE_BUTTON_TOOLTIP, scene.Name);
+				return _contentCache.GetContent (scene.Name, tooltip);
+			}
+			return _contentCache[scene.Name];
+		}
+
+		private GUIContent GetContent(string label, string tooltip)
+		{
+			return _contentCache.GetContent (label, tooltip);
+		}
+
+		private GUIContent GetContentIcon(string iconName, string tooltip)
+		{
+			if(!_contentCache.Contains(iconName)){
+				var texture = _textureProvider.GetRelativeTexture (iconName);
+				_contentCache [iconName] = new GUIContent (texture, tooltip);
+			}
+			return _contentCache[iconName];
+		}
+
 		private Texture GetTexture(ISceneEntity entity, bool refresh)
 		{
 			if (_textureProvider == null)

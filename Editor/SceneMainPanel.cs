@@ -12,6 +12,8 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
+using TuxedoBerries.ScenePanel.Drawers;
+using TuxedoBerries.ScenePanel.Constants;
 
 namespace TuxedoBerries.ScenePanel
 {
@@ -27,12 +29,13 @@ namespace TuxedoBerries.ScenePanel
 		private ScrollableContainer _scrolls;
 		private string _search;
 		private float _deltaBetweenUpdates = 0;
-		private SceneEntityDrawer _drawer;
 		private SceneHistory _history;
-		private bool _stopStack = false;
 		private bool _justLoaded = true;
 		private EditorPreferenceHandlerChannel _channel;
 
+		// Drawers
+		private SceneEntityDrawer _drawer;
+		private GameplayControlsDrawer _controlsDrawer;
 
 		/// <summary>
 		/// Gets the type of the implementation.
@@ -79,10 +82,10 @@ namespace TuxedoBerries.ScenePanel
 				_folders = new FolderContainer ("SceneMainPanel", true);
 			if (_scrolls == null)
 				_scrolls = new ScrollableContainer ("SceneMainPanel", true);
-			if (_drawer == null) {
+			if (_drawer == null)
 				_drawer = new SceneEntityDrawer ();
-				_drawer.SetTextureProvider (_textureProvider);
-			}
+			if (_controlsDrawer == null)
+				_controlsDrawer = new GameplayControlsDrawer ();
 
 			this.titleContent.text = "Scene Panel";
 			this.titleContent.tooltip = "List of the scenes in the project.";
@@ -91,10 +94,7 @@ namespace TuxedoBerries.ScenePanel
 		private void UpdateCurrent()
 		{
 			_provider.SetAsActive (EditorApplication.currentScene);
-
-			if (EditorApplication.isPlaying || Application.isPlaying) {
-				_stopStack = true;
-			}
+			_controlsDrawer.UpdateFirstScene (_provider.FirstScene);
 			
 			SaveCurrentHistory ();
 		}
@@ -102,9 +102,7 @@ namespace TuxedoBerries.ScenePanel
 		private void SaveCurrentHistory()
 		{
 			// Add to history only if we are in Edit mode
-			if (EditorApplication.isPlaying || Application.isPlaying)
-				return;
-			if (_stopStack)
+			if (_controlsDrawer.IsPlaying)
 				return;
 			
 			_history.Push (_provider.CurrentActive);
@@ -117,15 +115,12 @@ namespace TuxedoBerries.ScenePanel
 				return;
 			if (!_justLoaded)
 				return;
-			if (!_restoreOnStop) {
-				_stopStack = false;
+			if (!_restoreOnStop)
 				return;
-			}
 
 			var item = _history.CurrentScene;
 			SceneMainPanelUtility.OpenScene (item);
 			_justLoaded = false;
-			_stopStack = false;
 		}
 
 		private void OnInspectorUpdate()
@@ -138,6 +133,8 @@ namespace TuxedoBerries.ScenePanel
 					_provider.Refresh ();
 				Repaint ();
 			}
+			if(_controlsDrawer != null)
+				_controlsDrawer.OnInspectorUpdate ();
 		}
 
 		private void OnGUI()
@@ -150,7 +147,7 @@ namespace TuxedoBerries.ScenePanel
 
 			_colorStack.Reset ();
 			DrawTitle ();
-			DrawGeneralControls ();
+			_controlsDrawer.DrawGeneralControls ();
 			EditorGUILayout.Space ();
 			DrawSearch ();
 			_folders.DrawFoldable ("History", DrawHistory);
@@ -165,45 +162,9 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.LabelField ("All the scenes in the project are displayed here.");
 		}
 
-		private void DrawGeneralControls()
-		{
-			EditorGUILayout.BeginHorizontal ();
-			{
-				// Play
-				var playColor = !EditorApplication.isPlaying ? ColorPalette.PlayButton_ON : ColorPalette.PlayButton_OFF;
-				_colorStack.Push (playColor);
-				var playFromStartTexture = _textureProvider.GetRelativeTexture (".icons/icon_play_start.png");
-				if (GUILayout.Button (playFromStartTexture) && !EditorApplication.isPlaying) {
-					var first = _provider.FirstScene;
-					if (first != null && SceneMainPanelUtility.OpenScene (first)) {
-						_stopStack = true;
-						EditorApplication.isPlaying = true;
-					}
-				}
-				_colorStack.Pop ();
-
-				// Play Current
-				_colorStack.Push (playColor);
-				var playTexture = _textureProvider.GetRelativeTexture (".icons/icon_play.png");
-				if (GUILayout.Button (playTexture) && !EditorApplication.isPlaying) {
-					EditorApplication.isPlaying = true;
-				}
-				_colorStack.Pop ();
-
-				// Stop
-				var stopColor = EditorApplication.isPlaying ? ColorPalette.StopButton_ON : ColorPalette.StopButton_OFF;
-				_colorStack.Push (stopColor);
-				var stopTexture = _textureProvider.GetRelativeTexture (".icons/icon_stop.png");
-				if (GUILayout.Button (stopTexture) && EditorApplication.isPlaying) {
-					EditorApplication.isPlaying = false;
-				}
-				_colorStack.Pop ();
-			}
-			EditorGUILayout.EndHorizontal ();
-		}
-
 		private void DrawSearch()
 		{
+			_colorStack.Reset ();
 			EditorGUILayout.BeginHorizontal ();
 			{
 				EditorGUILayout.LabelField ("Filter", GUILayout.Width (50));
@@ -247,18 +208,8 @@ namespace TuxedoBerries.ScenePanel
 							}
 							if (GUILayout.Button ("Save to JSON File", GUILayout.Width(120))) {
 								var path = EditorUtility.SaveFilePanel ("Save scene list", "", "scenes.json", "json");
-								if (!string.IsNullOrEmpty (path)) {
-									bool saved = false;
-									try{
-										System.IO.File.WriteAllText (path, _provider.GenerateJSON ());
-										saved = true;
-									}catch(System.Exception e){
-										Debug.LogErrorFormat ("Exception trying to write file: {0}", e.Message);
-									}
-									if (saved) {
-										EditorUtility.DisplayDialog ("Scene list", "File successfully saved", "ok");
-									}
-								}
+								if(!string.IsNullOrEmpty(path))
+									SceneMainPanelUtility.SaveText (_provider.GenerateJSON (), path);
 							}
 						}
 						EditorGUILayout.EndVertical ();
@@ -292,7 +243,7 @@ namespace TuxedoBerries.ScenePanel
 					EditorGUILayout.BeginHorizontal ();
 					{
 						_colorStack.Push ((_history.BackCount > 1) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
-						var arrowback = _textureProvider.GetRelativeTexture (".icons/icon_arrow_back.png");
+						var arrowback = _textureProvider.GetRelativeTexture (IconSet.ARROW_BACK_ICON);
 						if (GUILayout.Button (arrowback, GUILayout.Width(42))) {
 							var item = _history.Back ();
 							SceneMainPanelUtility.OpenScene (item);
@@ -300,7 +251,7 @@ namespace TuxedoBerries.ScenePanel
 						_colorStack.Pop ();
 
 						_colorStack.Push ((_history.FowardCount > 0) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
-						var arrowForward = _textureProvider.GetRelativeTexture (".icons/icon_arrow_forward.png");
+						var arrowForward = _textureProvider.GetRelativeTexture (IconSet.ARROW_FORWARD_ICON);
 						if (GUILayout.Button (arrowForward, GUILayout.Width(42))) {
 							var item = _history.Forward ();
 							SceneMainPanelUtility.OpenScene (item);

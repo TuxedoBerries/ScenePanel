@@ -10,6 +10,7 @@
 using UnityEditor;
 using UnityEngine;
 using System.IO;
+using TuxedoBerries.ScenePanel.Constants;
 
 namespace TuxedoBerries.ScenePanel
 {
@@ -55,6 +56,32 @@ namespace TuxedoBerries.ScenePanel
 			Application.CaptureScreenshot (entity.ScreenshotPath, scale);
 			EditorApplication.ExecuteMenuItem ("Window/Game");
 			EditorUtility.DisplayDialog ("Snapshot", "Snapshot successfully saved", "ok");
+		}
+
+		/// <summary>
+		/// Saves a text into a file.
+		/// </summary>
+		/// <param name="text">Text.</param>
+		/// <param name="path">Path.</param>
+		public static void SaveText(string text, string path)
+		{
+			if (string.IsNullOrEmpty (path))
+				return;
+			if (string.IsNullOrEmpty (text)) {
+				Debug.LogWarning ("Data to save is null or empty");
+				return;
+			}
+
+			bool saved = false;
+			try{
+				System.IO.File.WriteAllText (path, text);
+				saved = true;
+			}catch(System.Exception e){
+				Debug.LogErrorFormat ("Exception trying to write file: {0}", e.Message);
+			}
+			if (saved) {
+				EditorUtility.DisplayDialog ("Scene list", "File successfully saved", "ok");
+			}
 		}
 
 		/// <summary>

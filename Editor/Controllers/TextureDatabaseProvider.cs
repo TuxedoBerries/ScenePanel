@@ -58,6 +58,18 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		/// <summary>
+		/// Check if the given texture path is cached
+		/// </summary>
+		/// <returns><c>true</c>, if cached was ised, <c>false</c> otherwise.</returns>
+		/// <param name="path">Path.</param>
+		public bool isCached(string path)
+		{
+			if (string.IsNullOrEmpty (path))
+				return false;
+			return _textureCache.ContainsKey (path);
+		}
+
+		/// <summary>
 		/// Gets the texture by path if any.
 		/// </summary>
 		/// <returns>The texture.</returns>
@@ -95,15 +107,19 @@ namespace TuxedoBerries.ScenePanel
 			// Return cached
 			return _textureCache [path];
 		}
-		#endregion
 
-		private void RefreshCache(string path)
+		/// <summary>
+		/// Refreshs the cache.
+		/// </summary>
+		/// <returns><c>true</c>, if cache was refreshed, <c>false</c> otherwise.</returns>
+		/// <param name="path">Path.</param>
+		public bool RefreshCache(string path)
 		{
 			if (string.IsNullOrEmpty (path))
-				return;
-			
+				return false;
+
 			if (!System.IO.File.Exists (path))
-				return;
+				return false;
 
 			var bytes = System.IO.File.ReadAllBytes (path);
 			// Refresh Cache
@@ -121,7 +137,9 @@ namespace TuxedoBerries.ScenePanel
 				texture.hideFlags = HideFlags.HideAndDontSave;
 				_textureCache.Add (path, texture);
 			}
+			return true;
 		}
+		#endregion
 	}
 }
 

@@ -17,12 +17,10 @@ namespace TuxedoBerries.ScenePanel.Drawers
 	{
 		private SceneDatabaseProvider _provider;
 		private GUIContentCache _contentCache;
-		private ScreenshotDrawer _screenshotDrawer;
 
 		public ToolsDrawer ()
 		{
 			_contentCache = new GUIContentCache ();
-			_screenshotDrawer = new ScreenshotDrawer ();
 		}
 
 		public void SetDatabase(SceneDatabaseProvider provider)
@@ -37,7 +35,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			
 			DrawSceneDatabaseExport ();
 			EditorGUILayout.Space ();
-			DrawScreenshots ();
 		}
 
 		public void DrawSceneDatabaseExport()
@@ -55,12 +52,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				}
 			}
 			EditorGUILayout.EndHorizontal ();
-		}
-
-		public void DrawScreenshots()
-		{
-			EditorGUILayout.LabelField ("Screenshot", GUILayout.Width(120));
-			_screenshotDrawer.DrawFull ();
 		}
 
 		#region Helpers

@@ -39,7 +39,7 @@ namespace TuxedoBerries.ScenePanel
 			if (string.IsNullOrEmpty(scene))
 				return false;
 			if (string.Equals (scene, EditorApplication.currentScene))
-				return false;
+				return true;
 
 			bool saved = EditorApplication.SaveCurrentSceneIfUserWantsTo ();
 			if (saved) {
@@ -155,6 +155,12 @@ namespace TuxedoBerries.ScenePanel
 			}
 
 			return ColorPalette.SceneOpenButton_Regular;
+		}
+
+		public static bool IsPlaying {
+			get {
+				return EditorApplication.isPlaying || Application.isPlaying;
+			}
 		}
 
 		/// <summary>

@@ -20,6 +20,21 @@ namespace TuxedoBerries.ScenePanel
 			var window = EditorWindow.GetWindow<SceneMainPanel> ();
 			window.Show ();
 		}
+
+		[MenuItem("TuxedoBerries/Scene Panel/Snapshot Panel")]
+		private static void InitSnapshot()
+		{
+			var window = EditorWindow.GetWindow<QuickScreenshotPanel> ();
+			window.Show ();
+		}
+
+		[MenuItem("TuxedoBerries/Scene Panel/History Panel")]
+		private static void InitHistory()
+		{
+			var window = EditorWindow.GetWindow<HistoryPanel> ();
+			window.ClearHistory ();
+			window.Show ();
+		}
 	}
 }
 

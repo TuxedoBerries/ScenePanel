@@ -31,7 +31,6 @@ namespace TuxedoBerries.ScenePanel
 		// Drawers
 		private SceneEntityDrawer _drawer;
 		private GameplayControlsDrawer _controlsDrawer;
-		private SceneHistoryDrawer _historyDrawer;
 		private ToolsDrawer _toolsDrawer;
 
 		private void CheckComponents()
@@ -45,17 +44,15 @@ namespace TuxedoBerries.ScenePanel
 
 			// GUI
 			if (_folders == null)
-				_folders = new FolderContainer ("SceneMainPanel", true);
+				_folders = new FolderContainer (PANEL_NAME, true);
 			if (_scrolls == null)
-				_scrolls = new ScrollableContainer ("SceneMainPanel", true);
+				_scrolls = new ScrollableContainer (PANEL_NAME, true);
 
 			// Drawers
 			if (_drawer == null)
 				_drawer = new SceneEntityDrawer ();
 			if (_controlsDrawer == null)
 				_controlsDrawer = new GameplayControlsDrawer ();
-			if (_historyDrawer == null)
-				_historyDrawer = new SceneHistoryDrawer ();
 			if (_toolsDrawer == null) {
 				_toolsDrawer = new ToolsDrawer ();
 				_toolsDrawer.SetDatabase (_provider);
@@ -69,9 +66,7 @@ namespace TuxedoBerries.ScenePanel
 			if (_controlsDrawer.IsPlaying)
 				return;
 
-			_historyDrawer.RestoreFromPlay ();
 			_controlsDrawer.UpdateFirstScene (_provider.FirstScene);
-			_historyDrawer.UpdateCurrentHistory (_provider.CurrentActive);
 		}
 
 		private void OnInspectorUpdate()
@@ -96,7 +91,6 @@ namespace TuxedoBerries.ScenePanel
 			_controlsDrawer.DrawGeneralControls ();
 			EditorGUILayout.Space ();
 			DrawSearch ();
-			_folders.DrawFoldable ("History", _historyDrawer.DrawHistory);
 			_folders.DrawFoldable ("Tools", DrawScrollableUtils);
 			EditorGUILayout.Space ();
 			EditorGUILayout.LabelField ("Scenes");

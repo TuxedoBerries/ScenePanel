@@ -27,6 +27,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private int _forwardSelected = 0;
 		private bool _restoreOnStop = true;
 		private bool _justLoaded = true;
+		private GUILayoutOption _textCol1;
 
 		public SceneHistoryDrawer ()
 		{
@@ -38,15 +39,16 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 			_colorStack = new ColorStack ();
 			_textureProvider = new TextureDatabaseProvider ();
+			_textCol1 = GUILayout.Width (100);
 		}
 
 		/// <summary>
 		/// Updates the current history.
 		/// </summary>
 		/// <param name="entity">Entity.</param>
-		public void UpdateCurrentHistory(ISceneEntity entity)
+		public void UpdateCurrentHistory()
 		{
-			_history.Push (entity);
+			_history.Push (SceneFileEntity.GetCurrent());
 		}
 
 		/// <summary>
@@ -71,7 +73,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		{
 			_colorStack.Reset ();
 
-			_restoreOnStop = EditorGUILayout.Toggle ("Restore Scene On Stop", _restoreOnStop);
+			_restoreOnStop = EditorGUILayout.Toggle ("Restore Scene When Stop", _restoreOnStop);
 			_channel.SetValue (RESTORE_VAR, _restoreOnStop);
 
 			EditorGUILayout.BeginHorizontal ();
@@ -80,55 +82,120 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				{
 					EditorGUILayout.BeginHorizontal ();
 					{
-						_colorStack.Push ((_history.BackCount > 1) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
-						var arrowback = _textureProvider.GetRelativeTexture (IconSet.ARROW_BACK_ICON);
-						if (GUILayout.Button (arrowback, GUILayout.Width(42))) {
-							var item = _history.Back ();
-							SceneMainPanelUtility.OpenScene (item);
+						// Back button
+						_colorStack.Push (GetColor (_history.BackCount > 1));
+						if (GUILayout.Button (GetTexture(IconSet.ARROW_BACK_ICON), GUILayout.Width(42))) {
+							BackButtonAction ();
 						}
 						_colorStack.Pop ();
 
-						_colorStack.Push ((_history.FowardCount > 0) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
-						var arrowForward = _textureProvider.GetRelativeTexture (IconSet.ARROW_FORWARD_ICON);
-						if (GUILayout.Button (arrowForward, GUILayout.Width(42))) {
-							var item = _history.Forward ();
-							SceneMainPanelUtility.OpenScene (item);
+						// Forward button
+						_colorStack.Push (GetColor(_history.FowardCount > 0));
+						if (GUILayout.Button (GetTexture(IconSet.ARROW_FORWARD_ICON), GUILayout.Width(42))) {
+							ForwardButtonAction ();
 						}
 						_colorStack.Pop ();
 					}
 
-					_colorStack.Push ((_history.Count > 1) ? ColorPalette.HistoryArrowButton_ON : ColorPalette.HistoryArrowButton_OFF);
+					_colorStack.Push (GetColor(_history.Count > 1));
 					EditorGUILayout.EndHorizontal ();
 					if (GUILayout.Button ("Clear History", GUILayout.Width(90))) {
-						_history.Clear ();
+						ClearHistory ();
 					}
 					_colorStack.Pop ();
 				}
 				EditorGUILayout.EndVertical ();
 				EditorGUILayout.BeginVertical ();
 				{
-					_backSelected = EditorGUILayout.Popup ("Back History: ", _backSelected, _history.GetBackStack ());
-					_forwardSelected = EditorGUILayout.Popup ("Forward History: ", _forwardSelected, _history.GetForwardStack ());
+					// Current Scene
+					EditorGUILayout.BeginHorizontal ();
+					{
+						EditorGUILayout.LabelField ("Current Scene: ", _textCol1);
+						EditorGUILayout.SelectableLabel (_history.CurrentScene, GUILayout.Height(16));
+					}
+					EditorGUILayout.EndHorizontal ();
+
+					// Back list
+					EditorGUILayout.BeginHorizontal ();
+					{
+						_colorStack.Push (GetColor (_history.BackCount > 1));
+						EditorGUILayout.LabelField ("Back History: ", _textCol1);
+						_backSelected = EditorGUILayout.Popup (_backSelected, _history.GetBackStack ());
+						_colorStack.Pop ();
+					}
+					EditorGUILayout.EndHorizontal ();
+
+					// Forward list
+					EditorGUILayout.BeginHorizontal ();
+					{
+						_colorStack.Push (GetColor(_history.FowardCount > 0));
+						EditorGUILayout.LabelField ("Forward History: ", _textCol1);
+						_forwardSelected = EditorGUILayout.Popup (_forwardSelected, _history.GetForwardStack ());
+						_colorStack.Pop ();
+					}
+					EditorGUILayout.EndHorizontal ();
 				}
 				EditorGUILayout.EndVertical ();
-
-				// Check Selection
-				if (_backSelected != 0) {
-					for (int i = 0; i < _backSelected; ++i) {
-						_history.Back ();
-					}
-					SceneMainPanelUtility.OpenScene (_history.CurrentScene);
-					_backSelected = 0;
-				}
-				if (_forwardSelected != 0) {
-					for (int i = 0; i <= _forwardSelected; ++i) {
-						_history.Forward ();
-					}
-					SceneMainPanelUtility.OpenScene (_history.CurrentScene);
-					_forwardSelected = 0;
-				}
 			}
 			EditorGUILayout.EndHorizontal ();
+
+			// Check Selection
+			GoToPast();
+			GoToFuture ();
+		}
+
+		#region Actions
+		private void BackButtonAction()
+		{
+			var item = _history.Back ();
+			SceneMainPanelUtility.OpenScene (item);
+		}
+
+		private void ForwardButtonAction()
+		{
+			var item = _history.Forward ();
+			SceneMainPanelUtility.OpenScene (item);
+		}
+
+		private void GoToPast()
+		{
+			if (_backSelected != 0 && !SceneMainPanelUtility.IsPlaying) {
+				for (int i = 0; i < _backSelected; ++i) {
+					_history.Back ();
+				}
+				SceneMainPanelUtility.OpenScene (_history.CurrentScene);
+				_backSelected = 0;
+			}
+		}
+
+		private void GoToFuture()
+		{
+			if (_forwardSelected != 0 && !SceneMainPanelUtility.IsPlaying) {
+				for (int i = 0; i <= _forwardSelected; ++i) {
+					_history.Forward ();
+				}
+				SceneMainPanelUtility.OpenScene (_history.CurrentScene);
+				_forwardSelected = 0;
+			}
+		}
+
+		public void ClearHistory()
+		{
+			_history.Clear ();
+		}
+		#endregion
+
+		private Texture GetTexture(string path)
+		{
+			return _textureProvider.GetRelativeTexture (path);
+		}
+
+		private Color GetColor(bool enabled)
+		{
+			if (enabled && !SceneMainPanelUtility.IsPlaying)
+				return ColorPalette.HistoryArrowButton_ON;
+			else
+				return ColorPalette.HistoryArrowButton_OFF;
 		}
 	}
 }

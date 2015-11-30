@@ -9,7 +9,7 @@
 /// ------------------------------------------------
 using System;
 using System.Text;
-using UnityEngine;
+using UnityEditor;
 
 namespace TuxedoBerries.ScenePanel
 {
@@ -95,6 +95,13 @@ namespace TuxedoBerries.ScenePanel
 
 			builder.Append ("}");
 			return builder.ToString ();
+		}
+
+		public static SceneFileEntity GetCurrent()
+		{
+			var currentScenePath = EditorApplication.currentScene;
+			var currentName = System.IO.Path.GetFileNameWithoutExtension (currentScenePath);
+			return new SceneFileEntity (currentName, currentScenePath);
 		}
 	}
 }

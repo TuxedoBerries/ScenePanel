@@ -53,8 +53,24 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				EditorGUILayout.LabelField (string.Format("Current Screenshot: {0}", givenPath));
 				EditorGUILayout.BeginHorizontal ();
 				{
-					DrawControls (givenPath, true, "Screenshots", givenName);
-					DrawPreview (_history.Current);
+					EditorGUILayout.BeginVertical (_column1);
+					{
+						// Take Snapshot
+						DrawTakeScreenshotButton(givenPath, true, "Screenshots", givenName);
+
+						// Refresh
+						DrawRefreshScreenshotButton (_history.Current);
+
+						// Open
+						DrawOpenFolderButton(_history.Current);
+					}
+					EditorGUILayout.EndVertical ();
+
+					EditorGUILayout.BeginVertical (_column1);
+					{
+						DrawPreview (_history.Current);
+					}
+					EditorGUILayout.EndVertical ();
 
 					var exist = GetTexture (givenPath, false);
 					if(exist != null)
@@ -187,45 +203,66 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		public string DrawControls(string dataPath, bool enableShot, string suggestedFolder, string suggestedName)
 		{
 			_colorStack.Reset ();
-			// Get Texture
-			var texture = GetTexture (dataPath, false);
 			
 			// Display
 			EditorGUILayout.BeginVertical (_column1);
 			{
 				// Take Snapshot
-				_colorStack.Push (enableShot ? ColorPalette.SnapshotButton_ON : ColorPalette.SnapshotButton_OFF);
-				if (GUILayout.Button (GetContentIcon(IconSet.CAMERA_ICON, TooltipSet.SCREENSHOT_BUTTON_TOOLTIP), _column1)) {
-					if (enableShot) {
-						if (string.IsNullOrEmpty (dataPath)) {
-							SceneMainPanelUtility.EnsureDirectory (suggestedFolder);
-						}
-						dataPath = SceneMainPanelUtility.TakeSnapshot (dataPath, _screenShotScale, suggestedFolder, suggestedName);
-					}
-				}
-				_colorStack.Pop ();
+				dataPath = DrawTakeScreenshotButton(dataPath, enableShot, suggestedFolder, suggestedName);
 
-				bool pathExist = !string.IsNullOrEmpty (dataPath);
 				// Refresh
-				_colorStack.Push ((pathExist) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
-				if (GUILayout.Button (GetContent("Refresh", TooltipSet.SCREENSHOT_REFRESH_BUTTON_TOOLTIP), _column1)) {
-					texture = GetTexture (dataPath, true);
-					if (texture == null) {
-						dataPath = "";
-					}
-				}
-				_colorStack.Pop ();
+				dataPath = DrawRefreshScreenshotButton (dataPath);
 
 				// Open
-				_colorStack.Push ((pathExist) ? ColorPalette.SnapshotOpenButton_ON : ColorPalette.SnapshotOpenButton_OFF);
-				if (GUILayout.Button (GetContent("Open Folder", TooltipSet.SCREENSHOT_OPEN_FOLDER_BUTTON_TOOLTIP), _column1)) {
-					if(texture != null)
-						EditorUtility.RevealInFinder (dataPath);
-				}
-				_colorStack.Pop ();
+				DrawOpenFolderButton(dataPath);
+
 			}
 			EditorGUILayout.EndVertical ();
 			return dataPath;
+		}
+
+		private string DrawTakeScreenshotButton(string dataPath, bool enableShot, string suggestedFolder, string suggestedName)
+		{
+			// Take Snapshot
+			_colorStack.Push (enableShot ? ColorPalette.SnapshotButton_ON : ColorPalette.SnapshotButton_OFF);
+			if (GUILayout.Button (GetContentIcon(IconSet.CAMERA_ICON, TooltipSet.SCREENSHOT_BUTTON_TOOLTIP), _column1)) {
+				if (enableShot) {
+					if (string.IsNullOrEmpty (dataPath)) {
+						SceneMainPanelUtility.EnsureDirectory (suggestedFolder);
+					}
+					dataPath = SceneMainPanelUtility.TakeSnapshot (dataPath, _screenShotScale, suggestedFolder, suggestedName);
+				}
+			}
+			_colorStack.Pop ();
+			return dataPath;
+		}
+
+		private string DrawRefreshScreenshotButton(string dataPath)
+		{
+			var isCached = _textureProvider.isCached (dataPath);
+			// Refresh
+			_colorStack.Push ((isCached) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
+			if (GUILayout.Button (GetContent("Refresh", TooltipSet.SCREENSHOT_REFRESH_BUTTON_TOOLTIP), _column1)) {
+				var exist = _textureProvider.RefreshCache (dataPath);
+				if (!exist)
+					dataPath = "";
+			}
+			_colorStack.Pop ();
+
+			return dataPath;
+		}
+
+		private void DrawOpenFolderButton(string dataPath)
+		{
+			bool validPath = SceneMainPanelUtility.ExistFile(dataPath);
+
+			_colorStack.Push ((validPath) ? ColorPalette.SnapshotOpenButton_ON : ColorPalette.SnapshotOpenButton_OFF);
+			if (GUILayout.Button (GetContent("Open Folder", TooltipSet.SCREENSHOT_OPEN_FOLDER_BUTTON_TOOLTIP), _column1)) {
+				if (validPath) {
+					EditorUtility.RevealInFinder (dataPath);
+				}
+			}
+			_colorStack.Pop ();
 		}
 
 		/// <summary>

@@ -1,7 +1,7 @@
 ﻿/// ------------------------------------------------
 /// <summary>
-/// Quick Screenshot Panel
-/// Purpose: 	Quickly take screenshots of the game.
+/// Gameplay Controls Panel
+/// Purpose: 	Custom Gameplay Controls.
 /// Author:		Juan Silva
 /// Date: 		November 29, 2015
 /// Copyright (c) Tuxedo Berries All rights reserved.
@@ -11,11 +11,11 @@ using TuxedoBerries.ScenePanel.Drawers;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class QuickScreenshotPanel : BaseUpdateablePanel
+	public class GameplayControlPanel : BaseUpdateablePanel
 	{
-		private const string PANEL_TITLE = "Snapshots";
-		private const string PANEL_TOOLTIP = "Take quick snapshots of the game";
-		private ScreenshotDrawer _drawer;
+		private const string PANEL_TITLE = "Gameplay Controls";
+		private const string PANEL_TOOLTIP = "Custom Gameplay Controls";
+		private GameplayControlsDrawer _drawer;
 
 		/// <summary>
 		/// Applies the title.
@@ -32,7 +32,7 @@ namespace TuxedoBerries.ScenePanel
 		protected override void CheckComponents()
 		{
 			if (_drawer == null)
-				_drawer = new ScreenshotDrawer ();
+				_drawer = new GameplayControlsDrawer ();
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		protected override void DrawContent ()
 		{
-			_drawer.DrawFull ();
+			_drawer.DrawGeneralControls ();
 		}
 	}
 }

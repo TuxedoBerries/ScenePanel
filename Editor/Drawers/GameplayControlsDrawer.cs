@@ -18,7 +18,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 	{
 		private ColorStack _colorStack;
 		private TextureDatabaseProvider _textureProvider;
-		private ISceneEntity _firstScene;
 		private GUIContentCache _contentCache;
 		private bool _hittedPlay = false;
 		private bool _performStep = false;
@@ -29,15 +28,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			_colorStack = new ColorStack ();
 			_textureProvider = new TextureDatabaseProvider ();
 			_contentCache = new GUIContentCache ();
-		}
-
-		/// <summary>
-		/// Updates the first scene.
-		/// </summary>
-		/// <param name="entity">Entity.</param>
-		public void UpdateFirstScene(ISceneEntity entity)
-		{
-			_firstScene = entity;
 		}
 
 		/// <summary>
@@ -54,7 +44,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				// Play From Start
 				_colorStack.Push ( GetPlayFromStartButtonColor() );
 				if (GUILayout.Button ( GetContent(IconSet.PLAY_START_ICON, TooltipSet.PLAY_START_TOOLTIP) )) {
-					if (!IsPlaying && SceneMainPanelUtility.OpenScene (_firstScene)) {
+					if (!IsPlaying && SceneMainPanelUtility.OpenFirstScene ()) {
 						_hittedPlay = true;
 						EditorApplication.isPlaying = true;
 					}

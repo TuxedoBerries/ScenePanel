@@ -30,6 +30,20 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		/// <summary>
+		/// Opens the first scene.
+		/// </summary>
+		/// <returns><c>true</c>, if first scene was opened, <c>false</c> otherwise.</returns>
+		public static bool OpenFirstScene()
+		{
+			var scenes = EditorBuildSettings.scenes;
+			if (scenes == null)
+				return false;
+			if (scenes.Length <= 0)
+				return false;
+			return OpenScene (scenes [0].path);
+		}
+
+		/// <summary>
 		/// Opens the scene in editor.
 		/// </summary>
 		/// <returns><c>true</c>, if scene was opened, <c>false</c> otherwise.</returns>
@@ -142,10 +156,6 @@ namespace TuxedoBerries.ScenePanel
 		/// <param name="entity">Entity.</param>
 		public static Color GetColor(ISceneEntity entity)
 		{
-			// Active Color
-			if (entity.IsActive)
-				return ColorPalette.SceneOpenButton_Active;
-
 			// Build Color
 			if (entity.InBuild) {
 				if (entity.IsEnabled)

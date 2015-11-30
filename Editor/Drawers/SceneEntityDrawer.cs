@@ -22,10 +22,14 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private GUILayoutOption _column1;
 		private ScreenshotDrawer _screenshotDrawer;
 
-		public SceneEntityDrawer()
+		public SceneEntityDrawer() : this("SceneEntityDrawer")
+		{
+		}
+
+		public SceneEntityDrawer(string name)
 		{
 			_colorStack = new ColorStack ();
-			_buttonContainer = new ButtonContainer ("SceneEntityDrawer", true);
+			_buttonContainer = new ButtonContainer (name, true);
 			_contentCache = new GUIContentCache ();
 			_textureProvider = new TextureDatabaseProvider ();
 			_screenshotDrawer = new ScreenshotDrawer ();
@@ -44,6 +48,12 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				// Row 1
 				EditorGUILayout.BeginHorizontal ();
 				{
+					if (entity.IsActive) {
+						GUILayout.Label (GetContentIcon (IconSet.PLAY_ICON, "Current Scene"), GUILayout.Width (18), GUILayout.Height (18));
+					} else {
+						GUILayout.Space (26);
+					}
+
 					// Open
 					_colorStack.Push (SceneMainPanelUtility.GetColor(entity));
 					if (GUILayout.Button (GetContent(entity)) && !entity.IsActive) {
@@ -53,7 +63,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 					// Fav
 					_colorStack.Push (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
-					if (GUILayout.Button (GetContentIcon(IconSet.STAR_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (30))) {
+					if (GUILayout.Button (GetContentIcon(IconSet.STAR_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (30), GUILayout.Height (18))) {
 						entity.IsFavorite = !entity.IsFavorite;
 					}
 					_colorStack.Pop ();

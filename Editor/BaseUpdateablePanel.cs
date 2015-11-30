@@ -24,9 +24,31 @@ namespace TuxedoBerries.ScenePanel
 			if (_deltaBetweenUpdates >= UpdatePoint) {
 				if (_allowRepaint) {
 					_deltaBetweenUpdates = 0;
+					BeforeUpdate ();
 					Repaint ();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Execute the OnGUI event.
+		/// </summary>
+		private void OnGUI()
+		{
+			_allowRepaint = false;
+			ApplyTitle ();
+			CheckComponents ();
+			DrawContent ();
+			_allowRepaint = true;
+		}
+
+		#region Virtual
+		/// <summary>
+		/// Execute the Before Update event
+		/// </summary>
+		protected virtual void BeforeUpdate()
+		{
+			// Nothing
 		}
 
 		/// <summary>
@@ -38,15 +60,7 @@ namespace TuxedoBerries.ScenePanel
 				return UPDATE_POINT;
 			}
 		}
-
-		private void OnGUI()
-		{
-			_allowRepaint = false;
-			ApplyTitle ();
-			CheckComponents ();
-			DrawContent ();
-			_allowRepaint = true;
-		}
+		#endregion
 
 		#region Abstract
 		/// <summary>

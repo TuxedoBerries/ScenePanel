@@ -37,7 +37,6 @@ namespace TuxedoBerries.ScenePanel.Constants
 		public static Color FavoriteButton_OFF = Color.white;
 
 		// Scene Open Button
-		public static Color SceneOpenButton_Active = new Color (155f / 255f, 202f / 255f, 60f / 255f, 1);
 		public static Color SceneOpenButton_InBuild_Enabled = new Color (98f / 255f, 192f / 255f, 220f / 255f, 1f);
 		public static Color SceneOpenButton_InBuild_Disabled = new Color (98f / 255f, 192f / 255f, 220f / 255f, 0.5f);
 		public static Color SceneOpenButton_Regular = Color.white;

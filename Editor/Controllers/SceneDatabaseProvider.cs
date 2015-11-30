@@ -205,7 +205,6 @@ namespace TuxedoBerries.ScenePanel
 
 			// Check removed
 			foreach (string key in oldKeys) {
-				Debug.LogFormat ("Scene [{0}] was removed", key);
 				_dict.Remove (key);
 			}
 		}

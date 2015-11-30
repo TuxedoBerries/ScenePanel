@@ -38,6 +38,8 @@ namespace TuxedoBerries.ScenePanel
 		{
 			if (string.IsNullOrEmpty(scene))
 				return false;
+			if (string.Equals (scene, EditorApplication.currentScene))
+				return false;
 
 			bool saved = EditorApplication.SaveCurrentSceneIfUserWantsTo ();
 			if (saved) {
@@ -46,16 +48,65 @@ namespace TuxedoBerries.ScenePanel
 			return saved;
 		}
 
+		public static string TakeSnapshot(string path, int scale)
+		{
+			return TakeSnapshot (path, scale, "", "screenshot.png");
+		}
+
 		/// <summary>
 		/// Takes a snapshot of the current visible screen and save it.
 		/// </summary>
 		/// <param name="entity">Entity.</param>
-		public static void TakeSnapshot(ISceneEntity entity, int scale)
+		public static string TakeSnapshot(string path, int scale, string suggestedFolder, string suggestedName)
 		{
-			Directory.CreateDirectory (System.IO.Path.GetDirectoryName(entity.ScreenshotPath));
-			Application.CaptureScreenshot (entity.ScreenshotPath, scale);
+			// Ask for path
+			string givenPath = path;
+			if (string.IsNullOrEmpty (givenPath)) {
+				givenPath = EditorUtility.SaveFilePanel ("Save screenshot", suggestedFolder, suggestedName, "png");
+			}
+			// Still null
+			if (string.IsNullOrEmpty (givenPath))
+				return givenPath;
+
+			EnsureDirectory (System.IO.Path.GetDirectoryName(givenPath));
+			Application.CaptureScreenshot (givenPath, scale);
 			EditorApplication.ExecuteMenuItem ("Window/Game");
-			EditorUtility.DisplayDialog ("Snapshot", "Snapshot successfully saved", "ok");
+			return givenPath;
+		}
+
+		/// <summary>
+		/// Ensures the existance of a directory.
+		/// </summary>
+		/// <param name="path">Path.</param>
+		public static void EnsureDirectory(string path)
+		{
+			if (string.IsNullOrEmpty (path))
+				return;
+			Directory.CreateDirectory (path);
+		}
+
+		/// <summary>
+		/// Check if a file Exists.
+		/// </summary>
+		/// <returns><c>true</c>, if file was existed, <c>false</c> otherwise.</returns>
+		/// <param name="path">Path.</param>
+		public static bool ExistFile(string path)
+		{
+			return System.IO.File.Exists (path);
+		}
+
+		/// <summary>
+		/// Deletes the file if exist.
+		/// </summary>
+		/// <returns><c>true</c>, if file if exist was deleted, <c>false</c> otherwise.</returns>
+		/// <param name="path">Path.</param>
+		public static bool DeleteFileIfExist(string path)
+		{
+			var exist = System.IO.File.Exists (path);
+			if (!exist)
+				return false;
+			System.IO.File.Delete (path);
+			return true;
 		}
 
 		/// <summary>

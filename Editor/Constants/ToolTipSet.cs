@@ -30,7 +30,7 @@ namespace TuxedoBerries.ScenePanel.Constants
 		public const string SCREENSHOT_OPEN_FOLDER_BUTTON_TOOLTIP = "Open the folder containing all the screenshots.";
 
 		// Data
-		public const string GENERATE_JSON_BUTTON_TOOLTIP = "Generate a JSON representation of all the scenes in the project.";
+		public const string GENERATE_JSON_BUTTON_TOOLTIP = "Generate a JSON representation of all the scenes in the project and print it in the console.";
 		public const string SAVE_JSON_BUTTON_TOOLTIP = "Generate and save a JSON representation of all the scenes in the project.";
 	}
 }

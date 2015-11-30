@@ -7,6 +7,7 @@
 /// Copyright (c) Tuxedo Berries All rights reserved.
 /// </summary>
 /// ------------------------------------------------
+using UnityEngine;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
@@ -77,10 +78,17 @@ namespace TuxedoBerries.ScenePanel
 				SaveValue (name, _folders [name]);
 			}
 			if (_folders [name]) {
-				EditorGUI.indentLevel++;
-				if (action != null)
-					action.Invoke ();
-				EditorGUI.indentLevel--;
+				EditorGUILayout.BeginHorizontal ();
+				{
+					GUILayout.Space (20);
+					EditorGUILayout.BeginVertical ();
+					{
+						if (action != null)
+							action.Invoke ();
+					}
+					EditorGUILayout.EndVertical ();
+				}
+				EditorGUILayout.EndHorizontal();
 			}
 		}
 
@@ -101,10 +109,17 @@ namespace TuxedoBerries.ScenePanel
 				SaveValue (name, _folders [name]);
 			}
 			if (_folders [name]) {
-				EditorGUI.indentLevel++;
-				if (action != null)
-					action.Invoke (param);
-				EditorGUI.indentLevel--;
+				EditorGUILayout.BeginHorizontal ();
+				{
+					GUILayout.Space (20);
+					EditorGUILayout.BeginVertical ();
+					{
+						if (action != null)
+							action.Invoke (param);
+					}
+					EditorGUILayout.EndVertical ();
+				}
+				EditorGUILayout.EndHorizontal();
 			}
 		}
 

@@ -33,6 +33,12 @@ namespace TuxedoBerries.ScenePanel
 			return _contentByTextureDict.ContainsKey (key);
 		}
 
+		public void Clear()
+		{
+			_contentDict.Clear ();
+			_contentByTextureDict.Clear ();
+		}
+
 		public GUIContent this[string key] {
 			get {
 				if (!_contentDict.ContainsKey (key))

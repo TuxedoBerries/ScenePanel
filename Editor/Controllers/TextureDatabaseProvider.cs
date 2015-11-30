@@ -27,7 +27,7 @@ namespace TuxedoBerries.ScenePanel
 
 		private void LocateRelativePath()
 		{
-			var result = AssetDatabase.FindAssets ("TextureDatabaseProvider");
+			var result = AssetDatabase.FindAssets ("ScenePanelMenu");
 			if (result == null || result.Length <= 0) {
 				Debug.LogError ("Could not find relative path");
 				return;
@@ -49,6 +49,14 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		#region Textures
+		/// <summary>
+		/// Clear this instance.
+		/// </summary>
+		public void Clear()
+		{
+			_textureCache.Clear ();
+		}
+
 		/// <summary>
 		/// Gets the texture by path if any.
 		/// </summary>
@@ -91,6 +99,9 @@ namespace TuxedoBerries.ScenePanel
 
 		private void RefreshCache(string path)
 		{
+			if (string.IsNullOrEmpty (path))
+				return;
+			
 			if (!System.IO.File.Exists (path))
 				return;
 

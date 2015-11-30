@@ -19,14 +19,17 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private ButtonContainer _buttonContainer;
 		private TextureDatabaseProvider _textureProvider;
 		private GUIContentCache _contentCache;
-		private int _screenShotScale = 1;
+		private GUILayoutOption _column1;
+		private ScreenshotDrawer _screenshotDrawer;
 
 		public SceneEntityDrawer()
 		{
 			_colorStack = new ColorStack ();
 			_buttonContainer = new ButtonContainer ("SceneEntityDrawer", true);
-			_textureProvider = new TextureDatabaseProvider ();
 			_contentCache = new GUIContentCache ();
+			_textureProvider = new TextureDatabaseProvider ();
+			_screenshotDrawer = new ScreenshotDrawer ();
+			_column1 = GUILayout.Width (128);
 		}
 
 		/// <summary>
@@ -70,7 +73,12 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 				// Row 2 - More
 				if (_buttonContainer != null) {
-					_buttonContainer.DrawContent (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
+					EditorGUILayout.BeginHorizontal ();
+					{
+						GUILayout.Space (20);
+						_buttonContainer.DrawContent (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
+					}
+					EditorGUILayout.EndHorizontal ();
 				} else {
 					DrawDetailEntity (entity);
 				}
@@ -84,34 +92,33 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		/// <param name="entity">Entity.</param>
 		public void DrawDetailEntity(ISceneEntity entity)
 		{
-			var col1Space = GUILayout.Width (128);
 			EditorGUILayout.BeginVertical ();
 			{
 				// Name
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Name:", col1Space);
+					EditorGUILayout.LabelField ("Name:", _column1);
 					EditorGUILayout.SelectableLabel (entity.Name, GUILayout.Height(16));
 				}
 				EditorGUILayout.EndHorizontal ();
 				// Path
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Path:", col1Space);
+					EditorGUILayout.LabelField ("Path:", _column1);
 					EditorGUILayout.SelectableLabel (entity.FullPath, GUILayout.Height(16));
 				}
 				EditorGUILayout.EndHorizontal ();
 				// Path
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("GUID:", col1Space);
+					EditorGUILayout.LabelField ("GUID:", _column1);
 					EditorGUILayout.SelectableLabel (entity.GUID.ToUpper(), GUILayout.Height(16));
 				}
 				EditorGUILayout.EndHorizontal ();
 				// In Build Check
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("In Build:", col1Space);
+					EditorGUILayout.LabelField ("In Build:", _column1);
 					EditorGUILayout.Toggle (entity.InBuild);
 				}
 				EditorGUILayout.EndHorizontal ();
@@ -120,7 +127,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				// In Build Enabled Check
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Build Enabled:", col1Space);
+					EditorGUILayout.LabelField ("Build Enabled:", _column1);
 					EditorGUILayout.Toggle (entity.IsEnabled);
 				}
 				EditorGUILayout.EndHorizontal ();
@@ -128,7 +135,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				// In Build index
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Build Index:", col1Space);
+					EditorGUILayout.LabelField ("Build Index:", _column1);
 					EditorGUILayout.LabelField (entity.BuildIndex.ToString());
 				}
 				EditorGUILayout.EndHorizontal ();
@@ -137,8 +144,16 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				// In Build Enabled Check
 				EditorGUILayout.BeginHorizontal ();
 				{
-					EditorGUILayout.LabelField ("Current Scene:", col1Space);
+					EditorGUILayout.LabelField ("Current Scene:", _column1);
 					EditorGUILayout.Toggle (entity.IsActive);
+				}
+				EditorGUILayout.EndHorizontal ();
+
+				// Screenshot
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Screenshot: ", _column1);
+					EditorGUILayout.SelectableLabel (entity.ScreenshotPath, GUILayout.Height(16));
 				}
 				EditorGUILayout.EndHorizontal ();
 
@@ -154,109 +169,12 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		/// <param name="entity">Entity.</param>
 		public void DrawSnapshot(ISceneEntity entity)
 		{
-			_colorStack.Reset ();
-			var texture = GetTexture (entity, false);
-
-			var col1Space = GUILayout.Width (128);
-			// In Build Enabled Check
-			EditorGUILayout.BeginHorizontal ();
-			{
-				EditorGUILayout.LabelField ("Screenshot: ", col1Space);
-				string displayText;
-				if (texture != null) {
-					displayText = entity.ScreenshotPath;
-				} else {
-					displayText = "--";
-				}
-				EditorGUILayout.SelectableLabel (displayText, GUILayout.Height(16));
-			}
-			EditorGUILayout.EndHorizontal ();
-
-			// In Build Enabled Check
-			EditorGUILayout.BeginHorizontal ();
-			{
-				EditorGUILayout.LabelField ("Screenshot Size: ", col1Space);
-				string displayText;
-				if (texture != null) {
-					displayText = string.Format ("{0} x {1}", texture.width, texture.height);
-				} else {
-					displayText = "--";
-				}
-				EditorGUILayout.LabelField (displayText);
-			}
-			EditorGUILayout.EndHorizontal ();
-
 			EditorGUILayout.Space ();
-			if (entity.IsActive) {
-				// Show current view size
-				EditorGUILayout.BeginHorizontal ();
-				{
-					EditorGUILayout.LabelField ("Current View Size: ", col1Space);
-					var size = SceneMainPanelUtility.GetGameViewSize ();
-					EditorGUILayout.LabelField (string.Format ("{0} x {1}", size.x, size.y));
-				}
-				EditorGUILayout.EndHorizontal ();
-
-				// Show current scale
-				EditorGUILayout.BeginHorizontal ();
-				{
-					EditorGUILayout.LabelField ("Screenshot Scale: ", col1Space);
-					_screenShotScale = EditorGUILayout.IntSlider (_screenShotScale, 1, 10);
-				}
-				EditorGUILayout.EndHorizontal ();
-
-				// Show current scale
-				EditorGUILayout.BeginHorizontal ();
-				{
-					EditorGUILayout.LabelField ("Estimated Size: ", col1Space);
-					var size = SceneMainPanelUtility.GetGameViewSize ();
-					EditorGUILayout.LabelField (string.Format ("{0} x {1}", size.x * _screenShotScale, size.y * _screenShotScale));
-				}
-				EditorGUILayout.EndHorizontal ();
-			}
-
+			_screenshotDrawer.DrawConfiguration ();
 			EditorGUILayout.BeginHorizontal ();
 			{
-				GUILayout.Space (20);
-				// Display
-				EditorGUILayout.BeginVertical (col1Space);
-				{
-					// Take Snapshot
-					_colorStack.Push (entity.IsActive ? ColorPalette.SnapshotButton_ON : ColorPalette.SnapshotButton_OFF);
-					if (GUILayout.Button (GetContentIcon(IconSet.CAMERA_ICON, TooltipSet.SCREENSHOT_BUTTON_TOOLTIP), GUILayout.MaxWidth(128))) {
-						if (entity.IsActive) {
-							SceneMainPanelUtility.TakeSnapshot (entity, _screenShotScale);
-						}
-					}
-					_colorStack.Pop ();
-
-					// Refresh
-					_colorStack.Push ((texture != null) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
-					if (GUILayout.Button (GetContent("Refresh", TooltipSet.SCREENSHOT_REFRESH_BUTTON_TOOLTIP), GUILayout.MaxWidth(128))) {
-						if(texture != null)
-							texture = GetTexture (entity, true);
-					}
-					_colorStack.Pop ();
-
-					// Open
-					_colorStack.Push ((texture != null) ? ColorPalette.SnapshotOpenButton_ON : ColorPalette.SnapshotOpenButton_OFF);
-					if (GUILayout.Button (GetContent("Open Folder", TooltipSet.SCREENSHOT_OPEN_FOLDER_BUTTON_TOOLTIP), GUILayout.MaxWidth(128))) {
-						if(texture != null)
-							EditorUtility.RevealInFinder (entity.ScreenshotPath);
-					}
-					_colorStack.Pop ();
-				}
-				EditorGUILayout.EndVertical ();
-
-				EditorGUILayout.BeginVertical (col1Space);
-				{
-					if (texture != null) {
-						GUILayout.Label (texture, GUILayout.Height(128), GUILayout.MaxWidth(128));
-					} else {
-						EditorGUILayout.LabelField ("Empty Screenshot", col1Space);
-					}
-				}
-				EditorGUILayout.EndVertical ();
+				entity.ScreenshotPath = _screenshotDrawer.DrawControls (entity.ScreenshotPath, entity.IsActive, "Screenshots", string.Format("{0}.png", entity.Name));
+				_screenshotDrawer.DrawPreview (entity.ScreenshotPath);
 			}
 			EditorGUILayout.EndHorizontal ();
 		}
@@ -283,13 +201,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				_contentCache [iconName] = new GUIContent (texture, tooltip);
 			}
 			return _contentCache[iconName];
-		}
-
-		private Texture GetTexture(ISceneEntity entity, bool refresh)
-		{
-			if (_textureProvider == null)
-				return null;
-			return _textureProvider.GetTexture (entity.ScreenshotPath, refresh);
 		}
 		#endregion
 	}

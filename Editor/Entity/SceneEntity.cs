@@ -28,7 +28,6 @@ namespace TuxedoBerries.ScenePanel
 		private bool _isEnabled;
 		private int _index;
 		// Cached
-		private string _screenshotPath;
 		private IPreferenceChannel _channel;
 
 		public SceneEntity ()
@@ -44,7 +43,6 @@ namespace TuxedoBerries.ScenePanel
 			_name = "";
 			_fullPath = "";
 			_guid = "";
-			_screenshotPath = "";
 
 			_inBuild = false;
 			_isActive = false;
@@ -60,7 +58,6 @@ namespace TuxedoBerries.ScenePanel
 		{
 			_name = entity.Name;
 			_fullPath = entity.FullPath;
-			_screenshotPath = entity.ScreenshotPath;
 			_guid = entity.GUID;
 
 			_inBuild = entity.InBuild;
@@ -80,7 +77,6 @@ namespace TuxedoBerries.ScenePanel
 			set {
 				_name = value;
 				_channel = EditorPreferenceHandler.GetChannel (this, _name);
-				_screenshotPath = string.Format ("Screenshots/{0}.png", _name);
 			}
 		}
 
@@ -147,7 +143,14 @@ namespace TuxedoBerries.ScenePanel
 		/// <value>The snapshot path.</value>
 		public string ScreenshotPath {
 			get {
-				return _screenshotPath;
+				if (_channel == null)
+					return "";
+				return _channel.GetString ("Screenshot");
+			}
+			set {
+				if (_channel == null)
+					return;
+				_channel.SetValue ("Screenshot", value);
 			}
 		}
 

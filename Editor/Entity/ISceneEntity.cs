@@ -38,6 +38,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <value>The snapshot path.</value>
 		string ScreenshotPath {
 			get;
+			set;
 		}
 
 		#region Only in Build

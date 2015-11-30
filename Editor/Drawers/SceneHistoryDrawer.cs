@@ -76,7 +76,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 			EditorGUILayout.BeginHorizontal ();
 			{
-				GUILayout.Space (20);
 				EditorGUILayout.BeginVertical (GUILayout.Width(90));
 				{
 					EditorGUILayout.BeginHorizontal ();

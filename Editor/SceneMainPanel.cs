@@ -32,6 +32,7 @@ namespace TuxedoBerries.ScenePanel
 		private SceneEntityDrawer _drawer;
 		private GameplayControlsDrawer _controlsDrawer;
 		private SceneHistoryDrawer _historyDrawer;
+		private ToolsDrawer _toolsDrawer;
 
 		private void CheckComponents()
 		{
@@ -55,6 +56,10 @@ namespace TuxedoBerries.ScenePanel
 				_controlsDrawer = new GameplayControlsDrawer ();
 			if (_historyDrawer == null)
 				_historyDrawer = new SceneHistoryDrawer ();
+			if (_toolsDrawer == null) {
+				_toolsDrawer = new ToolsDrawer ();
+				_toolsDrawer.SetDatabase (_provider);
+			}
 		}
 
 		private void UpdateCurrent()
@@ -128,51 +133,21 @@ namespace TuxedoBerries.ScenePanel
 
 		private void DrawScrollableUtils()
 		{
-			_scrolls.DrawScrollable ("tools", DrawUtils);
-		}
-
-		private void DrawUtils()
-		{
-			EditorGUILayout.BeginHorizontal ();
-			{
-				EditorGUILayout.BeginVertical (GUILayout.Width(120));
-				{
-					EditorGUILayout.LabelField ("Scenes List", GUILayout.Width(80));
-					EditorGUILayout.BeginHorizontal ();
-					{
-						GUILayout.Space (20);
-						EditorGUILayout.BeginVertical (GUILayout.Width(120));
-						{
-							if (GUILayout.Button ("Generate JSON", GUILayout.Width(120))) {
-								Debug.Log (_provider.GenerateJSON ());
-							}
-							if (GUILayout.Button ("Save to JSON File", GUILayout.Width(120))) {
-								var path = EditorUtility.SaveFilePanel ("Save scene list", "", "scenes.json", "json");
-								if(!string.IsNullOrEmpty(path))
-									SceneMainPanelUtility.SaveText (_provider.GenerateJSON (), path);
-							}
-						}
-						EditorGUILayout.EndVertical ();
-					}
-					EditorGUILayout.EndHorizontal ();
-				}
-				EditorGUILayout.EndVertical ();
-
-				EditorGUILayout.BeginVertical ();
-				{
-					_drawer.DrawDetailEntity (_provider.CurrentActive);
-				}
-				EditorGUILayout.EndVertical ();
-			}
-			EditorGUILayout.EndHorizontal ();
+			_scrolls.DrawScrollable ("tools", _toolsDrawer.DrawUtils);
 		}
 
 		#region Lists
 		private void DrawMainScroll()
 		{
+			_folders.DrawFoldable ("Current Scene", DrawCurrentScene);
 			_folders.DrawFoldable ("Favorites", DrawAllFavorites);
 			_folders.DrawFoldable ("All Scenes In Build", DrawAllInBuild);
 			_folders.DrawFoldable ("All Scenes", DrawAll);
+		}
+
+		private void DrawCurrentScene()
+		{
+			_drawer.DrawDetailEntity (_provider.CurrentActive);
 		}
 
 		private void DrawAllFavorites()
@@ -204,7 +179,6 @@ namespace TuxedoBerries.ScenePanel
 				EditorGUILayout.BeginHorizontal ();
 				{
 					// Space
-					GUILayout.Space (20);
 					_drawer.DrawEntity (entity);
 				}
 				EditorGUILayout.EndHorizontal ();

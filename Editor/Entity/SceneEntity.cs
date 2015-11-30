@@ -18,6 +18,7 @@ namespace TuxedoBerries.ScenePanel
 	public class SceneEntity : ISceneEntity, ISceneFileEntity
 	{
 		private const string FAVORITE_KEY = "SceneEntity:Favorite:[{0}]";
+		public static SceneEntity Empty = new SceneEntity(); 
 
 		private string _name;
 		private string _fullPath;
@@ -224,10 +225,6 @@ namespace TuxedoBerries.ScenePanel
 			builder.Append ("\"");
 			builder.Append (ScreenshotPath);
 			builder.Append ("\",");
-			// IsActive
-			builder.Append ("\"is_active\":");
-			builder.Append (IsActive.ToString().ToLower());
-			builder.Append (",");
 			// IsFavorite
 			builder.Append ("\"is_favorite\":");
 			builder.Append (IsFavorite.ToString().ToLower());

@@ -43,11 +43,13 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			EditorGUILayout.BeginHorizontal ();
 			{
 				if (GUILayout.Button ( GetContent("Generate JSON", TooltipSet.GENERATE_JSON_BUTTON_TOOLTIP))) {
+					_provider.Refresh ();
 					Debug.Log (_provider.GenerateJSON ());
 				}
 				if (GUILayout.Button ( GetContent("Save to JSON File", TooltipSet.SAVE_JSON_BUTTON_TOOLTIP))) {
 					var path = EditorUtility.SaveFilePanel ("Save scene list", "", "scenes.json", "json");
 					if(!string.IsNullOrEmpty(path))
+						_provider.Refresh ();
 						SceneMainPanelUtility.SaveText (_provider.GenerateJSON (), path);
 				}
 			}

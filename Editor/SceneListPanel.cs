@@ -86,6 +86,7 @@ namespace TuxedoBerries.ScenePanel
 		{
 			EditorGUILayout.BeginHorizontal ();
 			{
+				GUILayout.Space (20);
 				EditorGUILayout.LabelField ("Filter: ", GUILayout.Width (50));
 				_search = EditorGUILayout.TextField (_search);
 				if (GUILayout.Button ("Clear")) {
@@ -109,14 +110,8 @@ namespace TuxedoBerries.ScenePanel
 		#region Lists
 		private void DrawMainScroll()
 		{
-			_folders.DrawFoldable ("Current Scene", DrawCurrentScene);
 			_folders.DrawFoldable ("Favorites", DrawAllFavorites);
 			_folders.DrawFoldable ("All Scenes", DrawAll);
-		}
-
-		private void DrawCurrentScene()
-		{
-			_drawer.DrawDetailEntity (_provider.CurrentActive);
 		}
 
 		private void DrawAllFavorites()

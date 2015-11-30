@@ -102,6 +102,9 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		/// <param name="entity">Entity.</param>
 		public void DrawDetailEntity(ISceneEntity entity)
 		{
+			if (entity == null)
+				entity = SceneEntity.Empty;
+			
 			EditorGUILayout.BeginVertical ();
 			{
 				// Name

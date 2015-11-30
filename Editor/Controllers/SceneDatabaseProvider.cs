@@ -82,6 +82,11 @@ namespace TuxedoBerries.ScenePanel
 		/// <param name="scenePath">Scene path.</param>
 		public bool SetAsActive(string scenePath)
 		{
+			if (string.IsNullOrEmpty (scenePath)) {
+				_activeScene = SceneEntity.Empty;
+				return true;
+			}
+			
 			// Same Scene
 			if (_activeScene != null && string.Equals (_activeScene.FullPath, scenePath)) {
 				_activeScene.IsActive = true;

@@ -20,7 +20,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private TextureDatabaseProvider _textureProvider;
 		private GUIContentCache _contentCache;
 		private GUILayoutOption _column1;
-		private ScreenshotDrawer _screenshotDrawer;
 
 		public SceneEntityDrawer() : this("SceneEntityDrawer")
 		{
@@ -32,7 +31,6 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			_buttonContainer = new ButtonContainer (name, true);
 			_contentCache = new GUIContentCache ();
 			_textureProvider = new TextureDatabaseProvider ();
-			_screenshotDrawer = new ScreenshotDrawer ();
 			_column1 = GUILayout.Width (128);
 		}
 
@@ -61,12 +59,24 @@ namespace TuxedoBerries.ScenePanel.Drawers
 					}
 					_colorStack.Pop ();
 
+					// Build Index
+
 					// Fav
 					_colorStack.Push (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
 					if (GUILayout.Button (GetContentIcon(IconSet.STAR_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (30), GUILayout.Height (18))) {
 						entity.IsFavorite = !entity.IsFavorite;
 					}
 					_colorStack.Pop ();
+
+					// Build
+					_colorStack.Push (SceneMainPanelUtility.GetColor(entity));
+					if (GUILayout.Button (GetContentIcon(IconSet.PACKAGE_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (30), GUILayout.Height (18))) {
+						entity.InBuild = !entity.InBuild;
+					}
+					_colorStack.Pop ();
+
+					// Enable
+					entity.IsEnabled = EditorGUILayout.Toggle (entity.IsEnabled, GUILayout.Width (15));
 
 					// Detail
 					if (_buttonContainer != null) {
@@ -85,7 +95,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				if (_buttonContainer != null) {
 					EditorGUILayout.BeginHorizontal ();
 					{
-						GUILayout.Space (20);
+						GUILayout.Space (25);
 						_buttonContainer.DrawContent (string.Format ("{0} Details", entity.Name), DrawDetailEntity, entity);
 					}
 					EditorGUILayout.EndHorizontal ();
@@ -94,6 +104,11 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				}
 			}
 			EditorGUILayout.EndVertical ();
+		}
+
+		public bool AreDetailsOpen(ISceneEntity entity)
+		{
+			return _buttonContainer.GetValue (string.Format ("{0} Details", entity.Name));
 		}
 
 		/// <summary>
@@ -132,7 +147,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				EditorGUILayout.BeginHorizontal ();
 				{
 					EditorGUILayout.LabelField ("In Build:", _column1);
-					EditorGUILayout.Toggle (entity.InBuild);
+					entity.InBuild = EditorGUILayout.Toggle (entity.InBuild);
 				}
 				EditorGUILayout.EndHorizontal ();
 
@@ -141,7 +156,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				EditorGUILayout.BeginHorizontal ();
 				{
 					EditorGUILayout.LabelField ("Build Enabled:", _column1);
-					EditorGUILayout.Toggle (entity.IsEnabled);
+					entity.IsEnabled = EditorGUILayout.Toggle (entity.IsEnabled);
 				}
 				EditorGUILayout.EndHorizontal ();
 
@@ -170,26 +185,8 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				}
 				EditorGUILayout.EndHorizontal ();
 
-				// Snapshot
-				DrawSnapshot(entity);
 			}
 			EditorGUILayout.EndVertical ();
-		}
-
-		/// <summary>
-		/// Draws the snapshot section of the entity.
-		/// </summary>
-		/// <param name="entity">Entity.</param>
-		public void DrawSnapshot(ISceneEntity entity)
-		{
-			EditorGUILayout.Space ();
-			_screenshotDrawer.DrawConfiguration ();
-			EditorGUILayout.BeginHorizontal ();
-			{
-				entity.ScreenshotPath = _screenshotDrawer.DrawControls (entity.ScreenshotPath, entity.IsActive, "Screenshots", string.Format("{0}.png", entity.Name));
-				_screenshotDrawer.DrawPreview (entity.ScreenshotPath);
-			}
-			EditorGUILayout.EndHorizontal ();
 		}
 
 		#region Helpers

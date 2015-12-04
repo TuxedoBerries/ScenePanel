@@ -152,6 +152,22 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 		#region Specific screenshot
 		/// <summary>
+		/// Draws the snapshot section of the entity.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		public void DrawSnapshot(ISceneEntity entity)
+		{
+			EditorGUILayout.Space ();
+			DrawConfiguration ();
+			EditorGUILayout.BeginHorizontal ();
+			{
+				entity.ScreenshotPath = DrawControls (entity.ScreenshotPath, entity.IsActive, "Screenshots", string.Format("{0}.png", entity.Name));
+				DrawPreview (entity.ScreenshotPath);
+			}
+			EditorGUILayout.EndHorizontal ();
+		}
+
+		/// <summary>
 		/// Draws the configuration.
 		/// </summary>
 		public void DrawConfiguration()
@@ -276,7 +292,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			{
 				// Get Texture
 				if (texture != null) {
-					GUILayout.Label (texture, GUILayout.Height(128), GUILayout.MaxWidth(128));
+					GUILayout.Label (texture, GUILayout.MaxWidth (MaxWidth (texture)), GUILayout.MaxHeight (MaxHeight (texture)));
 				} else {
 					EditorGUILayout.LabelField ("[ Empty Screenshot ]", _column1);
 				}
@@ -323,6 +339,24 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			if (string.IsNullOrEmpty (path))
 				return null;
 			return _textureProvider.GetTexture (path, refresh);
+		}
+
+		private float MaxWidth(Texture texture)
+		{
+			if (texture == null)
+				return 0;
+
+			float scale = 128f / (Mathf.Max(texture.width, texture.height) * 1f);
+			return scale * texture.width;
+		}
+
+		private float MaxHeight(Texture texture)
+		{
+			if (texture == null)
+				return 0;
+
+			float scale = 128f / (Mathf.Max(texture.width, texture.height) * 1f);
+			return scale * texture.height;
 		}
 		#endregion
 	}

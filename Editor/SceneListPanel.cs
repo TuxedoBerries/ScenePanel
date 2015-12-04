@@ -20,6 +20,7 @@ namespace TuxedoBerries.ScenePanel
 		private const string PANEL_TOOLTIP = "List all the scenes in the project";
 		private SceneEntityDrawer _drawer;
 		private SceneEntityDrawer _favDrawer;
+		private ScreenshotDrawer _screenshotDrawer;
 		private ScrollableContainer _scrolls;
 		private FolderContainer _folders;
 		private SceneDatabaseProvider _provider;
@@ -43,6 +44,8 @@ namespace TuxedoBerries.ScenePanel
 				_drawer = new SceneEntityDrawer ();
 			if (_favDrawer == null)
 				_favDrawer = new SceneEntityDrawer ("FavoriteSceneEntityDrawer");
+			if (_screenshotDrawer == null)
+				_screenshotDrawer = new ScreenshotDrawer ();
 			if (_scrolls == null)
 				_scrolls = new ScrollableContainer ("SceneListPanel", true);
 			if (_folders == null)
@@ -58,7 +61,6 @@ namespace TuxedoBerries.ScenePanel
 		{
 			UpdateCurrentScene ();
 
-			EditorGUILayout.Space ();
 			DrawFilter ();
 			EditorGUILayout.Space ();
 			_scrolls.DrawScrollable ("main", DrawMainScroll);
@@ -84,12 +86,11 @@ namespace TuxedoBerries.ScenePanel
 		#region Filter
 		private void DrawFilter()
 		{
-			EditorGUILayout.BeginHorizontal ();
+			EditorGUILayout.BeginHorizontal (EditorStyles.toolbar);
 			{
-				GUILayout.Space (20);
-				EditorGUILayout.LabelField ("Filter: ", GUILayout.Width (50));
-				_search = EditorGUILayout.TextField (_search);
-				if (GUILayout.Button ("Clear")) {
+				EditorGUILayout.LabelField ("Filter", GUILayout.Width (50));
+				_search = EditorGUILayout.TextField (_search, GUI.skin.FindStyle("ToolbarSeachTextField"));
+				if (GUILayout.Button ("", GUI.skin.FindStyle("ToolbarSeachCancelButton"))) {
 					_search = "";
 				}
 			}
@@ -134,8 +135,27 @@ namespace TuxedoBerries.ScenePanel
 
 				EditorGUILayout.BeginHorizontal ();
 				{
-					// Space
 					drawer.DrawEntity (entity);
+					if (entity.InBuild) {
+						_provider.AddToBuild (entity);
+					} else {
+						_provider.RemoveToBuild (entity);
+					}
+					_provider.UpdateEnable (entity);
+				}
+				EditorGUILayout.EndHorizontal ();
+
+				if (!drawer.AreDetailsOpen (entity))
+					continue;
+				EditorGUILayout.BeginHorizontal ();
+				{
+					GUILayout.Space (22);
+					EditorGUILayout.BeginVertical ();
+					{
+						_screenshotDrawer.DrawSnapshot (entity);
+						EditorGUILayout.Space ();
+					}
+					EditorGUILayout.EndVertical ();
 				}
 				EditorGUILayout.EndHorizontal ();
 			}

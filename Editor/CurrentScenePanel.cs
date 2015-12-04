@@ -19,6 +19,7 @@ namespace TuxedoBerries.ScenePanel
 		private const string PANEL_TOOLTIP = "Display all the detials of the current scene";
 		private ScrollableContainer _scrolls;
 		private SceneEntityDrawer _drawer;
+		private ScreenshotDrawer _screenshotDrawer;
 		private SceneDatabaseProvider _provider;
 
 		/// <summary>
@@ -37,6 +38,8 @@ namespace TuxedoBerries.ScenePanel
 		{
 			if (_drawer == null)
 				_drawer = new SceneEntityDrawer ();
+			if (_screenshotDrawer == null)
+				_screenshotDrawer = new ScreenshotDrawer ();
 			if (_provider == null)
 				_provider = new SceneDatabaseProvider ();
 			if (_scrolls == null)
@@ -53,10 +56,16 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.BeginHorizontal ();
 			{
 				GUILayout.Space (20);
-				_scrolls.DrawScrollable ("main", _drawer.DrawDetailEntity, _provider.CurrentActive);
+				_scrolls.DrawScrollable ("main", Content);
 			}
 			EditorGUILayout.EndHorizontal ();
-			EditorGUILayout.Space ();
+
+		}
+
+		private void Content()
+		{
+			_drawer.DrawDetailEntity (_provider.CurrentActive);
+			_screenshotDrawer.DrawSnapshot (_provider.CurrentActive);
 		}
 
 		private void UpdateCurrentScene()

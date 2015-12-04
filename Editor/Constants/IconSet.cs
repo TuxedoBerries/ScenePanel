@@ -26,6 +26,7 @@ namespace TuxedoBerries.ScenePanel.Constants
 
 		// Scene Entity
 		public const string STAR_ICON = "icons/icon_star.png";
+		public const string PACKAGE_ICON = "icons/icon_package.png";
 		public const string CAMERA_ICON = "icons/icon_camera.png";
 	}
 }

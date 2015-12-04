@@ -107,6 +107,60 @@ namespace TuxedoBerries.ScenePanel
 			return true;
 		}
 
+		public bool UpdateEnable(ISceneEntity entity)
+		{
+			if (!_dict.ContainsKey (entity.FullPath))
+				return false;
+
+			if (entity.BuildIndex < 0)
+				return false;
+			if (entity.BuildIndex >= EditorBuildSettings.scenes.Length)
+				return false;
+
+			var current = EditorBuildSettings.scenes [entity.BuildIndex];
+			if (current.enabled == entity.IsEnabled)
+				return true;
+
+			RefreshBuildSettings ();
+			return true;
+		}
+
+		public bool AddToBuild(ISceneEntity entity)
+		{
+			if (!entity.InBuild)
+				return false;
+			
+			if (!_dict.ContainsKey (entity.FullPath))
+				return false;
+			
+			var scene = _dict[entity.FullPath];
+			if (_buildListByIndex.Contains (scene))
+				return true;
+
+			// Add last
+			scene.BuildIndex = _buildListByIndex.Count-1;
+			_buildListByIndex.Add (scene);
+
+			RefreshBuildSettings ();
+			return true;
+		}
+
+		public bool RemoveToBuild(ISceneEntity entity)
+		{
+			if (entity.InBuild)
+				return false;
+
+			if (!_dict.ContainsKey (entity.FullPath))
+				return false;
+
+			var scene = _dict[entity.FullPath];
+			if (!_buildListByIndex.Contains (scene))
+				return true;
+
+			RefreshBuildSettings ();
+			return true;
+		}
+
 		/// <summary>
 		/// Gets the SceneEntity with the specified scenePath.
 		/// </summary>
@@ -182,6 +236,33 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		#region Helpers
+		private void RefreshBuildSettings()
+		{
+			Debug.Log ("Refreshing Editor Build Settings Scene");
+			int total = 0;
+			foreach (var scene in _buildListByIndex) {
+				if (!scene.InBuild)
+					continue;
+				++total;
+			}
+
+			// Create new array
+			var newArray = new EditorBuildSettingsScene[ total ];
+
+			// Update Data
+			int count = 0;
+			for (int i = 0; i < _buildListByIndex.Count; ++i) {
+				var scene = _buildListByIndex [i];
+				if (!scene.InBuild)
+					continue;
+				newArray [count++] = new EditorBuildSettingsScene (scene.FullPath, scene.IsEnabled);
+			}
+
+			// Reassign
+			EditorBuildSettings.scenes = newArray;
+			Refresh ();
+		}
+
 		/// <summary>
 		/// Generates the dictionary of scenes.
 		/// </summary>
@@ -225,8 +306,9 @@ namespace TuxedoBerries.ScenePanel
 				var scene = scenes [i];
 				if (!_dict.ContainsKey (scene.path))
 					continue;
-
+				
 				var entity = _dict [scene.path];
+				entity.Scene = scene;
 				entity.InBuild = true;
 				entity.IsEnabled = scene.enabled;
 				entity.BuildIndex = i;

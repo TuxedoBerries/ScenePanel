@@ -20,6 +20,7 @@ namespace TuxedoBerries.ScenePanel
 		private const string FAVORITE_KEY = "SceneEntity:Favorite:[{0}]";
 		public static SceneEntity Empty = new SceneEntity(); 
 
+		private EditorBuildSettingsScene _scene;
 		private string _name;
 		private string _fullPath;
 		private string _guid;
@@ -156,6 +157,19 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		#region Only In Build
+		/// <summary>
+		/// Gets the scene in the build if any.
+		/// </summary>
+		/// <value>The scene.</value>
+		public EditorBuildSettingsScene Scene {
+			get {
+				return _scene;
+			}
+			set {
+				_scene = value;
+			}
+		}
+
 		/// <summary>
 		/// Determine if the scene is in the build list or not.
 		/// </summary>

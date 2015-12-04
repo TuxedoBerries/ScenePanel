@@ -9,6 +9,7 @@
 /// ------------------------------------------------
 using System;
 using UnityEngine;
+using UnityEditor;
 
 namespace TuxedoBerries.ScenePanel
 {
@@ -43,11 +44,20 @@ namespace TuxedoBerries.ScenePanel
 
 		#region Only in Build
 		/// <summary>
+		/// Gets the scene in the build if any.
+		/// </summary>
+		/// <value>The scene.</value>
+		EditorBuildSettingsScene Scene {
+			get;
+		}
+
+		/// <summary>
 		/// Determine if the scene is in the build list or not.
 		/// </summary>
 		/// <value><c>true</c> if is in build; otherwise, <c>false</c>.</value>
 		bool InBuild {
-				get;
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -56,6 +66,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <value><c>true</c> if this instance is enabled; otherwise, <c>false</c>.</value>
 		bool IsEnabled {
 			get;
+			set;
 		}
 
 		/// <summary>

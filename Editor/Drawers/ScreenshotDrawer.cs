@@ -161,7 +161,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			DrawConfiguration ();
 			EditorGUILayout.BeginHorizontal ();
 			{
-				entity.ScreenshotPath = DrawControls (entity.ScreenshotPath, entity.IsActive, "Screenshots", string.Format("{0}.png", entity.Name));
+				entity.ScreenshotPath = DrawControls (entity.ScreenshotPath, entity.IsActive || SceneMainPanelUtility.IsPlaying, "Screenshots", string.Format("{0}.png", entity.Name));
 				DrawPreview (entity.ScreenshotPath);
 			}
 			EditorGUILayout.EndHorizontal ();

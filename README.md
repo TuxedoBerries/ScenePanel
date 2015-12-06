@@ -65,7 +65,7 @@ Enables the capture and display of snapshots of the game.
 0.9.8b
 
 ### Author & Copyright
-Author : [Juan Silva](juanssl@gmail.com)
+Author : [Juan Silva](mailto:juanssl@gmail.com)
 
 Copyright (c) 2015 Tuxedo Berries All rights reserved
 

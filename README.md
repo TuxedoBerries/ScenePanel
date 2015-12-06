@@ -4,6 +4,7 @@ Unity extension set of panel that display multiple information about scenes.
 
 ## Dashboard
 Combienes Gameplay control, Scene History and scene list.
+
 ![Gameplay Panel](/.docs/dashboard_normal.png)
 ![Gameplay Panel](/.docs/dashboard_edit.png)
 ![Gameplay Panel](/.docs/dashboard_detail.png)

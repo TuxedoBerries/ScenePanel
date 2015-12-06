@@ -37,20 +37,28 @@ namespace TuxedoBerries.ScenePanel
 		protected override void CheckComponents()
 		{
 			if (_drawer == null)
-				_drawer = new SceneEntityDrawer ();
+				_drawer = new SceneEntityDrawer (PANEL_TITLE);
 			if (_screenshotDrawer == null)
 				_screenshotDrawer = new ScreenshotDrawer ();
 			if (_provider == null)
 				_provider = new SceneDatabaseProvider ();
 			if (_scrolls == null)
-				_scrolls = new ScrollableContainer ("CurrentScenePanel", true);
+				_scrolls = new ScrollableContainer (PANEL_TITLE, true);
 		}
+
 		/// <summary>
 		/// Draws the content.
 		/// </summary>
 		protected override void DrawContent ()
 		{
 			UpdateCurrentScene ();
+
+			EditorGUILayout.BeginHorizontal (EditorStyles.toolbar);
+			{
+				EditorGUILayout.LabelField ("");
+				DrawToolbar ();
+			}
+			EditorGUILayout.EndHorizontal ();
 
 			EditorGUILayout.Space ();
 			EditorGUILayout.BeginHorizontal ();
@@ -59,13 +67,23 @@ namespace TuxedoBerries.ScenePanel
 				_scrolls.DrawScrollable ("main", Content);
 			}
 			EditorGUILayout.EndHorizontal ();
+		}
 
+		private void DrawToolbar()
+		{
+			EditorGUILayout.BeginHorizontal (EditorStyles.toolbar);
+			{
+				_drawer.EnableEditing = GUILayout.Toggle (_drawer.EnableEditing, "Edit", EditorStyles.toolbarButton, GUILayout.Width (40));
+			}
+			EditorGUILayout.EndHorizontal ();
 		}
 
 		private void Content()
 		{
-			_drawer.DrawDetailEntity (_provider.CurrentActive);
-			_screenshotDrawer.DrawSnapshot (_provider.CurrentActive);
+			var currentScene = _provider.CurrentActive;
+			_drawer.DrawDetailEntity (currentScene);
+			_screenshotDrawer.DrawSnapshot (currentScene);
+			_provider.UpdateEntity (currentScene);
 		}
 
 		private void UpdateCurrentScene()

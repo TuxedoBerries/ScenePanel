@@ -258,6 +258,18 @@ namespace TuxedoBerries.ScenePanel
 			builder.Append ("}");
 			return builder.ToString ();
 		}
+
+		public static int CompareByIndex(SceneEntity sceneA, SceneEntity sceneB)
+		{
+			if (sceneA == null && sceneB == null)
+				return 0;
+			if (sceneA == null)
+				return -1;
+			if (sceneB == null)
+				return 1;
+
+			return sceneA.BuildIndex - sceneB.BuildIndex;
+		}
 	}
 }
 

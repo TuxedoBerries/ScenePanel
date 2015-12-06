@@ -149,24 +149,6 @@ namespace TuxedoBerries.ScenePanel
 			}
 		}
 
-		/// <summary>
-		/// Gets the color representation of the given entity.
-		/// </summary>
-		/// <returns>The color.</returns>
-		/// <param name="entity">Entity.</param>
-		public static Color GetColor(ISceneEntity entity)
-		{
-			// Build Color
-			if (entity.InBuild) {
-				if (entity.IsEnabled)
-					return ColorPalette.SceneOpenButton_InBuild_Enabled;
-				else
-					return ColorPalette.SceneOpenButton_InBuild_Disabled;
-			}
-
-			return ColorPalette.SceneOpenButton_Regular;
-		}
-
 		public static bool IsPlaying {
 			get {
 				return EditorApplication.isPlaying || Application.isPlaying;

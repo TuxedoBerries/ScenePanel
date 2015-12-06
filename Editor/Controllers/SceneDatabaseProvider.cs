@@ -46,6 +46,149 @@ namespace TuxedoBerries.ScenePanel
 			_buildListByIndex.Sort (SortByIndex);
 		}
 
+		#region Update Entities
+		/// <summary>
+		/// Sets as active.
+		/// </summary>
+		/// <returns><c>true</c>, if as active was set, <c>false</c> otherwise.</returns>
+		/// <param name="scenePath">Scene path.</param>
+		public bool SetAsActive(string scenePath)
+		{
+			if (string.IsNullOrEmpty (scenePath)) {
+				_activeScene = SceneEntity.Empty;
+				return true;
+			}
+
+			// Same Scene
+			if (_activeScene != null && string.Equals (_activeScene.FullPath, scenePath)) {
+				_activeScene.IsActive = true;
+				return false;
+			}
+
+			// Not exist
+			if (!_dict.ContainsKey (scenePath))
+				return false;
+
+			// Deactivate
+			if (_activeScene != null)
+				_activeScene.IsActive = false;
+
+			// Set new active scene
+			_activeScene = _dict [scenePath];
+			_activeScene.IsActive = true;
+			return true;
+		}
+
+		/// <summary>
+		/// Updates the entity.
+		/// </summary>
+		/// <returns><c>true</c>, if entity was updated, <c>false</c> otherwise.</returns>
+		/// <param name="entity">Entity.</param>
+		public bool UpdateEntity(ISceneEntity entity)
+		{
+			bool retval = true;
+			if (entity.InBuild) {
+				retval = AddToBuild (entity);
+				retval = retval && UpdateIndex (entity);
+			} else {
+				retval = retval && RemoveToBuild (entity);
+			}
+			retval = retval && UpdateEnable (entity);
+			return retval;
+		}
+
+		/// <summary>
+		/// Updates the enable.
+		/// </summary>
+		/// <returns><c>true</c>, if enable was updated, <c>false</c> otherwise.</returns>
+		/// <param name="entity">Entity.</param>
+		public bool UpdateEnable(ISceneEntity entity)
+		{
+			if (!_dict.ContainsKey (entity.FullPath))
+				return false;
+
+			if (entity.BuildIndex < 0)
+				return false;
+			if (entity.BuildIndex >= EditorBuildSettings.scenes.Length)
+				return false;
+
+			var current = EditorBuildSettings.scenes [entity.BuildIndex];
+			if (current.enabled == entity.IsEnabled)
+				return true;
+
+			RefreshBuildSettings ();
+			return true;
+		}
+
+		/// <summary>
+		/// Adds to build.
+		/// </summary>
+		/// <returns><c>true</c>, if to build was added, <c>false</c> otherwise.</returns>
+		/// <param name="entity">Entity.</param>
+		public bool AddToBuild(ISceneEntity entity)
+		{
+			if (!entity.InBuild)
+				return false;
+			
+			if (!_dict.ContainsKey (entity.FullPath))
+				return false;
+			
+			var scene = _dict[entity.FullPath];
+			if (_buildListByIndex.Contains (scene))
+				return true;
+
+			// Add last
+			scene.BuildIndex = _buildListByIndex.Count;
+			_buildListByIndex.Add (scene);
+
+			RefreshBuildSettings ();
+			return true;
+		}
+
+		/// <summary>
+		/// Updates the index.
+		/// </summary>
+		/// <returns><c>true</c>, if index was updated, <c>false</c> otherwise.</returns>
+		/// <param name="entity">Entity.</param>
+		public bool UpdateIndex(ISceneEntity entity)
+		{
+			if (!entity.InBuild)
+				return false;
+
+			if (!_dict.ContainsKey (entity.FullPath))
+				return false;
+
+			var scene = _dict[entity.FullPath];
+			if(_buildListByIndex.IndexOf(scene) == scene.BuildIndex)
+				return true;
+
+			RefreshBuildSettings ();
+			return true;
+		}
+
+		/// <summary>
+		/// Removes to build.
+		/// </summary>
+		/// <returns><c>true</c>, if to build was removed, <c>false</c> otherwise.</returns>
+		/// <param name="entity">Entity.</param>
+		public bool RemoveToBuild(ISceneEntity entity)
+		{
+			if (entity.InBuild)
+				return false;
+
+			if (!_dict.ContainsKey (entity.FullPath))
+				return false;
+
+			var scene = _dict[entity.FullPath];
+			if (!_buildListByIndex.Contains (scene))
+				return true;
+
+			RefreshBuildSettings ();
+			return true;
+		}
+		#endregion
+
+		#region Access
 		/// <summary>
 		/// Gets the first scene in build, if any.
 		/// </summary>
@@ -73,92 +216,6 @@ namespace TuxedoBerries.ScenePanel
 		public bool Contains(string scenePath)
 		{
 			return _dict.ContainsKey (scenePath);
-		}
-
-		/// <summary>
-		/// Sets as active.
-		/// </summary>
-		/// <returns><c>true</c>, if as active was set, <c>false</c> otherwise.</returns>
-		/// <param name="scenePath">Scene path.</param>
-		public bool SetAsActive(string scenePath)
-		{
-			if (string.IsNullOrEmpty (scenePath)) {
-				_activeScene = SceneEntity.Empty;
-				return true;
-			}
-			
-			// Same Scene
-			if (_activeScene != null && string.Equals (_activeScene.FullPath, scenePath)) {
-				_activeScene.IsActive = true;
-				return false;
-			}
-
-			// Not exist
-			if (!_dict.ContainsKey (scenePath))
-				return false;
-
-			// Deactivate
-			if (_activeScene != null)
-				_activeScene.IsActive = false;
-
-			// Set new active scene
-			_activeScene = _dict [scenePath];
-			_activeScene.IsActive = true;
-			return true;
-		}
-
-		public bool UpdateEnable(ISceneEntity entity)
-		{
-			if (!_dict.ContainsKey (entity.FullPath))
-				return false;
-
-			if (entity.BuildIndex < 0)
-				return false;
-			if (entity.BuildIndex >= EditorBuildSettings.scenes.Length)
-				return false;
-
-			var current = EditorBuildSettings.scenes [entity.BuildIndex];
-			if (current.enabled == entity.IsEnabled)
-				return true;
-
-			RefreshBuildSettings ();
-			return true;
-		}
-
-		public bool AddToBuild(ISceneEntity entity)
-		{
-			if (!entity.InBuild)
-				return false;
-			
-			if (!_dict.ContainsKey (entity.FullPath))
-				return false;
-			
-			var scene = _dict[entity.FullPath];
-			if (_buildListByIndex.Contains (scene))
-				return true;
-
-			// Add last
-			scene.BuildIndex = _buildListByIndex.Count-1;
-			_buildListByIndex.Add (scene);
-
-			RefreshBuildSettings ();
-			return true;
-		}
-
-		public bool RemoveToBuild(ISceneEntity entity)
-		{
-			if (entity.InBuild)
-				return false;
-
-			if (!_dict.ContainsKey (entity.FullPath))
-				return false;
-
-			var scene = _dict[entity.FullPath];
-			if (!_buildListByIndex.Contains (scene))
-				return true;
-
-			RefreshBuildSettings ();
-			return true;
 		}
 
 		/// <summary>
@@ -209,7 +266,9 @@ namespace TuxedoBerries.ScenePanel
 			}
 			yield break;
 		}
+		#endregion
 
+		#region Export
 		/// <summary>
 		/// Generates a JSON representation of the scenes.
 		/// </summary>
@@ -234,11 +293,14 @@ namespace TuxedoBerries.ScenePanel
 			builder.Append ("}");
 			return builder.ToString ();
 		}
+		#endregion
 
 		#region Helpers
 		private void RefreshBuildSettings()
 		{
-			Debug.Log ("Refreshing Editor Build Settings Scene");
+			// Debug.Log ("Refreshing Editor Build Settings");
+			_buildListByIndex.Sort (SceneEntity.CompareByIndex);
+
 			int total = 0;
 			foreach (var scene in _buildListByIndex) {
 				if (!scene.InBuild)

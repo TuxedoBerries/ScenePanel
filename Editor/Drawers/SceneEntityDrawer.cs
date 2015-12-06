@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEditor;
 using TuxedoBerries.ScenePanel.Constants;
+using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
@@ -20,6 +21,8 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private TextureDatabaseProvider _textureProvider;
 		private GUIContentCache _contentCache;
 		private GUILayoutOption _column1;
+		private IPreferenceChannel _channel;
+		private bool _enableEditing = false;
 
 		public SceneEntityDrawer() : this("SceneEntityDrawer")
 		{
@@ -32,6 +35,19 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			_contentCache = new GUIContentCache ();
 			_textureProvider = new TextureDatabaseProvider ();
 			_column1 = GUILayout.Width (128);
+
+			_channel = EditorPreferenceHandler.GetChannel (this, name);
+			_enableEditing = _channel.GetBool ("edit");
+		}
+
+		public bool EnableEditing {
+			get {
+				return _enableEditing;
+			}
+			set {
+				_enableEditing = value;
+				_channel.SetValue ("edit", value);
+			}
 		}
 
 		/// <summary>
@@ -53,30 +69,23 @@ namespace TuxedoBerries.ScenePanel.Drawers
 					}
 
 					// Open
-					_colorStack.Push (SceneMainPanelUtility.GetColor(entity));
+					_colorStack.Push (ColorPalette.GetColor(entity));
 					if (GUILayout.Button (GetContent(entity)) && !entity.IsActive) {
 						SceneMainPanelUtility.OpenScene (entity);
 					}
 					_colorStack.Pop ();
 
-					// Build Index
-
 					// Fav
-					_colorStack.Push (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
-					if (GUILayout.Button (GetContentIcon(IconSet.STAR_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (30), GUILayout.Height (18))) {
-						entity.IsFavorite = !entity.IsFavorite;
-					}
-					_colorStack.Pop ();
+					DrawFavoriteButton(entity);
 
 					// Build
-					_colorStack.Push (SceneMainPanelUtility.GetColor(entity));
-					if (GUILayout.Button (GetContentIcon(IconSet.PACKAGE_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (30), GUILayout.Height (18))) {
-						entity.InBuild = !entity.InBuild;
-					}
-					_colorStack.Pop ();
+					DrawBuildButton (entity);
 
 					// Enable
-					entity.IsEnabled = EditorGUILayout.Toggle (entity.IsEnabled, GUILayout.Width (15));
+					DrawEnable (entity);
+
+					// Index
+					DrawBuildNumber (entity);
 
 					// Detail
 					if (_buttonContainer != null) {
@@ -84,10 +93,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 					}
 
 					// Select
-					if (GUILayout.Button (GetContent("Select", TooltipSet.SELECT_BUTTON_TOOLTIP), GUILayout.Width (50))) {
-						Selection.activeObject = AssetDatabase.LoadMainAssetAtPath (entity.FullPath);
-						EditorGUIUtility.PingObject (Selection.activeObject);
-					}
+					DrawSelectButton(entity);
 				}
 				EditorGUILayout.EndHorizontal ();
 
@@ -143,11 +149,24 @@ namespace TuxedoBerries.ScenePanel.Drawers
 					EditorGUILayout.SelectableLabel (entity.GUID.ToUpper(), GUILayout.Height(16));
 				}
 				EditorGUILayout.EndHorizontal ();
+				// Select
+				EditorGUILayout.BeginHorizontal ();
+				{
+					EditorGUILayout.LabelField ("Select in Project:", _column1);
+					DrawSelectButton (entity);
+				}
+				EditorGUILayout.EndHorizontal ();
 				// In Build Check
 				EditorGUILayout.BeginHorizontal ();
 				{
 					EditorGUILayout.LabelField ("In Build:", _column1);
-					entity.InBuild = EditorGUILayout.Toggle (entity.InBuild);
+					_colorStack.Push (ColorPalette.GetEditColor (_enableEditing));
+					if (_enableEditing) {
+						entity.InBuild = EditorGUILayout.Toggle (entity.InBuild);
+					} else {
+						EditorGUILayout.Toggle (entity.InBuild);
+					}
+					_colorStack.Pop ();
 				}
 				EditorGUILayout.EndHorizontal ();
 
@@ -156,7 +175,13 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				EditorGUILayout.BeginHorizontal ();
 				{
 					EditorGUILayout.LabelField ("Build Enabled:", _column1);
-					entity.IsEnabled = EditorGUILayout.Toggle (entity.IsEnabled);
+					_colorStack.Push (ColorPalette.GetEditColor (entity.InBuild && _enableEditing));
+					if (entity.InBuild && _enableEditing) {
+						entity.IsEnabled = EditorGUILayout.Toggle (entity.IsEnabled);
+					} else {
+						EditorGUILayout.Toggle (entity.IsEnabled);
+					}
+					_colorStack.Pop ();
 				}
 				EditorGUILayout.EndHorizontal ();
 
@@ -164,7 +189,11 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				EditorGUILayout.BeginHorizontal ();
 				{
 					EditorGUILayout.LabelField ("Build Index:", _column1);
-					EditorGUILayout.LabelField (entity.BuildIndex.ToString());
+					if (entity.InBuild && _enableEditing) {
+						entity.BuildIndex = EditorGUILayout.IntField (entity.BuildIndex);
+					} else {
+						EditorGUILayout.LabelField (entity.BuildIndex.ToString());
+					}
 				}
 				EditorGUILayout.EndHorizontal ();
 				_colorStack.Pop ();
@@ -188,6 +217,82 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			}
 			EditorGUILayout.EndVertical ();
 		}
+
+		#region Buttons
+		/// <summary>
+		/// Draws the select button.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		private void DrawSelectButton(ISceneEntity entity)
+		{
+			if (GUILayout.Button (GetContent("Select", TooltipSet.SELECT_BUTTON_TOOLTIP), GUILayout.Width (47))) {
+				Selection.activeObject = AssetDatabase.LoadMainAssetAtPath (entity.FullPath);
+				EditorGUIUtility.PingObject (Selection.activeObject);
+			}
+		}
+
+		/// <summary>
+		/// Draws the favorite button.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		private void DrawFavoriteButton(ISceneEntity entity)
+		{
+			_colorStack.Push (entity.IsFavorite ? ColorPalette.FavoriteButton_ON : ColorPalette.FavoriteButton_OFF);
+			if (GUILayout.Button (GetContentIcon(IconSet.STAR_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (25), GUILayout.Height (18))) {
+				entity.IsFavorite = !entity.IsFavorite;
+			}
+			_colorStack.Pop ();
+		}
+
+		/// <summary>
+		/// Draws the build button.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		private void DrawBuildButton(ISceneEntity entity)
+		{
+			if (!_enableEditing)
+				return;
+			
+			_colorStack.Push (ColorPalette.GetColor(entity));
+			// Build
+			if (GUILayout.Button (GetContentIcon(IconSet.PACKAGE_ICON, TooltipSet.FAVORITE_BUTTON_TOOLTIP), GUILayout.Width (30), GUILayout.Height (18))) {
+				entity.InBuild = !entity.InBuild;
+			}
+			_colorStack.Pop ();
+		}
+
+		/// <summary>
+		/// Draws the enable.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		private void DrawEnable(ISceneEntity entity)
+		{
+			if (!_enableEditing)
+				return;
+
+			if (entity.InBuild) {
+				entity.IsEnabled = EditorGUILayout.Toggle (entity.IsEnabled, GUILayout.Width (15));
+			} else {
+				EditorGUILayout.LabelField ("", GUILayout.Width (15));
+			}
+		}
+
+		/// <summary>
+		/// Draws the build number.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		private void DrawBuildNumber(ISceneEntity entity)
+		{
+			if (!_enableEditing)
+				return;
+
+			if (entity.InBuild) {
+				entity.BuildIndex = EditorGUILayout.IntField (entity.BuildIndex, GUILayout.Width (25), GUILayout.Height (20));
+			} else {
+				EditorGUILayout.LabelField ("", GUILayout.Width (25));
+			}
+		}
+		#endregion
 
 		#region Helpers
 		private GUIContent GetContent(ISceneEntity scene)

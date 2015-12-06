@@ -75,6 +75,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <value>The index in the build.</value>
 		int BuildIndex {
 			get;
+			set;
 		}
 		#endregion
 	}

@@ -60,6 +60,40 @@ namespace TuxedoBerries.ScenePanel.Constants
 		// History Arrow Button
 		public static Color HistoryArrowButton_ON = Color.white;
 		public static Color HistoryArrowButton_OFF = new Color (1f, 1f, 1f, 0.25f);
+
+		#region Get Colors
+
+		/// <summary>
+		/// Gets the color representation of the given entity.
+		/// </summary>
+		/// <returns>The color.</returns>
+		/// <param name="entity">Entity.</param>
+		public static Color GetColor(ISceneEntity entity)
+		{
+			// Build Color
+			if (entity.InBuild) {
+				if (entity.IsEnabled)
+					return SceneOpenButton_InBuild_Enabled;
+				else
+					return SceneOpenButton_InBuild_Disabled;
+			}
+
+			return SceneOpenButton_Regular;
+		}
+
+		/// <summary>
+		/// Gets the color of the edit.
+		/// </summary>
+		/// <returns>The edit color.</returns>
+		/// <param name="editMode">If set to <c>true</c> edit mode.</param>
+		public static Color GetEditColor(bool editMode)
+		{
+			if (editMode)
+				return InBuildField_ON;
+
+			return InBuildField_OFF;
+		}
+		#endregion
 	}
 }
 

@@ -41,15 +41,15 @@ namespace TuxedoBerries.ScenePanel
 		protected override void CheckComponents()
 		{
 			if (_drawer == null)
-				_drawer = new SceneEntityDrawer ();
+				_drawer = new SceneEntityDrawer (PANEL_TITLE);
 			if (_favDrawer == null)
-				_favDrawer = new SceneEntityDrawer ("FavoriteSceneEntityDrawer");
+				_favDrawer = new SceneEntityDrawer (PANEL_TITLE);
 			if (_screenshotDrawer == null)
 				_screenshotDrawer = new ScreenshotDrawer ();
 			if (_scrolls == null)
-				_scrolls = new ScrollableContainer ("SceneListPanel", true);
+				_scrolls = new ScrollableContainer (PANEL_TITLE, true);
 			if (_folders == null)
-				_folders = new FolderContainer ("SceneListPanel", true);
+				_folders = new FolderContainer (PANEL_TITLE, true);
 			if (_provider == null)
 				_provider = new SceneDatabaseProvider ();
 		}
@@ -93,6 +93,9 @@ namespace TuxedoBerries.ScenePanel
 				if (GUILayout.Button ("", GUI.skin.FindStyle("ToolbarSeachCancelButton"))) {
 					_search = "";
 				}
+
+				_drawer.EnableEditing = GUILayout.Toggle (_drawer.EnableEditing, "Edit", EditorStyles.toolbarButton, GUILayout.Width (40));
+				_favDrawer.EnableEditing = _drawer.EnableEditing;
 			}
 			EditorGUILayout.EndHorizontal ();
 		}
@@ -136,12 +139,7 @@ namespace TuxedoBerries.ScenePanel
 				EditorGUILayout.BeginHorizontal ();
 				{
 					drawer.DrawEntity (entity);
-					if (entity.InBuild) {
-						_provider.AddToBuild (entity);
-					} else {
-						_provider.RemoveToBuild (entity);
-					}
-					_provider.UpdateEnable (entity);
+					_provider.UpdateEntity (entity);
 				}
 				EditorGUILayout.EndHorizontal ();
 

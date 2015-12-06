@@ -67,15 +67,26 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="TuxedoBerries.ScenePanel.Drawers.SceneHistoryDrawer"/>
+		/// restore on stop.
+		/// </summary>
+		/// <value><c>true</c> if restore on stop; otherwise, <c>false</c>.</value>
+		public bool RestoreOnStop {
+			get {
+				return _restoreOnStop;
+			}
+			set {
+				_restoreOnStop = value;
+				_channel.SetValue (RESTORE_VAR, _restoreOnStop);
+			}
+		}
+
+		/// <summary>
 		/// Draws the history.
 		/// </summary>
 		public void DrawHistory()
 		{
 			_colorStack.Reset ();
-
-			_restoreOnStop = EditorGUILayout.Toggle ("Restore Scene When Stop", _restoreOnStop);
-			_channel.SetValue (RESTORE_VAR, _restoreOnStop);
-
 			EditorGUILayout.BeginHorizontal ();
 			{
 				EditorGUILayout.BeginVertical (GUILayout.Width(90));

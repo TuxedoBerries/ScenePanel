@@ -39,52 +39,58 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		/// </summary>
 		public void DrawGeneralControls()
 		{
-			EditorGUILayout.BeginHorizontal ();
+			EditorGUILayout.BeginVertical ();
 			{
-				// Play From Start
-				_colorStack.Push ( GetPlayFromStartButtonColor() );
-				if (GUILayout.Button ( GetContent(IconSet.PLAY_START_ICON, TooltipSet.PLAY_START_TOOLTIP) )) {
-					if (!IsPlaying && SceneMainPanelUtility.OpenFirstScene ()) {
-						_hittedPlay = true;
-						EditorApplication.isPlaying = true;
-					}
-				}
-				_colorStack.Pop ();
-
-
-				if (!IsPlaying) {
-					// Play Current
-					_colorStack.Push ( GetPlayButtonColor() );
-					if (GUILayout.Button (GetContent(IconSet.PLAY_ICON, TooltipSet.PLAY_TOOLTIP))) {
-						_hittedPlay = true;
-						EditorApplication.isPlaying = true;
-					}
-					_colorStack.Pop ();
-				} else {
-					// Stop
-					_colorStack.Push ( GetStopButtonColor() );
-					if (GUILayout.Button ( GetContent(IconSet.STOP_ICON, TooltipSet.STOP_TOOLTIP) )) {
-						EditorApplication.isPlaying = false;
+				EditorGUILayout.BeginHorizontal ();
+				{
+					// Play From Start
+					_colorStack.Push ( GetPlayFromStartButtonColor() );
+					if (GUILayout.Button ( GetContent(IconSet.PLAY_START_ICON, TooltipSet.PLAY_START_TOOLTIP) )) {
+						if (!IsPlaying && SceneMainPanelUtility.OpenFirstScene ()) {
+							_hittedPlay = true;
+							EditorApplication.isPlaying = true;
+						}
 					}
 					_colorStack.Pop ();
 				}
+				EditorGUILayout.EndHorizontal ();
+				EditorGUILayout.BeginHorizontal ();
+				{
+					if (!IsPlaying) {
+						// Play Current
+						_colorStack.Push ( GetPlayButtonColor() );
+						if (GUILayout.Button (GetContent(IconSet.PLAY_ICON, TooltipSet.PLAY_TOOLTIP))) {
+							_hittedPlay = true;
+							EditorApplication.isPlaying = true;
+						}
+						_colorStack.Pop ();
+					} else {
+						// Stop
+						_colorStack.Push ( GetStopButtonColor() );
+						if (GUILayout.Button ( GetContent(IconSet.STOP_ICON, TooltipSet.STOP_TOOLTIP) )) {
+							EditorApplication.isPlaying = false;
+						}
+						_colorStack.Pop ();
+					}
 
-				// Pause
-				_colorStack.Push ( GetPauseButtonColor() );
-				if (GUILayout.Button ( GetContent(IconSet.PAUSE_ICON, TooltipSet.PAUSE_TOOLTIP))) {
-					EditorApplication.isPaused = !EditorApplication.isPaused;
-				}
-				_colorStack.Pop ();
+					// Pause
+					_colorStack.Push ( GetPauseButtonColor() );
+					if (GUILayout.Button ( GetContent(IconSet.PAUSE_ICON, TooltipSet.PAUSE_TOOLTIP))) {
+						EditorApplication.isPaused = !EditorApplication.isPaused;
+					}
+					_colorStack.Pop ();
 
-				// Step
-				_colorStack.Push ( GetStepButtonColor() );
-				if (GUILayout.Button ( GetContent(IconSet.STEP_ICON, TooltipSet.STEP_TOOLTIP))) {
-					if(IsPlaying)
-						_performStep = true;
+					// Step
+					_colorStack.Push ( GetStepButtonColor() );
+					if (GUILayout.Button ( GetContent(IconSet.STEP_ICON, TooltipSet.STEP_TOOLTIP))) {
+						if(IsPlaying)
+							_performStep = true;
+					}
+					_colorStack.Pop ();
 				}
-				_colorStack.Pop ();
+				EditorGUILayout.EndHorizontal ();
 			}
-			EditorGUILayout.EndHorizontal ();
+			EditorGUILayout.EndVertical ();
 
 			// Perform at the end
 			if (_performStep) {

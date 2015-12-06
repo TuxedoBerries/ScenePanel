@@ -52,14 +52,6 @@ namespace TuxedoBerries.ScenePanel
 		protected override void DrawContent ()
 		{
 			UpdateCurrentScene ();
-
-			EditorGUILayout.BeginHorizontal (EditorStyles.toolbar);
-			{
-				EditorGUILayout.LabelField ("");
-				DrawToolbar ();
-			}
-			EditorGUILayout.EndHorizontal ();
-
 			EditorGUILayout.Space ();
 			EditorGUILayout.BeginHorizontal ();
 			{
@@ -69,13 +61,10 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.EndHorizontal ();
 		}
 
-		private void DrawToolbar()
+		protected override void DrawToolbarContent()
 		{
-			EditorGUILayout.BeginHorizontal (EditorStyles.toolbar);
-			{
-				_drawer.EnableEditing = GUILayout.Toggle (_drawer.EnableEditing, "Edit", EditorStyles.toolbarButton, GUILayout.Width (40));
-			}
-			EditorGUILayout.EndHorizontal ();
+			EditorGUILayout.Space ();
+			_drawer.EnableEditing = GUILayout.Toggle (_drawer.EnableEditing, "Edit", EditorStyles.toolbarButton, GUILayout.Width (40));
 		}
 
 		private void Content()

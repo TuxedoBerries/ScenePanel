@@ -7,13 +7,14 @@
 /// Copyright (c) Tuxedo Berries All rights reserved.
 /// </summary>
 /// ------------------------------------------------
+using UnityEditor;
 using TuxedoBerries.ScenePanel.Drawers;
 
 namespace TuxedoBerries.ScenePanel
 {
 	public class GameplayControlPanel : BaseUpdateablePanel
 	{
-		private const string PANEL_TITLE = "Gameplay Controls";
+		private const string PANEL_TITLE = "Gameplay";
 		private const string PANEL_TOOLTIP = "Custom Gameplay Controls";
 		private GameplayControlsDrawer _drawer;
 
@@ -40,6 +41,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		protected override void DrawContent ()
 		{
+			EditorGUILayout.Space ();
 			_drawer.DrawGeneralControls ();
 		}
 	}

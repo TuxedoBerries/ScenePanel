@@ -69,14 +69,10 @@ namespace TuxedoBerries.ScenePanel.Drawers
 					}
 
 					// Open
-					_colorStack.Push (ColorPalette.GetColor(entity));
-					if (GUILayout.Button (GetContent(entity)) && !entity.IsActive) {
-						SceneMainPanelUtility.OpenScene (entity);
-					}
-					_colorStack.Pop ();
+					DrawOpenButton (entity);
 
 					// Fav
-					DrawFavoriteButton(entity);
+					DrawFavoriteButton (entity);
 
 					// Build
 					DrawBuildButton (entity);
@@ -112,6 +108,11 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			EditorGUILayout.EndVertical ();
 		}
 
+		/// <summary>
+		/// Check if a scene is open for details
+		/// </summary>
+		/// <returns><c>true</c>, if details open was ared, <c>false</c> otherwise.</returns>
+		/// <param name="entity">Entity.</param>
 		public bool AreDetailsOpen(ISceneEntity entity)
 		{
 			return _buttonContainer.GetValue (string.Format ("{0} Details", entity.Name));
@@ -220,6 +221,21 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 		#region Buttons
 		/// <summary>
+		/// Draws the open button.
+		/// </summary>
+		/// <param name="entity">Entity.</param>
+		private void DrawOpenButton(ISceneEntity entity)
+		{
+			_colorStack.Push (ColorPalette.GetColor(entity));
+			GUI.skin.button.alignment = TextAnchor.MiddleLeft;
+			if (GUILayout.Button (GetContent(entity)) && !entity.IsActive) {
+				SceneMainPanelUtility.OpenScene (entity);
+			}
+			GUI.skin.button.alignment = TextAnchor.MiddleCenter;
+			_colorStack.Pop ();
+		}
+
+		/// <summary>
 		/// Draws the select button.
 		/// </summary>
 		/// <param name="entity">Entity.</param>
@@ -297,11 +313,18 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		#region Helpers
 		private GUIContent GetContent(ISceneEntity scene)
 		{
-			if(!_contentCache.Contains(scene.Name)){
-				var tooltip = string.Format(TooltipSet.SCENE_BUTTON_TOOLTIP, scene.Name);
-				return _contentCache.GetContent (scene.Name, tooltip);
+			string keyName = "";
+			if (scene.InBuild) {
+				keyName = string.Format ("[{0:00}] {1}", scene.BuildIndex, scene.Name);
+			} else {
+				keyName = string.Format ("        {0}", scene.Name);
 			}
-			return _contentCache[scene.Name];
+
+			if(!_contentCache.Contains(keyName)){
+				var tooltip = string.Format(TooltipSet.SCENE_BUTTON_TOOLTIP, scene.Name);
+				return _contentCache.GetContent (keyName, tooltip);
+			}
+			return _contentCache[keyName];
 		}
 
 		private GUIContent GetContent(string label, string tooltip)

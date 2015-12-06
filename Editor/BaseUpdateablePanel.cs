@@ -38,8 +38,22 @@ namespace TuxedoBerries.ScenePanel
 			_allowRepaint = false;
 			ApplyTitle ();
 			CheckComponents ();
+
+			DrawToolbar ();
 			DrawContent ();
 			_allowRepaint = true;
+		}
+
+		/// <summary>
+		/// Draws the toolbar.
+		/// </summary>
+		private void DrawToolbar()
+		{
+			EditorGUILayout.BeginHorizontal (EditorStyles.toolbar);
+			{
+				DrawToolbarContent ();
+			}
+			EditorGUILayout.EndHorizontal ();
 		}
 
 		#region Virtual
@@ -59,6 +73,14 @@ namespace TuxedoBerries.ScenePanel
 			get {
 				return UPDATE_POINT;
 			}
+		}
+
+		/// <summary>
+		/// Draws the content of the toolbar.
+		/// </summary>
+		protected virtual void DrawToolbarContent()
+		{
+			EditorGUILayout.Space ();
 		}
 		#endregion
 

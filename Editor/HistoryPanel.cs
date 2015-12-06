@@ -53,7 +53,14 @@ namespace TuxedoBerries.ScenePanel
 		protected override void DrawContent ()
 		{
 			UpdateHistory ();
+			EditorGUILayout.Space ();
 			_drawer.DrawHistory ();
+		}
+
+		protected override void DrawToolbarContent()
+		{
+			EditorGUILayout.LabelField ("");
+			_drawer.RestoreOnStop = GUILayout.Toggle (_drawer.RestoreOnStop, "Restore On Stop", EditorStyles.toolbarButton, GUILayout.Width (100));
 		}
 
 		/// <summary>

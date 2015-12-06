@@ -60,8 +60,6 @@ namespace TuxedoBerries.ScenePanel
 		protected override void DrawContent ()
 		{
 			UpdateCurrentScene ();
-
-			DrawFilter ();
 			EditorGUILayout.Space ();
 			_scrolls.DrawScrollable ("main", DrawMainScroll);
 			EditorGUILayout.Space ();
@@ -84,20 +82,16 @@ namespace TuxedoBerries.ScenePanel
 		}
 
 		#region Filter
-		private void DrawFilter()
+		protected override void DrawToolbarContent()
 		{
-			EditorGUILayout.BeginHorizontal (EditorStyles.toolbar);
-			{
-				EditorGUILayout.LabelField ("Filter", GUILayout.Width (50));
-				_search = EditorGUILayout.TextField (_search, GUI.skin.FindStyle("ToolbarSeachTextField"));
-				if (GUILayout.Button ("", GUI.skin.FindStyle("ToolbarSeachCancelButton"))) {
-					_search = "";
-				}
-
-				_drawer.EnableEditing = GUILayout.Toggle (_drawer.EnableEditing, "Edit", EditorStyles.toolbarButton, GUILayout.Width (40));
-				_favDrawer.EnableEditing = _drawer.EnableEditing;
+			EditorGUILayout.LabelField ("Filter", GUILayout.Width (50));
+			_search = EditorGUILayout.TextField (_search, GUI.skin.FindStyle("ToolbarSeachTextField"));
+			if (GUILayout.Button ("", GUI.skin.FindStyle("ToolbarSeachCancelButton"))) {
+				_search = "";
 			}
-			EditorGUILayout.EndHorizontal ();
+
+			_drawer.EnableEditing = GUILayout.Toggle (_drawer.EnableEditing, "Edit", EditorStyles.toolbarButton, GUILayout.Width (40));
+			_favDrawer.EnableEditing = _drawer.EnableEditing;
 		}
 
 		private bool PassFilter(ISceneEntity entity)

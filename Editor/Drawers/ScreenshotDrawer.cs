@@ -294,7 +294,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 				// In Build Enabled Check
 				if (!string.IsNullOrEmpty (dataPath)) {
-					EditorGUILayout.LabelField (System.IO.Path.GetFileName (dataPath));
+					EditorGUILayout.LabelField (System.IO.Path.GetFileName (dataPath), _column1);
 				} else {
 					EditorGUILayout.LabelField ("--");
 				}

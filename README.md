@@ -62,8 +62,9 @@ Enables the capture and display of snapshots of the game.
 ![Snapshot Panel](/.docs/snapshot_panel.png)
 
 ### Version
-0.9.7b
+0.9.8b
 
-### Copyright
-Copyright (c) Tuxedo Berries All rights reserved
+### Author & Copyright
+Author : [Juan Silva](juanssl@gmail.com)
+Copyright (c) 2015 Tuxedo Berries All rights reserved
 

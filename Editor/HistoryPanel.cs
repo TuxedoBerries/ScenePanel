@@ -57,6 +57,9 @@ namespace TuxedoBerries.ScenePanel
 			_drawer.DrawHistory ();
 		}
 
+		/// <summary>
+		/// Draws the content of the toolbar.
+		/// </summary>
 		protected override void DrawToolbarContent()
 		{
 			EditorGUILayout.LabelField ("");
@@ -82,6 +85,12 @@ namespace TuxedoBerries.ScenePanel
 		{
 			CheckComponents ();
 			_drawer.ClearHistory ();
+		}
+
+		private void OnDestroy()
+		{
+			if(_drawer != null)
+				_drawer.Dispose ();
 		}
 	}
 }

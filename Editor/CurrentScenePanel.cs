@@ -10,6 +10,8 @@
 using UnityEditor;
 using UnityEngine;
 using TuxedoBerries.ScenePanel.Drawers;
+using TuxedoBerries.ScenePanel.Provider;
+using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel
 {
@@ -41,7 +43,7 @@ namespace TuxedoBerries.ScenePanel
 			if (_screenshotDrawer == null)
 				_screenshotDrawer = new ScreenshotDrawer ();
 			if (_database == null)
-				_database = new SceneDatabase ();
+				_database = SceneDatabaseProvider.GetDatabase(this);
 			if (_scrolls == null)
 				_scrolls = new ScrollableContainer (PANEL_TITLE, true);
 		}
@@ -89,6 +91,16 @@ namespace TuxedoBerries.ScenePanel
 				return;
 
 			_database.Refresh ();
+		}
+
+		private void OnDestroy()
+		{
+			// Return the Database
+			SceneDatabaseProvider.ReturnDatabase (this);
+			if(_drawer != null)
+				_drawer.Dispose ();
+			if(_screenshotDrawer != null)
+				_screenshotDrawer.Dispose ();
 		}
 	}
 }

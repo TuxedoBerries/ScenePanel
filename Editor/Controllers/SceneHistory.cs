@@ -12,7 +12,7 @@ using System.Text;
 using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
 
-namespace TuxedoBerries.ScenePanel
+namespace TuxedoBerries.ScenePanel.Controllers
 {
 	public class SceneHistory
 	{
@@ -79,6 +79,15 @@ namespace TuxedoBerries.ScenePanel
 					return null;
 
 				return _backHistory.Peek ().FullPath;
+			}
+		}
+
+		public string CurrentSceneName {
+			get {
+				if (_backHistory.Count <= 0)
+					return null;
+
+				return _backHistory.Peek ().Name;
 			}
 		}
 

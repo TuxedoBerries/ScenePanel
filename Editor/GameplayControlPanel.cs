@@ -44,6 +44,12 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.Space ();
 			_drawer.DrawGeneralControls ();
 		}
+
+		private void OnDestroy()
+		{
+			if(_drawer != null)
+				_drawer.Dispose ();
+		}
 	}
 }
 

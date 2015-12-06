@@ -10,22 +10,18 @@
 using UnityEditor;
 using UnityEngine;
 using TuxedoBerries.ScenePanel.Constants;
+using TuxedoBerries.ScenePanel.Controllers;
+using TuxedoBerries.ScenePanel.Provider;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
-	public class ToolsDrawer
+	public class ToolsDrawer : BaseDrawer
 	{
 		private SceneDatabase _database;
-		private GUIContentCache _contentCache;
 
-		public ToolsDrawer ()
+		public ToolsDrawer () : base()
 		{
-			_contentCache = new GUIContentCache ();
-		}
-
-		public void SetDatabase(SceneDatabase provider)
-		{
-			_database = provider;
+			_database = SceneDatabaseProvider.GetDatabase (this);
 		}
 
 		public void DrawUtils()
@@ -54,6 +50,12 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				}
 			}
 			EditorGUILayout.EndHorizontal ();
+		}
+
+		public override void Dispose()
+		{
+			SceneDatabaseProvider.ReturnDatabase (this);
+			TextureDatabaseProvider.ReturnDatabase (this);
 		}
 
 		#region Helpers

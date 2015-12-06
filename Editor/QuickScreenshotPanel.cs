@@ -42,6 +42,12 @@ namespace TuxedoBerries.ScenePanel
 		{
 			_drawer.DrawFull ();
 		}
+
+		private void OnDestroy()
+		{
+			if(_drawer != null)
+				_drawer.Dispose ();
+		}
 	}
 }
 

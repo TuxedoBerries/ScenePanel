@@ -11,15 +11,13 @@ using UnityEngine;
 using UnityEditor;
 using TuxedoBerries.ScenePanel.Constants;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
+using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
-	public class SceneEntityDrawer
+	public class SceneEntityDrawer : BaseDrawer
 	{
-		private ColorStack _colorStack;
 		private ButtonContainer _buttonContainer;
-		private TextureDatabase _textureDatabase;
-		private GUIContentCache _contentCache;
 		private GUILayoutOption _column1;
 		private IPreferenceChannel _channel;
 		private bool _enableEditing = false;
@@ -28,12 +26,9 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		{
 		}
 
-		public SceneEntityDrawer(string name)
+		public SceneEntityDrawer(string name) : base()
 		{
-			_colorStack = new ColorStack ();
 			_buttonContainer = new ButtonContainer (name, true);
-			_contentCache = new GUIContentCache ();
-			_textureDatabase = new TextureDatabase ();
 			_column1 = GUILayout.Width (128);
 
 			_channel = EditorPreferenceHandler.GetChannel (this, name);

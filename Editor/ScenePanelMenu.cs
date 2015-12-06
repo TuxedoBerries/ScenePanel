@@ -21,7 +21,15 @@ namespace TuxedoBerries.ScenePanel
 			window.Show ();
 		}
 
-		[MenuItem("TuxedoBerries/Scene Panel/History Panel", false, 100)]
+		[MenuItem("TuxedoBerries/Scene Panel/Dashboard Panel", false, 100)]
+		private static void InitDashboard()
+		{
+			var window = EditorWindow.GetWindow<SceneDashboardPanel> ();
+			window.ClearHistory ();
+			window.Show ();
+		}
+
+		[MenuItem("TuxedoBerries/Scene Panel/History Panel", false, 101)]
 		private static void InitHistory()
 		{
 			var window = EditorWindow.GetWindow<HistoryPanel> ();
@@ -29,14 +37,14 @@ namespace TuxedoBerries.ScenePanel
 			window.Show ();
 		}
 
-		[MenuItem("TuxedoBerries/Scene Panel/Scene List Panel", false, 101)]
+		[MenuItem("TuxedoBerries/Scene Panel/Scene List Panel", false, 102)]
 		private static void InitSceneList()
 		{
 			var window = EditorWindow.GetWindow<SceneListPanel> ();
 			window.Show ();
 		}
 
-		[MenuItem("TuxedoBerries/Scene Panel/Current Scene Panel", false, 102)]
+		[MenuItem("TuxedoBerries/Scene Panel/Current Scene Panel", false, 103)]
 		private static void InitCurrentScene()
 		{
 			var window = EditorWindow.GetWindow<CurrentScenePanel> ();

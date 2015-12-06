@@ -1,7 +1,7 @@
 ﻿/// ------------------------------------------------
 /// <summary>
-/// Scene Database Provider
-/// Purpose: 	Provide a databse of the scenes in the project.
+/// Scene Database
+/// Purpose: 	Databse of the scenes in the project.
 /// Author:		Juan Silva
 /// Date: 		November 22, 2015
 /// Copyright (c) Tuxedo Berries All rights reserved.
@@ -14,7 +14,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-namespace TuxedoBerries.ScenePanel
+namespace TuxedoBerries.ScenePanel.Controllers
 {
 	public class SceneDatabase
 	{

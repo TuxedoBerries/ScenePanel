@@ -11,25 +11,20 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.Constants;
+using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
-	public class ScreenshotDrawer
+	public class ScreenshotDrawer : BaseDrawer
 	{
-		private ColorStack _colorStack;
-		private TextureDatabase _textureDatabase;
-		private GUIContentCache _contentCache;
 		private GUILayoutOption _column1;
 		private ScrollableContainer _scrolls;
 		private int _screenShotScale = 1;
 		private ScreenshotHistory _history;
 
-		public ScreenshotDrawer ()
+		public ScreenshotDrawer () : base()
 		{
-			_colorStack = new ColorStack ();
 			_column1 = GUILayout.Width (128);
-			_textureDatabase = new TextureDatabase ();
-			_contentCache = new GUIContentCache ();
 			_history = new ScreenshotHistory ();
 			_history.Load ();
 			_scrolls = new ScrollableContainer ();

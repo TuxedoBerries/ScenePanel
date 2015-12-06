@@ -9,7 +9,7 @@
 /// ------------------------------------------------
 using System;
 
-namespace TuxedoBerries.ScenePanel
+namespace TuxedoBerries.ScenePanel.Controllers
 {
 	public class ScreenshotHistory : BasePersistantStack<string>
 	{

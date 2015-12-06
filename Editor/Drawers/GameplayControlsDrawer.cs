@@ -11,23 +11,18 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.Constants;
+using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
-	public class GameplayControlsDrawer
+	public class GameplayControlsDrawer : BaseDrawer
 	{
-		private ColorStack _colorStack;
-		private TextureDatabase _textureDatabase;
-		private GUIContentCache _contentCache;
 		private bool _hittedPlay = false;
 		private bool _performStep = false;
 
-		public GameplayControlsDrawer ()
+		public GameplayControlsDrawer () : base()
 		{
 			_hittedPlay = false;
-			_colorStack = new ColorStack ();
-			_textureDatabase = new TextureDatabase ();
-			_contentCache = new GUIContentCache ();
 		}
 
 		/// <summary>

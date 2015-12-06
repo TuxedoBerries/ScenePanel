@@ -12,7 +12,7 @@ using System.Text;
 using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
 
-namespace TuxedoBerries.ScenePanel
+namespace TuxedoBerries.ScenePanel.Controllers
 {
 	public abstract class BasePersistantStack<T>
 		where T : class

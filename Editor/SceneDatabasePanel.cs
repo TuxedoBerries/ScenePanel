@@ -10,6 +10,8 @@
 using UnityEditor;
 using UnityEngine;
 using TuxedoBerries.ScenePanel.Drawers;
+using TuxedoBerries.ScenePanel.Controllers;
+using TuxedoBerries.ScenePanel.Provider;
 
 namespace TuxedoBerries.ScenePanel
 {
@@ -18,7 +20,6 @@ namespace TuxedoBerries.ScenePanel
 		private const string PANEL_TITLE = "Database";
 		private const string PANEL_TOOLTIP = "Options for exporting the current scene database.";
 		private ToolsDrawer _drawer;
-		private SceneDatabase _database;
 
 		/// <summary>
 		/// Applies the title.
@@ -36,8 +37,6 @@ namespace TuxedoBerries.ScenePanel
 		{
 			if (_drawer == null)
 				_drawer = new ToolsDrawer ();
-			if (_database == null)
-				_database = new SceneDatabase ();
 		}
 		/// <summary>
 		/// Draws the content.
@@ -47,11 +46,16 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.Space ();
 			EditorGUILayout.BeginVertical ();
 			{
-				_drawer.SetDatabase (_database);
 				_drawer.DrawUtils ();
 			}
 			EditorGUILayout.EndVertical ();
 			EditorGUILayout.Space ();
+		}
+
+		private void OnDestroy()
+		{
+			if(_drawer != null)
+				_drawer.Dispose ();
 		}
 	}
 }

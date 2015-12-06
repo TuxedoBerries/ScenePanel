@@ -12,7 +12,7 @@ using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
 
-namespace TuxedoBerries.ScenePanel
+namespace TuxedoBerries.ScenePanel.Controllers
 {
 	public class TextureDatabase
 	{

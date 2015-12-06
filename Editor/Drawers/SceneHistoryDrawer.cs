@@ -11,17 +11,16 @@ using UnityEngine;
 using UnityEditor;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
 using TuxedoBerries.ScenePanel.Constants;
+using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
-	public class SceneHistoryDrawer
+	public class SceneHistoryDrawer : BaseDrawer
 	{
 		private const string CLASS_NAME = "SceneHistoryDrawer";
 		private const string RESTORE_VAR = "restoreScene";
-		private ColorStack _colorStack;
 		private SceneHistory _history;
 		private IPreferenceChannel _channel;
-		private TextureDatabase _textureDatabase;
 
 		private int _backSelected = 0;
 		private int _forwardSelected = 0;
@@ -29,16 +28,13 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private bool _justLoaded = true;
 		private GUILayoutOption _textCol1;
 
-		public SceneHistoryDrawer ()
+		public SceneHistoryDrawer () : base()
 		{
 			_history = new SceneHistory ();
 			_history.Load ();
 
 			_channel = EditorPreferenceHandler.GetChannel (this, CLASS_NAME);
 			_restoreOnStop = _channel.GetBool (RESTORE_VAR);
-
-			_colorStack = new ColorStack ();
-			_textureDatabase = new TextureDatabase ();
 			_textCol1 = GUILayout.Width (100);
 		}
 
@@ -122,7 +118,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 					EditorGUILayout.BeginHorizontal ();
 					{
 						EditorGUILayout.LabelField ("Current Scene: ", _textCol1);
-						EditorGUILayout.SelectableLabel (_history.CurrentScene, GUILayout.Height(16));
+						EditorGUILayout.SelectableLabel (_history.CurrentSceneName, GUILayout.Height(16));
 					}
 					EditorGUILayout.EndHorizontal ();
 

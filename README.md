@@ -2,13 +2,19 @@
 
 Unity extension set of panel that display multiple information about scenes.
 
+## Dashboard
+Combienes Gameplay control, Scene History and scene list.
+![Gameplay Panel](/.docs/dashboard_normal.png)
+![Gameplay Panel](/.docs/dashboard_edit.png)
+![Gameplay Panel](/.docs/dashboard_detail.png)
+![Gameplay Panel](/.docs/dashboard_filter.png)
+
 ## Gameplay Controls
 Custom Gameplay controls
 - Play from the first scene.
-- Play from current scene.
+- Play from current scene / Stop.
 - Toggle Pause.
 - Next frame.
-- Stop.
 
 ![Gameplay Panel](/.docs/gameplay_panel.png)
 
@@ -26,19 +32,24 @@ Scene history tracker. Allows moving trough the scene history with ease.
 ## Scene List
 Display all the scenes in the project.
 - Filter functionality for easy search and locate.
-- Set favorite scenes (constant access).
+- Edit mode to manage the scenes included in build, enable and modify index.
+- Set favorite scenes for constant access.
 - Display detailed information about a specific scene.
 - Colored button that reference the included scenes in the build.
 - Faded colored button that represents included, but disabled, scenes in the build. 
 - Arrow pointing to the current scene.
 - Select button to enable locate the scene file in the project.
 
-![Scene List Panel](/.docs/scene_list_panel.png)
+![Scene List Panel](/.docs/scene_list_panel_normal.png)
+![Scene List Panel](/.docs/scene_list_panel_edit.png)
+![Scene List Panel](/.docs/scene_list_panel_detail.png)
+![Scene List Panel](/.docs/scene_list_panel_filter.png) 
 
 ## Current Scene
 Display all the relevant information of the current working scene.
 - Display all the meta information like name, path, GUID, status in build.
 - Enables to display, capture and update a preview of the scene.
+- Edit mode to include the scene in build, change enable status and modify index.
 
 ![Current Scene Panel](/.docs/current_scene_panel.png)
 
@@ -50,7 +61,7 @@ Enables the capture and display of snapshots of the game.
 ![Snapshot Panel](/.docs/snapshot_panel.png)
 
 ### Version
-0.8.1b
+0.9.7b
 
 ### Copyright
 Copyright (c) Tuxedo Berries All rights reserved

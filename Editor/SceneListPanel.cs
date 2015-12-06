@@ -11,6 +11,8 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.Drawers;
+using TuxedoBerries.ScenePanel.Controllers;
+using TuxedoBerries.ScenePanel.Provider;
 
 namespace TuxedoBerries.ScenePanel
 {
@@ -51,7 +53,7 @@ namespace TuxedoBerries.ScenePanel
 			if (_folders == null)
 				_folders = new FolderContainer (PANEL_TITLE, true);
 			if (_database == null)
-				_database = new SceneDatabase ();
+				_database = SceneDatabaseProvider.GetDatabase (this);
 		}
 
 		/// <summary>
@@ -79,6 +81,17 @@ namespace TuxedoBerries.ScenePanel
 				return;
 			
 			_database.Refresh ();
+		}
+
+		private void OnDestroy()
+		{
+			if(_drawer != null)
+				_drawer.Dispose ();
+			if(_favDrawer != null)
+				_favDrawer.Dispose ();
+			if(_screenshotDrawer != null)
+				_screenshotDrawer.Dispose ();
+			SceneDatabaseProvider.ReturnDatabase (this);
 		}
 
 		#region Filter

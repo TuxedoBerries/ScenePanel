@@ -87,6 +87,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			{
 				EditorGUILayout.BeginVertical (GUILayout.Width(90));
 				{
+					GUILayout.Space (5);
 					EditorGUILayout.BeginHorizontal ();
 					{
 						// Back button

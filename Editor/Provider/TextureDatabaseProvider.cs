@@ -44,7 +44,6 @@ namespace TuxedoBerries.ScenePanel.Provider
 			_instance.RemoveSource(source);
 			if (_instance.Count <= 0) {
 				_instance = null;
-				UnityEngine.Debug.Log ("Destroying Texture Database");
 			}
 		}
 		#endregion

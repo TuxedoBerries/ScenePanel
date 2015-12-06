@@ -102,7 +102,7 @@ namespace TuxedoBerries.ScenePanel
 			// Gameplay controls
 			_gameplayDrawer.DrawGeneralControls ();
 			EditorGUILayout.Space ();
-			_historyDrawer.DrawHistory ();
+			_folders.DrawFoldable ("History", _historyDrawer.DrawHistory);
 			// Scene list
 			EditorGUILayout.Space ();
 			_scrolls.DrawScrollable ("main", DrawMainScroll);

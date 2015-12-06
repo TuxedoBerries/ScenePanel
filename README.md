@@ -66,5 +66,6 @@ Enables the capture and display of snapshots of the game.
 
 ### Author & Copyright
 Author : [Juan Silva](juanssl@gmail.com)
+
 Copyright (c) 2015 Tuxedo Berries All rights reserved
 

@@ -21,7 +21,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private ColorStack _colorStack;
 		private SceneHistory _history;
 		private IPreferenceChannel _channel;
-		private TextureDatabaseProvider _textureProvider;
+		private TextureDatabase _textureDatabase;
 
 		private int _backSelected = 0;
 		private int _forwardSelected = 0;
@@ -38,7 +38,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			_restoreOnStop = _channel.GetBool (RESTORE_VAR);
 
 			_colorStack = new ColorStack ();
-			_textureProvider = new TextureDatabaseProvider ();
+			_textureDatabase = new TextureDatabase ();
 			_textCol1 = GUILayout.Width (100);
 		}
 
@@ -198,7 +198,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 		private Texture GetTexture(string path)
 		{
-			return _textureProvider.GetRelativeTexture (path);
+			return _textureDatabase.GetRelativeTexture (path);
 		}
 
 		private Color GetColor(bool enabled)

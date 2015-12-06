@@ -20,7 +20,7 @@ namespace TuxedoBerries.ScenePanel
 		private ScrollableContainer _scrolls;
 		private SceneEntityDrawer _drawer;
 		private ScreenshotDrawer _screenshotDrawer;
-		private SceneDatabaseProvider _provider;
+		private SceneDatabase _database;
 
 		/// <summary>
 		/// Applies the title.
@@ -40,8 +40,8 @@ namespace TuxedoBerries.ScenePanel
 				_drawer = new SceneEntityDrawer (PANEL_TITLE);
 			if (_screenshotDrawer == null)
 				_screenshotDrawer = new ScreenshotDrawer ();
-			if (_provider == null)
-				_provider = new SceneDatabaseProvider ();
+			if (_database == null)
+				_database = new SceneDatabase ();
 			if (_scrolls == null)
 				_scrolls = new ScrollableContainer (PANEL_TITLE, true);
 		}
@@ -69,15 +69,15 @@ namespace TuxedoBerries.ScenePanel
 
 		private void Content()
 		{
-			var currentScene = _provider.CurrentActive;
+			var currentScene = _database.CurrentActive;
 			_drawer.DrawDetailEntity (currentScene);
 			_screenshotDrawer.DrawSnapshot (currentScene);
-			_provider.UpdateEntity (currentScene);
+			_database.UpdateEntity (currentScene);
 		}
 
 		private void UpdateCurrentScene()
 		{
-			_provider.SetAsActive (EditorApplication.currentScene);
+			_database.SetAsActive (EditorApplication.currentScene);
 		}
 
 		/// <summary>
@@ -85,10 +85,10 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		protected override void BeforeUpdate()
 		{
-			if (_provider == null)
+			if (_database == null)
 				return;
 
-			_provider.Refresh ();
+			_database.Refresh ();
 		}
 	}
 }

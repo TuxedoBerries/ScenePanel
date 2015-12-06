@@ -18,7 +18,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 	{
 		private ColorStack _colorStack;
 		private ButtonContainer _buttonContainer;
-		private TextureDatabaseProvider _textureProvider;
+		private TextureDatabase _textureDatabase;
 		private GUIContentCache _contentCache;
 		private GUILayoutOption _column1;
 		private IPreferenceChannel _channel;
@@ -33,7 +33,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			_colorStack = new ColorStack ();
 			_buttonContainer = new ButtonContainer (name, true);
 			_contentCache = new GUIContentCache ();
-			_textureProvider = new TextureDatabaseProvider ();
+			_textureDatabase = new TextureDatabase ();
 			_column1 = GUILayout.Width (128);
 
 			_channel = EditorPreferenceHandler.GetChannel (this, name);
@@ -335,7 +335,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private GUIContent GetContentIcon(string iconName, string tooltip)
 		{
 			if(!_contentCache.Contains(iconName)){
-				var texture = _textureProvider.GetRelativeTexture (iconName);
+				var texture = _textureDatabase.GetRelativeTexture (iconName);
 				_contentCache [iconName] = new GUIContent (texture, tooltip);
 			}
 			return _contentCache[iconName];

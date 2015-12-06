@@ -15,7 +15,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 {
 	public class ToolsDrawer
 	{
-		private SceneDatabaseProvider _provider;
+		private SceneDatabase _database;
 		private GUIContentCache _contentCache;
 
 		public ToolsDrawer ()
@@ -23,14 +23,14 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			_contentCache = new GUIContentCache ();
 		}
 
-		public void SetDatabase(SceneDatabaseProvider provider)
+		public void SetDatabase(SceneDatabase provider)
 		{
-			_provider = provider;
+			_database = provider;
 		}
 
 		public void DrawUtils()
 		{
-			if (_provider == null)
+			if (_database == null)
 				return;
 			
 			DrawSceneDatabaseExport ();
@@ -43,14 +43,14 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			EditorGUILayout.BeginHorizontal ();
 			{
 				if (GUILayout.Button ( GetContent("Generate JSON", TooltipSet.GENERATE_JSON_BUTTON_TOOLTIP))) {
-					_provider.Refresh ();
-					Debug.Log (_provider.GenerateJSON ());
+					_database.Refresh ();
+					Debug.Log (_database.GenerateJSON ());
 				}
 				if (GUILayout.Button ( GetContent("Save to JSON File", TooltipSet.SAVE_JSON_BUTTON_TOOLTIP))) {
 					var path = EditorUtility.SaveFilePanel ("Save scene list", "", "scenes.json", "json");
 					if(!string.IsNullOrEmpty(path))
-						_provider.Refresh ();
-						SceneMainPanelUtility.SaveText (_provider.GenerateJSON (), path);
+						_database.Refresh ();
+						SceneMainPanelUtility.SaveText (_database.GenerateJSON (), path);
 				}
 			}
 			EditorGUILayout.EndHorizontal ();

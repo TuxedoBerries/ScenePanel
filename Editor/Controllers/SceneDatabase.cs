@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class SceneDatabaseProvider
+	public class SceneDatabase
 	{
 		private SortedDictionary<string, SceneEntity> _dict;
 		private List<SceneEntity> _buildListByIndex;
@@ -25,9 +25,9 @@ namespace TuxedoBerries.ScenePanel
 		private SceneEntity _activeScene;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.SceneDatabaseProvider"/> class.
+		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.SceneDatabase"/> class.
 		/// </summary>
-		public SceneDatabaseProvider()
+		public SceneDatabase()
 		{
 			_dict = new SortedDictionary<string, SceneEntity> ();
 			_pool = new Stack<SceneEntity> ();

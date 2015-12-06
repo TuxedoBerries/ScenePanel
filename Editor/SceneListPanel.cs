@@ -23,7 +23,7 @@ namespace TuxedoBerries.ScenePanel
 		private ScreenshotDrawer _screenshotDrawer;
 		private ScrollableContainer _scrolls;
 		private FolderContainer _folders;
-		private SceneDatabaseProvider _provider;
+		private SceneDatabase _database;
 		private string _search;
 
 		/// <summary>
@@ -50,8 +50,8 @@ namespace TuxedoBerries.ScenePanel
 				_scrolls = new ScrollableContainer (PANEL_TITLE, true);
 			if (_folders == null)
 				_folders = new FolderContainer (PANEL_TITLE, true);
-			if (_provider == null)
-				_provider = new SceneDatabaseProvider ();
+			if (_database == null)
+				_database = new SceneDatabase ();
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace TuxedoBerries.ScenePanel
 
 		private void UpdateCurrentScene()
 		{
-			_provider.SetAsActive (EditorApplication.currentScene);
+			_database.SetAsActive (EditorApplication.currentScene);
 		}
 
 		/// <summary>
@@ -75,10 +75,10 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		protected override void BeforeUpdate()
 		{
-			if (_provider == null)
+			if (_database == null)
 				return;
 			
-			_provider.Refresh ();
+			_database.Refresh ();
 		}
 
 		#region Filter
@@ -114,12 +114,12 @@ namespace TuxedoBerries.ScenePanel
 
 		private void DrawAllFavorites()
 		{
-			DrawIenum (_favDrawer, _provider.GetFavorites ());
+			DrawIenum (_favDrawer, _database.GetFavorites ());
 		}
 
 		private void DrawAll()
 		{
-			DrawIenum (_drawer, _provider.GetAllScenes ());
+			DrawIenum (_drawer, _database.GetAllScenes ());
 		}
 
 		private void DrawIenum(SceneEntityDrawer drawer, IEnumerator<ISceneEntity> ienum)
@@ -133,7 +133,7 @@ namespace TuxedoBerries.ScenePanel
 				EditorGUILayout.BeginHorizontal ();
 				{
 					drawer.DrawEntity (entity);
-					_provider.UpdateEntity (entity);
+					_database.UpdateEntity (entity);
 				}
 				EditorGUILayout.EndHorizontal ();
 

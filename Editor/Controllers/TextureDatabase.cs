@@ -14,12 +14,12 @@ using System.Collections.Generic;
 
 namespace TuxedoBerries.ScenePanel
 {
-	public class TextureDatabaseProvider
+	public class TextureDatabase
 	{
 		private Dictionary<string, Texture> _textureCache;
 		private string _localFolder;
 
-		public TextureDatabaseProvider ()
+		public TextureDatabase ()
 		{
 			_textureCache = new Dictionary<string, Texture> ();
 			LocateRelativePath ();
@@ -38,6 +38,7 @@ namespace TuxedoBerries.ScenePanel
 			_localFolder = Path.GetDirectoryName (path);
 		}
 
+		#region Textures
 		/// <summary>
 		/// Gets the texture using the relative path fro this class file.
 		/// </summary>
@@ -48,7 +49,6 @@ namespace TuxedoBerries.ScenePanel
 			return GetTexture (Path.Combine (_localFolder, path));
 		}
 
-		#region Textures
 		/// <summary>
 		/// Clear this instance.
 		/// </summary>

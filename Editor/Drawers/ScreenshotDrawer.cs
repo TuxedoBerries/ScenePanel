@@ -17,7 +17,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 	public class ScreenshotDrawer
 	{
 		private ColorStack _colorStack;
-		private TextureDatabaseProvider _textureProvider;
+		private TextureDatabase _textureDatabase;
 		private GUIContentCache _contentCache;
 		private GUILayoutOption _column1;
 		private ScrollableContainer _scrolls;
@@ -28,7 +28,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		{
 			_colorStack = new ColorStack ();
 			_column1 = GUILayout.Width (128);
-			_textureProvider = new TextureDatabaseProvider ();
+			_textureDatabase = new TextureDatabase ();
 			_contentCache = new GUIContentCache ();
 			_history = new ScreenshotHistory ();
 			_history.Load ();
@@ -122,7 +122,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				tempStack.Push (_history.Pop ());
 			}
 			// Clear cache
-			_textureProvider.Clear ();
+			_textureDatabase.Clear ();
 
 			// Add only existant
 			var ienum = tempStack.GetEnumerator();
@@ -144,7 +144,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				SceneMainPanelUtility.DeleteFileIfExist (screenshot);
 			}
 			_history.Clear ();
-			_textureProvider.Clear ();
+			_textureDatabase.Clear ();
 			_history.AutoSave = true;
 			_history.Save ();
 		}
@@ -255,11 +255,11 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 		private string DrawRefreshScreenshotButton(string dataPath)
 		{
-			var isCached = _textureProvider.isCached (dataPath);
+			var isCached = _textureDatabase.isCached (dataPath);
 			// Refresh
 			_colorStack.Push ((isCached) ? ColorPalette.SnapshotRefreshButton_ON : ColorPalette.SnapshotRefreshButton_OFF);
 			if (GUILayout.Button (GetContent("Refresh", TooltipSet.SCREENSHOT_REFRESH_BUTTON_TOOLTIP), _column1)) {
-				var exist = _textureProvider.RefreshCache (dataPath);
+				var exist = _textureDatabase.RefreshCache (dataPath);
 				if (!exist)
 					dataPath = "";
 			}
@@ -326,7 +326,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private GUIContent GetContentIcon(string iconName, string tooltip)
 		{
 			if(!_contentCache.Contains(iconName)){
-				var texture = _textureProvider.GetRelativeTexture (iconName);
+				var texture = _textureDatabase.GetRelativeTexture (iconName);
 				_contentCache [iconName] = new GUIContent (texture, tooltip);
 			}
 			return _contentCache[iconName];
@@ -334,11 +334,11 @@ namespace TuxedoBerries.ScenePanel.Drawers
 
 		private Texture GetTexture(string path, bool refresh)
 		{
-			if (_textureProvider == null)
+			if (_textureDatabase == null)
 				return null;
 			if (string.IsNullOrEmpty (path))
 				return null;
-			return _textureProvider.GetTexture (path, refresh);
+			return _textureDatabase.GetTexture (path, refresh);
 		}
 
 		private float MaxWidth(Texture texture)

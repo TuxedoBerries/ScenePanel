@@ -17,7 +17,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 	public class GameplayControlsDrawer
 	{
 		private ColorStack _colorStack;
-		private TextureDatabaseProvider _textureProvider;
+		private TextureDatabase _textureDatabase;
 		private GUIContentCache _contentCache;
 		private bool _hittedPlay = false;
 		private bool _performStep = false;
@@ -26,7 +26,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		{
 			_hittedPlay = false;
 			_colorStack = new ColorStack ();
-			_textureProvider = new TextureDatabaseProvider ();
+			_textureDatabase = new TextureDatabase ();
 			_contentCache = new GUIContentCache ();
 		}
 
@@ -114,7 +114,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private GUIContent GetContent(string texture, string tooltip)
 		{
 			if (!_contentCache.Contains (texture)) {
-				_contentCache [texture] = new GUIContent (_textureProvider.GetRelativeTexture (texture), tooltip);
+				_contentCache [texture] = new GUIContent (_textureDatabase.GetRelativeTexture (texture), tooltip);
 			}
 
 			return _contentCache [texture];

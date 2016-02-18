@@ -207,7 +207,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		private void UpdateCurrentScene()
 		{
-			_database.SetAsActive (EditorApplication.currentScene);
+			_database.SetAsActive (SceneMainPanelUtility.CurrentActiveScene);
 		}
 
 		/// <summary>

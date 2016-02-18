@@ -9,6 +9,10 @@
 /// ------------------------------------------------
 using UnityEditor;
 using UnityEngine;
+
+#if UNITY_5_3
+using UnityEditor.SceneManagement;
+#endif
 using System.IO;
 using TuxedoBerries.ScenePanel.Constants;
 
@@ -21,19 +25,19 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <returns><c>true</c>, if scene was opened, <c>false</c> otherwise.</returns>
 		/// <param name="entity">Entity.</param>
-		public static bool OpenScene(ISceneFileEntity entity)
+		public static bool OpenScene (ISceneFileEntity entity)
 		{
 			if (entity == null)
 				return false;
 
-			return OpenScene(entity.FullPath);
+			return OpenScene (entity.FullPath);
 		}
 
 		/// <summary>
 		/// Opens the first scene.
 		/// </summary>
 		/// <returns><c>true</c>, if first scene was opened, <c>false</c> otherwise.</returns>
-		public static bool OpenFirstScene()
+		public static bool OpenFirstScene ()
 		{
 			var scenes = EditorBuildSettings.scenes;
 			if (scenes == null)
@@ -48,21 +52,42 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <returns><c>true</c>, if scene was opened, <c>false</c> otherwise.</returns>
 		/// <param name="scene">Scene.</param>
-		public static bool OpenScene(string scene)
+		public static bool OpenScene (string scene)
 		{
-			if (string.IsNullOrEmpty(scene))
+			if (string.IsNullOrEmpty (scene))
 				return false;
-			if (string.Equals (scene, EditorApplication.currentScene))
+
+			var currentScene = CurrentActiveScene;
+			if (string.Equals (scene, currentScene))
 				return true;
 
+			#if UNITY_5_3
+			bool saved = EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo ();
+			#else
 			bool saved = EditorApplication.SaveCurrentSceneIfUserWantsTo ();
+			#endif
 			if (saved) {
+				#if UNITY_5_3
+				EditorSceneManager.OpenScene (scene);
+				#else
 				EditorApplication.OpenScene (scene);
+				#endif
 			}
 			return saved;
 		}
 
-		public static string TakeSnapshot(string path, int scale)
+		public static string CurrentActiveScene {
+			get {
+				#if UNITY_5_3
+				var currentScene = EditorSceneManager.GetActiveScene ().path;
+				#else
+				var currentScene = EditorApplication.currentScene;
+				#endif
+				return currentScene;
+			}
+		}
+
+		public static string TakeSnapshot (string path, int scale)
 		{
 			return TakeSnapshot (path, scale, "", "screenshot.png");
 		}
@@ -71,7 +96,7 @@ namespace TuxedoBerries.ScenePanel
 		/// Takes a snapshot of the current visible screen and save it.
 		/// </summary>
 		/// <param name="entity">Entity.</param>
-		public static string TakeSnapshot(string path, int scale, string suggestedFolder, string suggestedName)
+		public static string TakeSnapshot (string path, int scale, string suggestedFolder, string suggestedName)
 		{
 			// Ask for path
 			string givenPath = path;
@@ -82,7 +107,7 @@ namespace TuxedoBerries.ScenePanel
 			if (string.IsNullOrEmpty (givenPath))
 				return givenPath;
 
-			EnsureDirectory (System.IO.Path.GetDirectoryName(givenPath));
+			EnsureDirectory (System.IO.Path.GetDirectoryName (givenPath));
 			Application.CaptureScreenshot (givenPath, scale);
 			EditorApplication.ExecuteMenuItem ("Window/Game");
 			return givenPath;
@@ -92,7 +117,7 @@ namespace TuxedoBerries.ScenePanel
 		/// Ensures the existance of a directory.
 		/// </summary>
 		/// <param name="path">Path.</param>
-		public static void EnsureDirectory(string path)
+		public static void EnsureDirectory (string path)
 		{
 			if (string.IsNullOrEmpty (path))
 				return;
@@ -104,7 +129,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <returns><c>true</c>, if file was existed, <c>false</c> otherwise.</returns>
 		/// <param name="path">Path.</param>
-		public static bool ExistFile(string path)
+		public static bool ExistFile (string path)
 		{
 			return System.IO.File.Exists (path);
 		}
@@ -114,7 +139,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <returns><c>true</c>, if file if exist was deleted, <c>false</c> otherwise.</returns>
 		/// <param name="path">Path.</param>
-		public static bool DeleteFileIfExist(string path)
+		public static bool DeleteFileIfExist (string path)
 		{
 			var exist = System.IO.File.Exists (path);
 			if (!exist)
@@ -128,7 +153,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <param name="text">Text.</param>
 		/// <param name="path">Path.</param>
-		public static void SaveText(string text, string path)
+		public static void SaveText (string text, string path)
 		{
 			if (string.IsNullOrEmpty (path))
 				return;
@@ -138,10 +163,10 @@ namespace TuxedoBerries.ScenePanel
 			}
 
 			bool saved = false;
-			try{
+			try {
 				System.IO.File.WriteAllText (path, text);
 				saved = true;
-			}catch(System.Exception e){
+			} catch (System.Exception e) {
 				Debug.LogErrorFormat ("Exception trying to write file: {0}", e.Message);
 			}
 			if (saved) {
@@ -159,7 +184,7 @@ namespace TuxedoBerries.ScenePanel
 		/// Gets the size of the Game View screen.
 		/// </summary>
 		/// <returns>The game view size.</returns>
-		public static Vector2 GetGameViewSize()
+		public static Vector2 GetGameViewSize ()
 		{
 			return Handles.GetMainGameViewSize ();
 		}

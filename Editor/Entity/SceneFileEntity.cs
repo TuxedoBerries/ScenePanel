@@ -99,7 +99,7 @@ namespace TuxedoBerries.ScenePanel
 
 		public static SceneFileEntity GetCurrent()
 		{
-			var currentScenePath = EditorApplication.currentScene;
+			var currentScenePath = SceneMainPanelUtility.CurrentActiveScene;
 			var currentName = System.IO.Path.GetFileNameWithoutExtension (currentScenePath);
 			return new SceneFileEntity (currentName, currentScenePath);
 		}

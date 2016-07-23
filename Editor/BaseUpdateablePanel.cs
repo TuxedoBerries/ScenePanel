@@ -19,6 +19,9 @@ namespace TuxedoBerries.ScenePanel
 
 		private void OnInspectorUpdate()
 		{
+			if (EditorApplication.isPlaying)
+				return;
+				
 			// Fixed Update
 			_deltaBetweenUpdates += 0.1f;
 			if (_deltaBetweenUpdates >= UpdatePoint) {
@@ -102,4 +105,3 @@ namespace TuxedoBerries.ScenePanel
 		#endregion
 	}
 }
-

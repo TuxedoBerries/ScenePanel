@@ -1,12 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene List Panel
-/// Purpose: 	List all the scenes in the project.
-/// Author:		Juan Silva
-/// Date: 		November 29, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 29, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
@@ -16,6 +12,9 @@ using TuxedoBerries.ScenePanel.Provider;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Scene list panel.
+	/// </summary>
 	public class SceneListPanel : BaseUpdateablePanel
 	{
 		private const string PANEL_TITLE = "Scene List";
@@ -31,7 +30,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Applies the title.
 		/// </summary>
-		protected override void ApplyTitle()
+		protected override void ApplyTitle ()
 		{
 			this.titleContent.text = PANEL_TITLE;
 			this.titleContent.tooltip = PANEL_TOOLTIP;
@@ -40,7 +39,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Checks the components.
 		/// </summary>
-		protected override void CheckComponents()
+		protected override void CheckComponents ()
 		{
 			if (_drawer == null)
 				_drawer = new SceneEntityDrawer (PANEL_TITLE);
@@ -67,7 +66,7 @@ namespace TuxedoBerries.ScenePanel
 			EditorGUILayout.Space ();
 		}
 
-		private void UpdateCurrentScene()
+		private void UpdateCurrentScene ()
 		{
 			_database.SetAsActive (SceneMainPanelUtility.CurrentActiveScene);
 		}
@@ -75,31 +74,31 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Execute the Before Update event
 		/// </summary>
-		protected override void BeforeUpdate()
+		protected override void BeforeUpdate ()
 		{
 			if (_database == null)
 				return;
-			
+
 			_database.Refresh ();
 		}
 
-		private void OnDestroy()
+		private void OnDestroy ()
 		{
-			if(_drawer != null)
+			if (_drawer != null)
 				_drawer.Dispose ();
-			if(_favDrawer != null)
+			if (_favDrawer != null)
 				_favDrawer.Dispose ();
-			if(_screenshotDrawer != null)
+			if (_screenshotDrawer != null)
 				_screenshotDrawer.Dispose ();
 			SceneDatabaseProvider.ReturnDatabase (this);
 		}
 
 		#region Filter
-		protected override void DrawToolbarContent()
+		protected override void DrawToolbarContent ()
 		{
 			EditorGUILayout.LabelField ("Filter", GUILayout.Width (50));
-			_search = EditorGUILayout.TextField (_search, GUI.skin.FindStyle("ToolbarSeachTextField"));
-			if (GUILayout.Button ("", GUI.skin.FindStyle("ToolbarSeachCancelButton"))) {
+			_search = EditorGUILayout.TextField (_search, GUI.skin.FindStyle ("ToolbarSeachTextField"));
+			if (GUILayout.Button ("", GUI.skin.FindStyle ("ToolbarSeachCancelButton"))) {
 				_search = "";
 			}
 
@@ -107,11 +106,11 @@ namespace TuxedoBerries.ScenePanel
 			_favDrawer.EnableEditing = _drawer.EnableEditing;
 		}
 
-		private bool PassFilter(ISceneEntity entity)
+		private bool PassFilter (ISceneEntity entity)
 		{
 			if (string.IsNullOrEmpty (_search))
 				return true;
-			if (entity.Name.ToLower().Contains(_search.ToLower()))
+			if (entity.Name.ToLower ().Contains (_search.ToLower ()))
 				return true;
 
 			return false;
@@ -119,28 +118,28 @@ namespace TuxedoBerries.ScenePanel
 		#endregion
 
 		#region Lists
-		private void DrawMainScroll()
+		private void DrawMainScroll ()
 		{
 			_folders.DrawFoldable ("Favorites", DrawAllFavorites);
 			_folders.DrawFoldable ("All Scenes", DrawAll);
 		}
 
-		private void DrawAllFavorites()
+		private void DrawAllFavorites ()
 		{
 			DrawIenum (_favDrawer, _database.GetFavorites ());
 		}
 
-		private void DrawAll()
+		private void DrawAll ()
 		{
 			DrawIenum (_drawer, _database.GetAllScenes ());
 		}
 
-		private void DrawIenum(SceneEntityDrawer drawer, IEnumerator<ISceneEntity> ienum)
+		private void DrawIenum (SceneEntityDrawer drawer, IEnumerator<ISceneEntity> ienum)
 		{
 			while (ienum.MoveNext ()) {
 				var entity = ienum.Current;
 				// Apply Search
-				if (!PassFilter(entity))
+				if (!PassFilter (entity))
 					continue;
 
 				EditorGUILayout.BeginHorizontal ();

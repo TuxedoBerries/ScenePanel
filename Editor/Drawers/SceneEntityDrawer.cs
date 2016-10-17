@@ -1,20 +1,19 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene Entity Drawer
-/// Purpose: 	Draws everything related with Scene Entity.
-/// Author:		Juan Silva
-/// Date: 		November 22, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 22, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 using UnityEditor;
 using TuxedoBerries.ScenePanel.Constants;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
-using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
+	/// <summary>
+	/// Scene entity drawer.
+	/// Draws everything related with Scene Entity.
+	/// </summary>
 	public class SceneEntityDrawer : BaseDrawer
 	{
 		private ButtonContainer _buttonContainer;

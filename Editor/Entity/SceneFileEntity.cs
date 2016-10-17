@@ -1,18 +1,15 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene File Entity
-/// Purpose: 	Scene file entity class.
-/// Author:		Juan Silva
-/// Date: 		November 27, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 27, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using System.Text;
-using UnityEditor;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Scene file entity.
+	/// </summary>
 	public class SceneFileEntity : ISceneFileEntity
 	{
 
@@ -20,11 +17,11 @@ namespace TuxedoBerries.ScenePanel
 		private string _fullPath;
 		private string _guid;
 
-		public SceneFileEntity() : this ("", "") { }
+		public SceneFileEntity () : this ("", "") { }
 
-		public SceneFileEntity(string name) : this (name, "") { }
+		public SceneFileEntity (string name) : this (name, "") { }
 
-		public SceneFileEntity(string name, string fullPath)
+		public SceneFileEntity (string name, string fullPath)
 		{
 			_name = name;
 			_fullPath = fullPath;
@@ -97,7 +94,7 @@ namespace TuxedoBerries.ScenePanel
 			return builder.ToString ();
 		}
 
-		public static SceneFileEntity GetCurrent()
+		public static SceneFileEntity GetCurrent ()
 		{
 			var currentScenePath = SceneMainPanelUtility.CurrentActiveScene;
 			var currentName = System.IO.Path.GetFileNameWithoutExtension (currentScenePath);

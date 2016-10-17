@@ -1,16 +1,14 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// IPreference Channel
-/// Purpose: 	Interface for a Editor Preference Channel.
-/// Author:		Juan Silva
-/// Date: 		November 28, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
-
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 28, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 namespace TuxedoBerries.ScenePanel.PreferenceHandler
 {
+	/// <summary>
+	/// IPreference channel.
+	/// Interface for a Editor Preference Channel.
+	/// </summary>
 	public interface IPreferenceChannel
 	{
 

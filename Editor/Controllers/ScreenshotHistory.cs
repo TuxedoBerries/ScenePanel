@@ -1,19 +1,17 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Screenshot History
-/// Purpose: 	Keeps the record of the screenshots.
-/// Author:		Juan Silva
-/// Date: 		November 29, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
-
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 29, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 namespace TuxedoBerries.ScenePanel.Controllers
 {
+	/// <summary>
+	/// Screenshot history.
+	/// Keeps the record of the screenshots.
+	/// </summary>
 	public class ScreenshotHistory : BasePersistantStack<string>
 	{
-		public ScreenshotHistory () : base()
+		public ScreenshotHistory () : base ()
 		{
 		}
 
@@ -44,7 +42,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns>The serialized element.</returns>
 		/// <param name="element">Element.</param>
-		protected override string GetSerializedElement(string element)
+		protected override string GetSerializedElement (string element)
 		{
 			return element;
 		}

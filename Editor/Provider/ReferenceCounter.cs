@@ -1,17 +1,15 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Reference Counter
-/// Purpose: 	Count reference for a specific class.
-/// Author:		Juan Silva
-/// Date: 		December 5, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		December 5, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using System.Collections.Generic;
 
 namespace TuxedoBerries.ScenePanel.Provider
 {
+	/// <summary>
+	/// Reference counter.
+	/// </summary>
 	public class ReferenceCounter<T>
 		where T : class, new()
 	{
@@ -19,7 +17,7 @@ namespace TuxedoBerries.ScenePanel.Provider
 		private HashSet<object> _sources;
 		private static SceneDatabaseProvider _instance;
 
-		public ReferenceCounter()
+		public ReferenceCounter ()
 		{
 			_classInstance = new T ();
 			_sources = new HashSet<object> ();
@@ -31,14 +29,14 @@ namespace TuxedoBerries.ScenePanel.Provider
 			}
 		}
 
-		public void AddSource(object source)
+		public void AddSource (object source)
 		{
 			if (_sources.Contains (source))
 				return;
 			_sources.Add (source);
 		}
 
-		public void RemoveSource(object source)
+		public void RemoveSource (object source)
 		{
 			if (!_sources.Contains (source))
 				return;

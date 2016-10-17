@@ -1,12 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Folder Container
-/// Purpose: 	Manages the Foldout GUI elements.
-/// Author:		Juan Silva
-/// Date: 		November 22, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 22, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -15,6 +11,10 @@ using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Folder container.
+	/// Manages the Foldout GUI elements.
+	/// </summary>
 	public class FolderContainer
 	{
 		private Dictionary<string, bool> _folders;

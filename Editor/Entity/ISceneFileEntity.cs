@@ -1,17 +1,13 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// IScene File Entity
-/// Purpose: 	Interface for a scene file entity.
-/// Author:		Juan Silva
-/// Date: 		November 27, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
-using UnityEngine;
-
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 27, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// IScene file entity.
+	/// </summary>
 	public interface ISceneFileEntity
 	{
 		/// <summary>

@@ -1,16 +1,16 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Icon Set
-/// Purpose: 	Set of icons used in Scene Panel.
-/// Author:		Juan Silva
-/// Date: 		November 28, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 28, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using System;
 
 namespace TuxedoBerries.ScenePanel.Constants
 {
+	/// <summary>
+	/// Icon set.
+	/// Set of icons used in Scene Panel.
+	/// </summary>
 	public static class IconSet
 	{
 		// Play buttons

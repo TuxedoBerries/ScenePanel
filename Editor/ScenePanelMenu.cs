@@ -1,16 +1,15 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene Panel Menu
-/// Purpose: 	Menu item for Scene Panel.
-/// Author:		Juan Silva
-/// Date: 		November 22, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 22, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Scene panel menu.
+	/// </summary>
 	public class ScenePanelMenu
 	{
 

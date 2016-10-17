@@ -1,21 +1,19 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene Database
-/// Purpose: 	Databse of the scenes in the project.
-/// Author:		Juan Silva
-/// Date: 		November 22, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 22, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
-using UnityEngine;
-using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
 namespace TuxedoBerries.ScenePanel.Controllers
 {
+	/// <summary>
+	/// Scene database.
+	/// Databse of the scenes in the project.
+	/// </summary>
 	public class SceneDatabase
 	{
 		private SortedDictionary<string, SceneEntity> _dict;

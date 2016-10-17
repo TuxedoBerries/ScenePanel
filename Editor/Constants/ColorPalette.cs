@@ -1,39 +1,39 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Color Palette
-/// Purpose: 	Color Palette for the Scene Panel.
-/// Author:		Juan Silva
-/// Date: 		November 24, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 24, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 
 namespace TuxedoBerries.ScenePanel.Constants
 {
+	/// <summary>
+	/// Color palette.
+	/// Color Palette for the Scene Panel.
+	/// </summary>
 	public static class ColorPalette
 	{
 		#region Play Buttons
 		// Play button
-		public static Color PlayButton_ON = new Color(155f / 255f, 202f / 255f, 60f / 255f, 1);
-		public static Color PlayButton_OFF = new Color(155f / 255f, 202f / 255f, 60f / 255f, 0.25f);
+		public static Color PlayButton_ON = new Color (155f / 255f, 202f / 255f, 60f / 255f, 1);
+		public static Color PlayButton_OFF = new Color (155f / 255f, 202f / 255f, 60f / 255f, 0.25f);
 
 		// Pause button
-		public static Color PauseButton_ON = new Color(155f / 255f, 202f / 255f, 60f / 255f, 1);
-		public static Color PauseButton_HOLD = new Color(98f / 255f, 192f / 255f, 220f / 255f, 1);
-		public static Color PauseButton_OFF = new Color(1f, 1f, 1f, 0.25f);
+		public static Color PauseButton_ON = new Color (155f / 255f, 202f / 255f, 60f / 255f, 1);
+		public static Color PauseButton_HOLD = new Color (98f / 255f, 192f / 255f, 220f / 255f, 1);
+		public static Color PauseButton_OFF = new Color (1f, 1f, 1f, 0.25f);
 
 		// Stop button
-		public static Color StopButton_ON = new Color(192f / 255f, 46f / 255f, 29f / 255f, 1);
-		public static Color StopButton_OFF = new Color(192f / 255f, 46f / 255f, 29f / 255f, 0.25f);
+		public static Color StopButton_ON = new Color (192f / 255f, 46f / 255f, 29f / 255f, 1);
+		public static Color StopButton_OFF = new Color (192f / 255f, 46f / 255f, 29f / 255f, 0.25f);
 
 		// Step button
-		public static Color StepButton_ON = new Color(252f / 255f, 185f / 255f, 20f / 255f, 1);
-		public static Color StepButton_OFF = new Color(252f / 255f, 185f / 255f, 20f / 255f, 0.25f);
+		public static Color StepButton_ON = new Color (252f / 255f, 185f / 255f, 20f / 255f, 1);
+		public static Color StepButton_OFF = new Color (252f / 255f, 185f / 255f, 20f / 255f, 0.25f);
 		#endregion
 
 		// Favorite Button
-		public static Color FavoriteButton_ON = new Color(1f, 213f / 255f, 4f / 255f, 1f);
+		public static Color FavoriteButton_ON = new Color (1f, 213f / 255f, 4f / 255f, 1f);
 		public static Color FavoriteButton_OFF = Color.white;
 
 		// Scene Open Button
@@ -68,7 +68,7 @@ namespace TuxedoBerries.ScenePanel.Constants
 		/// </summary>
 		/// <returns>The color.</returns>
 		/// <param name="entity">Entity.</param>
-		public static Color GetColor(ISceneEntity entity)
+		public static Color GetColor (ISceneEntity entity)
 		{
 			// Build Color
 			if (entity.InBuild) {
@@ -86,7 +86,7 @@ namespace TuxedoBerries.ScenePanel.Constants
 		/// </summary>
 		/// <returns>The edit color.</returns>
 		/// <param name="editMode">If set to <c>true</c> edit mode.</param>
-		public static Color GetEditColor(bool editMode)
+		public static Color GetEditColor (bool editMode)
 		{
 			if (editMode)
 				return InBuildField_ON;

@@ -1,13 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Button Container
-/// Purpose: 	Manages a Button with a foldable GUI elements.
-/// Author:		Juan Silva
-/// Date: 		November 22, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using UnityEditor;
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 22, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -15,6 +10,10 @@ using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Button container.
+	/// Manages a Button with a foldable GUI elements.
+	/// </summary>
 	public class ButtonContainer
 	{
 		private Dictionary<string, bool> _folders;
@@ -25,7 +24,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.ButtonContainer"/> class.
 		/// </summary>
-		public ButtonContainer () : this("ButtonContainer", false)
+		public ButtonContainer () : this ("ButtonContainer", false)
 		{
 		}
 
@@ -33,7 +32,7 @@ namespace TuxedoBerries.ScenePanel
 		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.ButtonContainer"/> class.
 		/// </summary>
 		/// <param name="containerName">Container name.</param>
-		public ButtonContainer (string containerName) : this(containerName, false)
+		public ButtonContainer (string containerName) : this (containerName, false)
 		{
 		}
 
@@ -55,7 +54,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <returns><c>true</c>, if value was gotten, <c>false</c> otherwise.</returns>
 		/// <param name="name">Name.</param>
-		public bool GetValue(string name)
+		public bool GetValue (string name)
 		{
 			if (!_folders.ContainsKey (name))
 				return false;
@@ -68,7 +67,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <param name="name">Name.</param>
 		/// <param name="label">Label.</param>
-		public void DrawButton (string name, string label, params GUILayoutOption[] options)
+		public void DrawButton (string name, string label, params GUILayoutOption [] options)
 		{
 			CheckNew (name);
 			if (GUILayout.Button (label, options)) {
@@ -83,7 +82,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <param name="name">Name.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="options">Options.</param>
-		public void DrawButton (string name, GUIContent content, params GUILayoutOption[] options)
+		public void DrawButton (string name, GUIContent content, params GUILayoutOption [] options)
 		{
 			CheckNew (name);
 			if (GUILayout.Button (content, options)) {
@@ -126,11 +125,11 @@ namespace TuxedoBerries.ScenePanel
 		/// Checks the new.
 		/// </summary>
 		/// <param name="name">Name.</param>
-		private void CheckNew(string name)
+		private void CheckNew (string name)
 		{
 			// Add New
 			if (!_folders.ContainsKey (name)) {
-				_folders.Add (name, GetDefaultValue(name));
+				_folders.Add (name, GetDefaultValue (name));
 			}
 		}
 
@@ -139,7 +138,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <param name="name">Name.</param>
 		/// <param name="value">If set to <c>true</c> value.</param>
-		private void SaveValue(string name, bool value)
+		private void SaveValue (string name, bool value)
 		{
 			if (_saveInPreferences) {
 				_channel.SetValue (name, value);
@@ -151,7 +150,7 @@ namespace TuxedoBerries.ScenePanel
 		/// </summary>
 		/// <returns><c>true</c>, if default value was gotten, <c>false</c> otherwise.</returns>
 		/// <param name="name">Name.</param>
-		private bool GetDefaultValue(string name)
+		private bool GetDefaultValue (string name)
 		{
 			if (_saveInPreferences) {
 				return _channel.GetBool (name);

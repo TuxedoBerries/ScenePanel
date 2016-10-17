@@ -1,12 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Screenshot Drawer
-/// Purpose: 	Draws the screenshot tool.
-/// Author:		Juan Silva
-/// Date: 		November 29, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 29, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
@@ -15,6 +11,10 @@ using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
+	/// <summary>
+	/// Screenshot drawer.
+	/// Draws the screenshot tool.
+	/// </summary>
 	public class ScreenshotDrawer : BaseDrawer
 	{
 		private GUILayoutOption _column1;

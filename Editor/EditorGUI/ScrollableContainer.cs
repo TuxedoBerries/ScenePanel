@@ -1,12 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scrollable Container
-/// Purpose: 	Manages the ScrollView GUI elements.
-/// Author:		Juan Silva
-/// Date: 		November 24, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 24, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 using UnityEngine;
 using System;
@@ -15,6 +11,10 @@ using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Scrollable container.
+	/// Manages the ScrollView GUI elements.
+	/// </summary>
 	public class ScrollableContainer
 	{
 		private Dictionary<string, Vector2> _areas;

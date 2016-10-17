@@ -1,18 +1,15 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Texture Database Provider
-/// Purpose: 	Provide a databse of the textures in the project.
-/// Author:		Juan Silva
-/// Date: 		December 5, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
-using System.Collections.Generic;
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 5, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Provider
 {
+	/// <summary>
+	/// Texture database provider.
+	/// </summary>
 	public class TextureDatabaseProvider
 	{
 		private static ReferenceCounter<TextureDatabase> _instance;
@@ -23,7 +20,7 @@ namespace TuxedoBerries.ScenePanel.Provider
 		/// </summary>
 		/// <returns>The database.</returns>
 		/// <param name="source">Source.</param>
-		public static TextureDatabase GetDatabase(object source)
+		public static TextureDatabase GetDatabase (object source)
 		{
 			if (_instance == null)
 				_instance = new ReferenceCounter<TextureDatabase> ();
@@ -36,12 +33,12 @@ namespace TuxedoBerries.ScenePanel.Provider
 		/// Returns the database.
 		/// </summary>
 		/// <param name="source">Source.</param>
-		public static void ReturnDatabase(object source)
+		public static void ReturnDatabase (object source)
 		{
 			if (_instance == null)
 				return;
 
-			_instance.RemoveSource(source);
+			_instance.RemoveSource (source);
 			if (_instance.Count <= 0) {
 				_instance = null;
 			}

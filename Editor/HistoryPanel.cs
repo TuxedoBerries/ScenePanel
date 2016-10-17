@@ -1,18 +1,17 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// History Panel
-/// Purpose: 	History of the working scenes.
-/// Author:		Juan Silva
-/// Date: 		November 29, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 29, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 using UnityEditor;
 using TuxedoBerries.ScenePanel.Drawers;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// History panel.
+	/// </summary>
 	public class HistoryPanel : BaseUpdateablePanel
 	{
 		private const string PANEL_TITLE = "History";
@@ -32,7 +31,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Applies the title.
 		/// </summary>
-		protected override void ApplyTitle()
+		protected override void ApplyTitle ()
 		{
 			this.titleContent.text = PANEL_TITLE;
 			this.titleContent.tooltip = PANEL_TOOLTIP;
@@ -41,7 +40,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Checks the components.
 		/// </summary>
-		protected override void CheckComponents()
+		protected override void CheckComponents ()
 		{
 			if (_drawer == null)
 				_drawer = new SceneHistoryDrawer ();
@@ -60,7 +59,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Draws the content of the toolbar.
 		/// </summary>
-		protected override void DrawToolbarContent()
+		protected override void DrawToolbarContent ()
 		{
 			EditorGUILayout.LabelField ("");
 			_drawer.RestoreOnStop = GUILayout.Toggle (_drawer.RestoreOnStop, "Restore On Stop", EditorStyles.toolbarButton, GUILayout.Width (100));
@@ -69,7 +68,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Updates the history.
 		/// </summary>
-		private void UpdateHistory()
+		private void UpdateHistory ()
 		{
 			if (SceneMainPanelUtility.IsPlaying)
 				return;
@@ -81,15 +80,15 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Clears the history.
 		/// </summary>
-		public void ClearHistory()
+		public void ClearHistory ()
 		{
 			CheckComponents ();
 			_drawer.ClearHistory ();
 		}
 
-		private void OnDestroy()
+		private void OnDestroy ()
 		{
-			if(_drawer != null)
+			if (_drawer != null)
 				_drawer.Dispose ();
 		}
 	}

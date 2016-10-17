@@ -3,7 +3,7 @@
 Unity extension set of panel that display multiple information about scenes.
 
 ## Dashboard
-Combienes Gameplay control, Scene History and scene list.
+Combines Gameplay control, Scene History and scene list.
 
 ![Gameplay Panel](/.docs/dashboard_normal.png)
 ![Gameplay Panel](/.docs/dashboard_edit.png)
@@ -37,14 +37,14 @@ Display all the scenes in the project.
 - Set favorite scenes for constant access.
 - Display detailed information about a specific scene.
 - Colored button that reference the included scenes in the build.
-- Faded colored button that represents included, but disabled, scenes in the build. 
+- Faded colored button that represents included, but disabled, scenes in the build.
 - Arrow pointing to the current scene.
 - Select button to enable locate the scene file in the project.
 
 ![Scene List Panel](/.docs/scene_list_panel_normal.png)
 ![Scene List Panel](/.docs/scene_list_panel_edit.png)
 ![Scene List Panel](/.docs/scene_list_panel_detail.png)
-![Scene List Panel](/.docs/scene_list_panel_filter.png) 
+![Scene List Panel](/.docs/scene_list_panel_filter.png)
 
 ## Current Scene
 Display all the relevant information of the current working scene.
@@ -62,10 +62,9 @@ Enables the capture and display of snapshots of the game.
 ![Snapshot Panel](/.docs/snapshot_panel.png)
 
 ### Version
-0.9.8b
+0.9.9b
 
 ### Author & Copyright
 Author : [Juan Silva](mailto:juanssl@gmail.com)
 
 Copyright (c) 2015 Tuxedo Berries All rights reserved
-

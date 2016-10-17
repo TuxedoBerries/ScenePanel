@@ -1,25 +1,24 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene History
-/// Purpose: 	Keeps the record of the scenes.
-/// Author:		Juan Silva
-/// Date: 		November 25, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 25, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using System.Text;
 using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel.Controllers
 {
+	/// <summary>
+	/// Scene history.
+	/// Keeps the record of the scenes.
+	/// </summary>
 	public class SceneHistory
 	{
 		private Stack<ISceneFileEntity> _backHistory;
-		private string[] _backCache;
+		private string [] _backCache;
 		private Stack<ISceneFileEntity> _forwardHistory;
-		private string[] _forwardCache;
+		private string [] _forwardCache;
 		private IPreferenceChannel _channel;
 
 		public SceneHistory ()
@@ -32,7 +31,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <summary>
 		/// Clear this instance.
 		/// </summary>
-		public void Clear()
+		public void Clear ()
 		{
 			_backHistory.Clear ();
 			_forwardHistory.Clear ();
@@ -95,14 +94,14 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Gets the Back stack as an array.
 		/// </summary>
 		/// <returns>The stack.</returns>
-		public string[] GetBackStack()
+		public string [] GetBackStack ()
 		{
 			if (_backCache == null) {
-				_backCache = new string[_backHistory.Count];
+				_backCache = new string [_backHistory.Count];
 				var ienum = _backHistory.GetEnumerator ();
 				int index = 0;
 				while (ienum.MoveNext ()) {
-					_backCache [index] = string.Format("[{0}]{1}", index, ienum.Current.Name);
+					_backCache [index] = string.Format ("[{0}]{1}", index, ienum.Current.Name);
 					++index;
 				}
 			}
@@ -113,14 +112,14 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Gets the forward stack as an array.
 		/// </summary>
 		/// <returns>The forward stack.</returns>
-		public string[] GetForwardStack()
+		public string [] GetForwardStack ()
 		{
 			if (_forwardCache == null) {
-				_forwardCache = new string[_forwardHistory.Count];
+				_forwardCache = new string [_forwardHistory.Count];
 				var ienum = _forwardHistory.GetEnumerator ();
 				int index = 0;
 				while (ienum.MoveNext ()) {
-					_forwardCache [index] = string.Format("[{0}]{1}", index, ienum.Current.Name);
+					_forwardCache [index] = string.Format ("[{0}]{1}", index, ienum.Current.Name);
 					++index;
 				}
 			}
@@ -131,7 +130,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Push the specified scene.
 		/// </summary>
 		/// <param name="scene">Scene.</param>
-		public void Push(ISceneFileEntity scene)
+		public void Push (ISceneFileEntity scene)
 		{
 			// Add if empty
 			if (_backHistory.Count <= 0) {
@@ -143,8 +142,8 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			}
 
 			// Discard if the same scene
-			var peek = _backHistory.Peek();
-			if (string.Equals(peek.Name, scene.Name)) {
+			var peek = _backHistory.Peek ();
+			if (string.Equals (peek.Name, scene.Name)) {
 				return;
 			}
 
@@ -158,7 +157,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <summary>
 		/// Go back in the stack and restack the element in the Forward histoy.
 		/// </summary>
-		public ISceneFileEntity Back()
+		public ISceneFileEntity Back ()
 		{
 			return Back (true);
 		}
@@ -168,11 +167,11 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// If restack is tryu, restack the element in the Forward histoy.
 		/// </summary>
 		/// <param name="restack">If set to <c>true</c> restack.</param>
-		public ISceneFileEntity Back(bool restack)
+		public ISceneFileEntity Back (bool restack)
 		{
 			if (_backHistory.Count <= 1)
 				return null;
-			
+
 			var item = _backHistory.Pop ();
 			if (restack) {
 				_forwardHistory.Push (item);
@@ -189,7 +188,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <summary>
 		/// Go Gorward.
 		/// </summary>
-		public ISceneFileEntity Forward()
+		public ISceneFileEntity Forward ()
 		{
 			if (_forwardHistory.Count <= 0)
 				return null;
@@ -205,19 +204,19 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			return _backHistory.Peek ();
 		}
 
-		private void ClearStringCache()
+		private void ClearStringCache ()
 		{
 			_backCache = null;
 			_forwardCache = null;
 		}
 
-		public void Save()
+		public void Save ()
 		{
 			SaveHistory ("_backHistory", _backHistory);
 			SaveHistory ("_forwardHistory", _forwardHistory);
 		}
 
-		private void SaveHistory(string name, Stack<ISceneFileEntity> stack)
+		private void SaveHistory (string name, Stack<ISceneFileEntity> stack)
 		{
 			// Generate Back History
 			var builder = new StringBuilder ();
@@ -239,17 +238,17 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			_channel.SetValue (name, data);
 		}
 
-		public void Load()
+		public void Load ()
 		{
 			LoadHistory ("_backHistory", _backHistory);
 			LoadHistory ("_forwardHistory", _forwardHistory);
 			ClearStringCache ();
 		}
 
-		private void LoadHistory(string name, Stack<ISceneFileEntity> stack)
+		private void LoadHistory (string name, Stack<ISceneFileEntity> stack)
 		{
 			var data = _channel.GetString (name);
-			if(string.IsNullOrEmpty(data)){
+			if (string.IsNullOrEmpty (data)) {
 				return;
 			}
 

@@ -1,16 +1,15 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Base Updateable Panel
-/// Purpose: 	Panel that refreshes every one second.
-/// Author:		Juan Silva
-/// Date: 		November 29, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 29, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Base updateable panel.
+	/// </summary>
 	public abstract class BaseUpdateablePanel : EditorWindow
 	{
 		private const float UPDATE_POINT = 1.0f;

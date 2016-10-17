@@ -1,16 +1,14 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Tooltip Set
-/// Purpose: 	Set of tooltip texts used in Scene Panel.
-/// Author:		Juan Silva
-/// Date: 		November 28, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
-
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 28, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 namespace TuxedoBerries.ScenePanel.Constants
 {
+	/// <summary>
+	/// Tooltip set.
+	/// Set of tooltip texts used in Scene Panel.
+	/// </summary>
 	public static class TooltipSet
 	{
 		// Play buttons

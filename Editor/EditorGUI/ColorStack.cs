@@ -1,17 +1,17 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Color Stack
-/// Purpose: 	Controls the color of the GUI.
-/// Author:		Juan Silva
-/// Date: 		November 22, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 22, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 using System.Collections.Generic;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Color stack.
+	/// Controls the color of the GUI.
+	/// </summary>
 	public class ColorStack
 	{
 		private Stack<Color> _stackColor;
@@ -27,7 +27,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Reset the colors.
 		/// </summary>
-		public void Reset()
+		public void Reset ()
 		{
 			_stackColor.Clear ();
 			ApplyCurrentColor ();
@@ -37,7 +37,7 @@ namespace TuxedoBerries.ScenePanel
 		/// Push the specified color to GUI.
 		/// </summary>
 		/// <param name="color">Color.</param>
-		public void Push(Color color)
+		public void Push (Color color)
 		{
 			_stackColor.Push (color);
 			ApplyCurrentColor ();
@@ -46,15 +46,15 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Pop this the current color.
 		/// </summary>
-		public void Pop()
+		public void Pop ()
 		{
-			if(_stackColor.Count > 0)
+			if (_stackColor.Count > 0)
 				_stackColor.Pop ();
 			ApplyCurrentColor ();
 		}
 		#endregion
 
-		private void ApplyCurrentColor()
+		private void ApplyCurrentColor ()
 		{
 			if (_stackColor.Count <= 0) {
 				GUI.color = _startingColor;

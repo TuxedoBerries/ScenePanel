@@ -1,12 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene History Drawer
-/// Purpose: 	Draws the history of the scenes opened.
-/// Author:		Juan Silva
-/// Date: 		November 28, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 28, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 using UnityEditor;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
@@ -15,6 +11,10 @@ using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
+	/// <summary>
+	/// Scene history drawer.
+	/// Draws the history of the scenes opened.
+	/// </summary>
 	public class SceneHistoryDrawer : BaseDrawer
 	{
 		private const string CLASS_NAME = "SceneHistoryDrawer";
@@ -28,7 +28,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		private bool _justLoaded = true;
 		private GUILayoutOption _textCol1;
 
-		public SceneHistoryDrawer () : base()
+		public SceneHistoryDrawer () : base ()
 		{
 			_history = new SceneHistory ();
 			_history.Load ();
@@ -42,15 +42,15 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		/// Updates the current history.
 		/// </summary>
 		/// <param name="entity">Entity.</param>
-		public void UpdateCurrentHistory()
+		public void UpdateCurrentHistory ()
 		{
-			_history.Push (SceneFileEntity.GetCurrent());
+			_history.Push (SceneFileEntity.GetCurrent ());
 		}
 
 		/// <summary>
 		/// Restores from play.
 		/// </summary>
-		public void RestoreFromPlay()
+		public void RestoreFromPlay ()
 		{
 			if (!_justLoaded)
 				return;
@@ -80,34 +80,34 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		/// <summary>
 		/// Draws the history.
 		/// </summary>
-		public void DrawHistory()
+		public void DrawHistory ()
 		{
 			_colorStack.Reset ();
 			EditorGUILayout.BeginHorizontal ();
 			{
-				EditorGUILayout.BeginVertical (GUILayout.Width(90));
+				EditorGUILayout.BeginVertical (GUILayout.Width (90));
 				{
 					GUILayout.Space (5);
 					EditorGUILayout.BeginHorizontal ();
 					{
 						// Back button
 						_colorStack.Push (GetColor (_history.BackCount > 1));
-						if (GUILayout.Button (GetTexture(IconSet.ARROW_BACK_ICON), GUILayout.Width(42))) {
+						if (GUILayout.Button (GetTexture (IconSet.ARROW_BACK_ICON), GUILayout.Width (42))) {
 							BackButtonAction ();
 						}
 						_colorStack.Pop ();
 
 						// Forward button
-						_colorStack.Push (GetColor(_history.FowardCount > 0));
-						if (GUILayout.Button (GetTexture(IconSet.ARROW_FORWARD_ICON), GUILayout.Width(42))) {
+						_colorStack.Push (GetColor (_history.FowardCount > 0));
+						if (GUILayout.Button (GetTexture (IconSet.ARROW_FORWARD_ICON), GUILayout.Width (42))) {
 							ForwardButtonAction ();
 						}
 						_colorStack.Pop ();
 					}
 
-					_colorStack.Push (GetColor(_history.Count > 1));
+					_colorStack.Push (GetColor (_history.Count > 1));
 					EditorGUILayout.EndHorizontal ();
-					if (GUILayout.Button ("Clear History", GUILayout.Width(90))) {
+					if (GUILayout.Button ("Clear History", GUILayout.Width (90))) {
 						ClearHistory ();
 					}
 					_colorStack.Pop ();
@@ -119,7 +119,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 					EditorGUILayout.BeginHorizontal ();
 					{
 						EditorGUILayout.LabelField ("Current Scene: ", _textCol1);
-						EditorGUILayout.SelectableLabel (_history.CurrentSceneName, GUILayout.Height(16));
+						EditorGUILayout.SelectableLabel (_history.CurrentSceneName, GUILayout.Height (16));
 					}
 					EditorGUILayout.EndHorizontal ();
 
@@ -136,7 +136,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 					// Forward list
 					EditorGUILayout.BeginHorizontal ();
 					{
-						_colorStack.Push (GetColor(_history.FowardCount > 0));
+						_colorStack.Push (GetColor (_history.FowardCount > 0));
 						EditorGUILayout.LabelField ("Forward History: ", _textCol1);
 						_forwardSelected = EditorGUILayout.Popup (_forwardSelected, _history.GetForwardStack ());
 						_colorStack.Pop ();
@@ -148,24 +148,24 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			EditorGUILayout.EndHorizontal ();
 
 			// Check Selection
-			GoToPast();
+			GoToPast ();
 			GoToFuture ();
 		}
 
 		#region Actions
-		private void BackButtonAction()
+		private void BackButtonAction ()
 		{
 			var item = _history.Back ();
 			SceneMainPanelUtility.OpenScene (item);
 		}
 
-		private void ForwardButtonAction()
+		private void ForwardButtonAction ()
 		{
 			var item = _history.Forward ();
 			SceneMainPanelUtility.OpenScene (item);
 		}
 
-		private void GoToPast()
+		private void GoToPast ()
 		{
 			if (_backSelected != 0 && !SceneMainPanelUtility.IsPlaying) {
 				for (int i = 0; i < _backSelected; ++i) {
@@ -176,7 +176,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			}
 		}
 
-		private void GoToFuture()
+		private void GoToFuture ()
 		{
 			if (_forwardSelected != 0 && !SceneMainPanelUtility.IsPlaying) {
 				for (int i = 0; i <= _forwardSelected; ++i) {
@@ -187,18 +187,18 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			}
 		}
 
-		public void ClearHistory()
+		public void ClearHistory ()
 		{
 			_history.Clear ();
 		}
 		#endregion
 
-		private Texture GetTexture(string path)
+		private Texture GetTexture (string path)
 		{
 			return _textureDatabase.GetRelativeTexture (path);
 		}
 
-		private Color GetColor(bool enabled)
+		private Color GetColor (bool enabled)
 		{
 			if (enabled && !SceneMainPanelUtility.IsPlaying)
 				return ColorPalette.HistoryArrowButton_ON;

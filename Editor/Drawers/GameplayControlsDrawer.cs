@@ -1,26 +1,24 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Gameplay Controls Drawer
-/// Purpose: 	Draws the gameplay controls.
-/// Author:		Juan Silva
-/// Date: 		November 28, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 28, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.Constants;
-using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel.Drawers
 {
+	/// <summary>
+	/// Gameplay controls drawer.
+	/// Draws the gameplay controls.
+	/// </summary>
 	public class GameplayControlsDrawer : BaseDrawer
 	{
 		private bool _hittedPlay = false;
 		private bool _performStep = false;
 
-		public GameplayControlsDrawer () : base()
+		public GameplayControlsDrawer () : base ()
 		{
 			_hittedPlay = false;
 		}
@@ -32,15 +30,15 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		/// - Pause
 		/// - Stop
 		/// </summary>
-		public void DrawGeneralControls()
+		public void DrawGeneralControls ()
 		{
 			EditorGUILayout.BeginVertical ();
 			{
 				EditorGUILayout.BeginHorizontal ();
 				{
 					// Play From Start
-					_colorStack.Push ( GetPlayFromStartButtonColor() );
-					if (GUILayout.Button ( GetContent(IconSet.PLAY_START_ICON, TooltipSet.PLAY_START_TOOLTIP) )) {
+					_colorStack.Push (GetPlayFromStartButtonColor ());
+					if (GUILayout.Button (GetContent (IconSet.PLAY_START_ICON, TooltipSet.PLAY_START_TOOLTIP))) {
 						if (!IsPlaying && SceneMainPanelUtility.OpenFirstScene ()) {
 							_hittedPlay = true;
 							EditorApplication.isPlaying = true;
@@ -53,32 +51,32 @@ namespace TuxedoBerries.ScenePanel.Drawers
 				{
 					if (!IsPlaying) {
 						// Play Current
-						_colorStack.Push ( GetPlayButtonColor() );
-						if (GUILayout.Button (GetContent(IconSet.PLAY_ICON, TooltipSet.PLAY_TOOLTIP))) {
+						_colorStack.Push (GetPlayButtonColor ());
+						if (GUILayout.Button (GetContent (IconSet.PLAY_ICON, TooltipSet.PLAY_TOOLTIP))) {
 							_hittedPlay = true;
 							EditorApplication.isPlaying = true;
 						}
 						_colorStack.Pop ();
 					} else {
 						// Stop
-						_colorStack.Push ( GetStopButtonColor() );
-						if (GUILayout.Button ( GetContent(IconSet.STOP_ICON, TooltipSet.STOP_TOOLTIP) )) {
+						_colorStack.Push (GetStopButtonColor ());
+						if (GUILayout.Button (GetContent (IconSet.STOP_ICON, TooltipSet.STOP_TOOLTIP))) {
 							EditorApplication.isPlaying = false;
 						}
 						_colorStack.Pop ();
 					}
 
 					// Pause
-					_colorStack.Push ( GetPauseButtonColor() );
-					if (GUILayout.Button ( GetContent(IconSet.PAUSE_ICON, TooltipSet.PAUSE_TOOLTIP))) {
+					_colorStack.Push (GetPauseButtonColor ());
+					if (GUILayout.Button (GetContent (IconSet.PAUSE_ICON, TooltipSet.PAUSE_TOOLTIP))) {
 						EditorApplication.isPaused = !EditorApplication.isPaused;
 					}
 					_colorStack.Pop ();
 
 					// Step
-					_colorStack.Push ( GetStepButtonColor() );
-					if (GUILayout.Button ( GetContent(IconSet.STEP_ICON, TooltipSet.STEP_TOOLTIP))) {
-						if(IsPlaying)
+					_colorStack.Push (GetStepButtonColor ());
+					if (GUILayout.Button (GetContent (IconSet.STEP_ICON, TooltipSet.STEP_TOOLTIP))) {
+						if (IsPlaying)
 							_performStep = true;
 					}
 					_colorStack.Pop ();
@@ -106,7 +104,7 @@ namespace TuxedoBerries.ScenePanel.Drawers
 		}
 
 		#region helpers
-		private GUIContent GetContent(string texture, string tooltip)
+		private GUIContent GetContent (string texture, string tooltip)
 		{
 			if (!_contentCache.Contains (texture)) {
 				_contentCache [texture] = new GUIContent (_textureDatabase.GetRelativeTexture (texture), tooltip);
@@ -115,30 +113,30 @@ namespace TuxedoBerries.ScenePanel.Drawers
 			return _contentCache [texture];
 		}
 
-		private Color GetPlayFromStartButtonColor()
+		private Color GetPlayFromStartButtonColor ()
 		{
 			return !IsPlaying ? ColorPalette.PlayButton_ON : ColorPalette.PlayButton_OFF;
 		}
 
-		private Color GetPlayButtonColor()
+		private Color GetPlayButtonColor ()
 		{
 			return !IsPlaying ? ColorPalette.PlayButton_ON : ColorPalette.PlayButton_OFF;
 		}
 
-		private Color GetPauseButtonColor()
+		private Color GetPauseButtonColor ()
 		{
 			if (!IsPlaying)
 				return ColorPalette.PauseButton_OFF;
-			
+
 			return EditorApplication.isPaused ? ColorPalette.PauseButton_HOLD : ColorPalette.PauseButton_ON;
 		}
 
-		private Color GetStopButtonColor()
+		private Color GetStopButtonColor ()
 		{
 			return IsPlaying ? ColorPalette.StopButton_ON : ColorPalette.StopButton_OFF;
 		}
 
-		private Color GetStepButtonColor()
+		private Color GetStepButtonColor ()
 		{
 			return IsPlaying ? ColorPalette.StepButton_ON : ColorPalette.StepButton_OFF;
 		}

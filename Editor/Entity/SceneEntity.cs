@@ -1,24 +1,21 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene Entity
-/// Purpose: 	Represents a scene in the project.
-/// Author:		Juan Silva
-/// Date: 		November 22, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 22, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using System.Text;
-using UnityEngine;
 using UnityEditor;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Scene entity.
+	/// </summary>
 	public class SceneEntity : ISceneEntity, ISceneFileEntity
 	{
 		private const string FAVORITE_KEY = "SceneEntity:Favorite:[{0}]";
-		public static SceneEntity Empty = new SceneEntity(); 
+		public static SceneEntity Empty = new SceneEntity ();
 
 		private EditorBuildSettingsScene _scene;
 		private string _name;
@@ -40,7 +37,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Clear this instance.
 		/// </summary>
-		public void Clear()
+		public void Clear ()
 		{
 			_name = "";
 			_fullPath = "";
@@ -56,7 +53,7 @@ namespace TuxedoBerries.ScenePanel
 		/// Copy the specified entity.
 		/// </summary>
 		/// <param name="entity">Entity.</param>
-		public void Copy(SceneEntity entity)
+		public void Copy (SceneEntity entity)
 		{
 			_name = entity.Name;
 			_fullPath = entity.FullPath;
@@ -241,15 +238,15 @@ namespace TuxedoBerries.ScenePanel
 			builder.Append ("\",");
 			// IsFavorite
 			builder.Append ("\"is_favorite\":");
-			builder.Append (IsFavorite.ToString().ToLower());
+			builder.Append (IsFavorite.ToString ().ToLower ());
 			builder.Append (",");
 			// InBuild
 			builder.Append ("\"in_build\":");
-			builder.Append (InBuild.ToString().ToLower());
+			builder.Append (InBuild.ToString ().ToLower ());
 			builder.Append (",");
 			// IsEnabled
 			builder.Append ("\"is_enabled\":");
-			builder.Append (IsEnabled.ToString().ToLower());
+			builder.Append (IsEnabled.ToString ().ToLower ());
 			builder.Append (",");
 			// BuildIndex
 			builder.Append ("\"build_index\":");
@@ -259,7 +256,7 @@ namespace TuxedoBerries.ScenePanel
 			return builder.ToString ();
 		}
 
-		public static int CompareByIndex(SceneEntity sceneA, SceneEntity sceneB)
+		public static int CompareByIndex (SceneEntity sceneA, SceneEntity sceneB)
 		{
 			if (sceneA == null && sceneB == null)
 				return 0;

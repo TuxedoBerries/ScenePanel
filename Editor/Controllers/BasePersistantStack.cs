@@ -1,19 +1,18 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Base History
-/// Purpose: 	Keeps the record of the specific data.
-/// Author:		Juan Silva
-/// Date: 		November 25, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 25, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using System.Text;
 using System.Collections.Generic;
 using TuxedoBerries.ScenePanel.PreferenceHandler;
 
 namespace TuxedoBerries.ScenePanel.Controllers
 {
+	/// <summary>
+	/// Base persistant stack.
+	/// Keeps the record of the specific data.
+	/// </summary>
 	public abstract class BasePersistantStack<T>
 		where T : class
 	{
@@ -30,7 +29,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <summary>
 		/// Clear this instance.
 		/// </summary>
-		public void Clear()
+		public void Clear ()
 		{
 			_backHistory.Clear ();
 		}
@@ -84,11 +83,11 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Push the specified scene.
 		/// </summary>
 		/// <param name="scene">Scene.</param>
-		public void Push(T element)
+		public void Push (T element)
 		{
 			if (!IsValid (element))
 				return;
-			
+
 			// Add if empty
 			if (_backHistory.Count <= 0) {
 				_backHistory.Push (element);
@@ -97,8 +96,8 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			}
 
 			// Discard if the same element
-			var peek = _backHistory.Peek();
-			if (AreEquals(peek, element)) {
+			var peek = _backHistory.Peek ();
+			if (AreEquals (peek, element)) {
 				return;
 			}
 
@@ -111,28 +110,28 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Pop the last element in the stack
 		/// </summary>
 		/// <param name="restack">If set to <c>true</c> restack.</param>
-		public T Pop()
+		public T Pop ()
 		{
 			if (_backHistory.Count <= 0)
 				return null;
 
 			var item = _backHistory.Pop ();
-			ExecuteAutoSave();
+			ExecuteAutoSave ();
 			return item;
 		}
 
-		private void ExecuteAutoSave()
+		private void ExecuteAutoSave ()
 		{
 			if (_autoSave)
 				Save ();
 		}
 
-		public void Save()
+		public void Save ()
 		{
 			SaveHistory ("_backHistory", _backHistory);
 		}
 
-		private void SaveHistory(string name, Stack<T> stack)
+		private void SaveHistory (string name, Stack<T> stack)
 		{
 			// Generate Back History
 			var builder = new StringBuilder ();
@@ -142,7 +141,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 
 			while (ienum.MoveNext ()) {
 				var current = ienum.Current;
-				builder.Append (GetSerializedElement(current));
+				builder.Append (GetSerializedElement (current));
 				if (++currentCount < total) {
 					builder.Append (";");
 				}
@@ -152,15 +151,15 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			_channel.SetValue (name, data);
 		}
 
-		public void Load()
+		public void Load ()
 		{
 			LoadHistory ("_backHistory", _backHistory);
 		}
 
-		private void LoadHistory(string name, Stack<T> stack)
+		private void LoadHistory (string name, Stack<T> stack)
 		{
 			var data = _channel.GetString (name);
-			if(string.IsNullOrEmpty(data)){
+			if (string.IsNullOrEmpty (data)) {
 				return;
 			}
 
@@ -199,7 +198,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns>The serialized element.</returns>
 		/// <param name="element">Element.</param>
-		protected abstract string GetSerializedElement(T element);
+		protected abstract string GetSerializedElement (T element);
 
 		/// <summary>
 		/// Gets the deserialized element for loading purposes.

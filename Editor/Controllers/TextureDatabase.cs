@@ -1,12 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Texture Database Provider
-/// Purpose: 	Provide a databse of the scenes snapshots.
-/// Author:		Juan Silva
-/// Date: 		November 27, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 27, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEngine;
 using UnityEditor;
 using System.IO;
@@ -14,6 +10,10 @@ using System.Collections.Generic;
 
 namespace TuxedoBerries.ScenePanel.Controllers
 {
+	/// <summary>
+	/// Texture database.
+	/// Provide a databse of the scenes snapshots.
+	/// </summary>
 	public class TextureDatabase
 	{
 		private Dictionary<string, Texture> _textureCache;
@@ -25,7 +25,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			LocateRelativePath ();
 		}
 
-		private void LocateRelativePath()
+		private void LocateRelativePath ()
 		{
 			var result = AssetDatabase.FindAssets ("ScenePanelMenu");
 			if (result == null || result.Length <= 0) {
@@ -44,7 +44,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns>The relative texture.</returns>
 		/// <param name="path">Path.</param>
-		public Texture GetRelativeTexture(string path)
+		public Texture GetRelativeTexture (string path)
 		{
 			return GetTexture (Path.Combine (_localFolder, path));
 		}
@@ -52,7 +52,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <summary>
 		/// Clear this instance.
 		/// </summary>
-		public void Clear()
+		public void Clear ()
 		{
 			_textureCache.Clear ();
 		}
@@ -62,7 +62,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns><c>true</c>, if cached was ised, <c>false</c> otherwise.</returns>
 		/// <param name="path">Path.</param>
-		public bool isCached(string path)
+		public bool isCached (string path)
 		{
 			if (string.IsNullOrEmpty (path))
 				return false;
@@ -74,7 +74,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns>The texture.</returns>
 		/// <param name="path">Path.</param>
-		public Texture GetTexture(string path)
+		public Texture GetTexture (string path)
 		{
 			return GetTexture (path, false);
 		}
@@ -86,10 +86,10 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <returns>The texture.</returns>
 		/// <param name="path">Path.</param>
 		/// <param name="refresh">If set to <c>true</c> refresh.</param>
-		public Texture GetTexture(string path, bool refresh)
+		public Texture GetTexture (string path, bool refresh)
 		{
 			// Force Refresh
-			if(refresh)
+			if (refresh)
 				RefreshCache (path);
 
 			// Refresh if not exist
@@ -101,7 +101,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 				return null;
 
 			// Refresh cache if null
-			if(_textureCache [path] == null)
+			if (_textureCache [path] == null)
 				RefreshCache (path);
 
 			// Return cached
@@ -113,7 +113,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns><c>true</c>, if cache was refreshed, <c>false</c> otherwise.</returns>
 		/// <param name="path">Path.</param>
-		public bool RefreshCache(string path)
+		public bool RefreshCache (string path)
 		{
 			if (string.IsNullOrEmpty (path))
 				return false;
@@ -124,7 +124,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			var bytes = System.IO.File.ReadAllBytes (path);
 			// Refresh Cache
 			if (_textureCache.ContainsKey (path)) {
-				var texture2D = _textureCache[path] as Texture2D;
+				var texture2D = _textureCache [path] as Texture2D;
 				if (texture2D == null) {
 					texture2D = new Texture2D (2, 2);
 					texture2D.hideFlags = HideFlags.HideAndDontSave;

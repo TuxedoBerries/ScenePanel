@@ -1,12 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Current Scene Panel
-/// Purpose: 	Display all the details for the current scene.
-/// Author:		Juan Silva
-/// Date: 		November 29, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 29, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 using UnityEngine;
 using TuxedoBerries.ScenePanel.Drawers;
@@ -15,6 +11,9 @@ using TuxedoBerries.ScenePanel.Controllers;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Current scene panel.
+	/// </summary>
 	public class CurrentScenePanel : BaseUpdateablePanel
 	{
 		private const string PANEL_TITLE = "Current Scene";

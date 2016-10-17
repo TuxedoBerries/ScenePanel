@@ -1,12 +1,8 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Scene Main Panel Utility
-/// Purpose: 	Utility class.
-/// Author:		Juan Silva
-/// Date: 		November 22, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 22, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 using UnityEngine;
 
@@ -14,10 +10,12 @@ using UnityEngine;
 using UnityEditor.SceneManagement;
 #endif
 using System.IO;
-using TuxedoBerries.ScenePanel.Constants;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Scene main panel utility.
+	/// </summary>
 	public class SceneMainPanelUtility
 	{
 		/// <summary>

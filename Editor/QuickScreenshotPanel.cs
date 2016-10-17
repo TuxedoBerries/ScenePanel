@@ -1,16 +1,15 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Quick Screenshot Panel
-/// Purpose: 	Quickly take screenshots of the game.
-/// Author:		Juan Silva
-/// Date: 		November 29, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 29, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using TuxedoBerries.ScenePanel.Drawers;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Quick screenshot panel.
+	/// </summary>
 	public class QuickScreenshotPanel : BaseUpdateablePanel
 	{
 		private const string PANEL_TITLE = "Snapshots";

@@ -1,17 +1,16 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Gameplay Controls Panel
-/// Purpose: 	Custom Gameplay Controls.
-/// Author:		Juan Silva
-/// Date: 		November 29, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 29, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 using TuxedoBerries.ScenePanel.Drawers;
 
 namespace TuxedoBerries.ScenePanel
 {
+	/// <summary>
+	/// Gameplay control panel.
+	/// </summary>
 	public class GameplayControlPanel : BaseUpdateablePanel
 	{
 		private const string PANEL_TITLE = "Gameplay";
@@ -21,7 +20,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Applies the title.
 		/// </summary>
-		protected override void ApplyTitle()
+		protected override void ApplyTitle ()
 		{
 			this.titleContent.text = PANEL_TITLE;
 			this.titleContent.tooltip = PANEL_TOOLTIP;
@@ -30,7 +29,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Checks the components.
 		/// </summary>
-		protected override void CheckComponents()
+		protected override void CheckComponents ()
 		{
 			if (_drawer == null)
 				_drawer = new GameplayControlsDrawer ();
@@ -45,9 +44,9 @@ namespace TuxedoBerries.ScenePanel
 			_drawer.DrawGeneralControls ();
 		}
 
-		private void OnDestroy()
+		private void OnDestroy ()
 		{
-			if(_drawer != null)
+			if (_drawer != null)
 				_drawer.Dispose ();
 		}
 	}

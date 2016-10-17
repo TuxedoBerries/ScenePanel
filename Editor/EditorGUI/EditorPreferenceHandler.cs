@@ -1,18 +1,16 @@
-﻿/// ------------------------------------------------
-/// <summary>
-/// Editor Preference Handler
-/// Purpose: 	Handles all the preferences in editor.
-/// Author:		Juan Silva
-/// Date: 		November 27, 2015
-/// Copyright (c) Tuxedo Berries All rights reserved.
-/// </summary>
-/// ------------------------------------------------
-using System;
-using System.Collections.Generic;
+﻿/**
+ * Author:		Juan Silva <juanssl@gmail.com>
+ * Date: 		November 27, 2015
+ * Copyright (c) Tuxedo Berries All rights reserved.
+ **/
 using UnityEditor;
 
 namespace TuxedoBerries.ScenePanel.PreferenceHandler
 {
+	/// <summary>
+	/// Editor Preference Handler
+	/// Handles all the preferences in editor.
+	/// </summary>
 	public class EditorPreferenceHandler
 	{
 		private const string MAIN_KEY = "EditorPreferenceHandler";

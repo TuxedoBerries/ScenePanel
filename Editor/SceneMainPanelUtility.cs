@@ -10,7 +10,7 @@
 using UnityEditor;
 using UnityEngine;
 
-#if UNITY_5_3
+#if UNITY_5_3 || UNITY_5_3_OR_NEWER
 using UnityEditor.SceneManagement;
 #endif
 using System.IO;
@@ -61,13 +61,13 @@ namespace TuxedoBerries.ScenePanel
 			if (string.Equals (scene, currentScene))
 				return true;
 
-			#if UNITY_5_3
+			#if UNITY_5_3 || UNITY_5_3_OR_NEWER
 			bool saved = EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo ();
 			#else
 			bool saved = EditorApplication.SaveCurrentSceneIfUserWantsTo ();
 			#endif
 			if (saved) {
-				#if UNITY_5_3
+				#if UNITY_5_3 || UNITY_5_3_OR_NEWER
 				EditorSceneManager.OpenScene (scene);
 				#else
 				EditorApplication.OpenScene (scene);
@@ -78,7 +78,7 @@ namespace TuxedoBerries.ScenePanel
 
 		public static string CurrentActiveScene {
 			get {
-				#if UNITY_5_3
+				#if UNITY_5_3 || UNITY_5_3_OR_NEWER
 				var currentScene = EditorSceneManager.GetActiveScene ().path;
 				#else
 				var currentScene = EditorApplication.currentScene;

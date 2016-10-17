@@ -17,11 +17,11 @@ namespace TuxedoBerries.ScenePanel
 		private float _deltaBetweenUpdates = 0;
 		private bool _allowRepaint = true;
 
-		private void OnInspectorUpdate()
+		private void OnInspectorUpdate ()
 		{
 			if (EditorApplication.isPlaying)
 				return;
-				
+
 			// Fixed Update
 			_deltaBetweenUpdates += 0.1f;
 			if (_deltaBetweenUpdates >= UpdatePoint) {
@@ -36,7 +36,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Execute the OnGUI event.
 		/// </summary>
-		private void OnGUI()
+		private void OnGUI ()
 		{
 			_allowRepaint = false;
 			ApplyTitle ();
@@ -50,7 +50,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Draws the toolbar.
 		/// </summary>
-		private void DrawToolbar()
+		private void DrawToolbar ()
 		{
 			EditorGUILayout.BeginHorizontal (EditorStyles.toolbar);
 			{
@@ -63,7 +63,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Execute the Before Update event
 		/// </summary>
-		protected virtual void BeforeUpdate()
+		protected virtual void BeforeUpdate ()
 		{
 			// Nothing
 		}
@@ -81,7 +81,7 @@ namespace TuxedoBerries.ScenePanel
 		/// <summary>
 		/// Draws the content of the toolbar.
 		/// </summary>
-		protected virtual void DrawToolbarContent()
+		protected virtual void DrawToolbarContent ()
 		{
 			EditorGUILayout.Space ();
 		}

@@ -23,11 +23,12 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		private Stack<SceneEntity> _pool;
 		private SceneEntity _firstScene;
 		private SceneEntity _activeScene;
+		private int _assetCount;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TuxedoBerries.ScenePanel.SceneDatabase"/> class.
 		/// </summary>
-		public SceneDatabase()
+		public SceneDatabase ()
 		{
 			_dict = new SortedDictionary<string, SceneEntity> ();
 			_pool = new Stack<SceneEntity> ();
@@ -38,7 +39,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <summary>
 		/// Refresh this instance.
 		/// </summary>
-		public void Refresh()
+		public void Refresh ()
 		{
 			_buildListByIndex.Clear ();
 			RefreshDictionary ();
@@ -52,7 +53,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns><c>true</c>, if as active was set, <c>false</c> otherwise.</returns>
 		/// <param name="scenePath">Scene path.</param>
-		public bool SetAsActive(string scenePath)
+		public bool SetAsActive (string scenePath)
 		{
 			if (string.IsNullOrEmpty (scenePath)) {
 				_activeScene = SceneEntity.Empty;
@@ -84,7 +85,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns><c>true</c>, if entity was updated, <c>false</c> otherwise.</returns>
 		/// <param name="entity">Entity.</param>
-		public bool UpdateEntity(ISceneEntity entity)
+		public bool UpdateEntity (ISceneEntity entity)
 		{
 			bool retval = true;
 			if (entity.InBuild) {
@@ -102,7 +103,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns><c>true</c>, if enable was updated, <c>false</c> otherwise.</returns>
 		/// <param name="entity">Entity.</param>
-		public bool UpdateEnable(ISceneEntity entity)
+		public bool UpdateEnable (ISceneEntity entity)
 		{
 			if (!_dict.ContainsKey (entity.FullPath))
 				return false;
@@ -125,15 +126,15 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns><c>true</c>, if to build was added, <c>false</c> otherwise.</returns>
 		/// <param name="entity">Entity.</param>
-		public bool AddToBuild(ISceneEntity entity)
+		public bool AddToBuild (ISceneEntity entity)
 		{
 			if (!entity.InBuild)
 				return false;
-			
+
 			if (!_dict.ContainsKey (entity.FullPath))
 				return false;
-			
-			var scene = _dict[entity.FullPath];
+
+			var scene = _dict [entity.FullPath];
 			if (_buildListByIndex.Contains (scene))
 				return true;
 
@@ -150,7 +151,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns><c>true</c>, if index was updated, <c>false</c> otherwise.</returns>
 		/// <param name="entity">Entity.</param>
-		public bool UpdateIndex(ISceneEntity entity)
+		public bool UpdateIndex (ISceneEntity entity)
 		{
 			if (!entity.InBuild)
 				return false;
@@ -158,8 +159,8 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			if (!_dict.ContainsKey (entity.FullPath))
 				return false;
 
-			var scene = _dict[entity.FullPath];
-			if(_buildListByIndex.IndexOf(scene) == scene.BuildIndex)
+			var scene = _dict [entity.FullPath];
+			if (_buildListByIndex.IndexOf (scene) == scene.BuildIndex)
 				return true;
 
 			RefreshBuildSettings ();
@@ -171,7 +172,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns><c>true</c>, if to build was removed, <c>false</c> otherwise.</returns>
 		/// <param name="entity">Entity.</param>
-		public bool RemoveToBuild(ISceneEntity entity)
+		public bool RemoveToBuild (ISceneEntity entity)
 		{
 			if (entity.InBuild)
 				return false;
@@ -179,7 +180,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			if (!_dict.ContainsKey (entity.FullPath))
 				return false;
 
-			var scene = _dict[entity.FullPath];
+			var scene = _dict [entity.FullPath];
 			if (!_buildListByIndex.Contains (scene))
 				return true;
 
@@ -213,7 +214,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Determine if the given scenePath exist.
 		/// </summary>
 		/// <param name="scenePath">Scene path.</param>
-		public bool Contains(string scenePath)
+		public bool Contains (string scenePath)
 		{
 			return _dict.ContainsKey (scenePath);
 		}
@@ -222,7 +223,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Gets the SceneEntity with the specified scenePath.
 		/// </summary>
 		/// <param name="scenePath">Scene path.</param>
-		public ISceneEntity this[string scenePath] {
+		public ISceneEntity this [string scenePath] {
 			get {
 				return _dict [scenePath];
 			}
@@ -232,10 +233,10 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Gets the build scenes.
 		/// </summary>
 		/// <returns>The build scenes.</returns>
-		public IEnumerator<ISceneEntity> GetBuildScenes()
+		public IEnumerator<ISceneEntity> GetBuildScenes ()
 		{
-			foreach (var data in _buildListByIndex) {
-				yield return data;
+			for (int i = 0; i < _buildListByIndex.Count; ++i) {
+				yield return _buildListByIndex [i];
 			}
 			yield break;
 		}
@@ -244,7 +245,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Gets all scenes.
 		/// </summary>
 		/// <returns>The all scenes.</returns>
-		public IEnumerator<ISceneEntity> GetAllScenes()
+		public IEnumerator<ISceneEntity> GetAllScenes ()
 		{
 			foreach (var data in _dict.Values) {
 				yield return data;
@@ -256,12 +257,12 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Gets the favorites.
 		/// </summary>
 		/// <returns>The favorites.</returns>
-		public IEnumerator<ISceneEntity> GetFavorites()
+		public IEnumerator<ISceneEntity> GetFavorites ()
 		{
 			foreach (var data in _dict.Values) {
 				if (!data.IsFavorite)
 					continue;
-				
+
 				yield return data;
 			}
 			yield break;
@@ -273,7 +274,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Generates a JSON representation of the scenes.
 		/// </summary>
 		/// <returns>The JSON string.</returns>
-		public string GenerateJSON()
+		public string GenerateJSON ()
 		{
 			var builder = new StringBuilder ();
 			builder.Append ("{");
@@ -284,10 +285,10 @@ namespace TuxedoBerries.ScenePanel.Controllers
 				builder.Append ("\"");
 				builder.Append (data.Name);
 				builder.Append ("\":");
-				builder.Append (data.ToString());
+				builder.Append (data.ToString ());
 
 				++current;
-				if(current < total)
+				if (current < total)
 					builder.Append (",");
 			}
 			builder.Append ("}");
@@ -296,7 +297,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		#endregion
 
 		#region Helpers
-		private void RefreshBuildSettings()
+		private void RefreshBuildSettings ()
 		{
 			// Debug.Log ("Refreshing Editor Build Settings");
 			_buildListByIndex.Sort (SceneEntity.CompareByIndex);
@@ -309,7 +310,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			}
 
 			// Create new array
-			var newArray = new EditorBuildSettingsScene[ total ];
+			var newArray = new EditorBuildSettingsScene [total];
 
 			// Update Data
 			int count = 0;
@@ -328,9 +329,13 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <summary>
 		/// Generates the dictionary of scenes.
 		/// </summary>
-		private void RefreshDictionary()
+		private void RefreshDictionary ()
 		{
 			var assets = AssetDatabase.GetAllAssetPaths ();
+			if (_assetCount == assets.Length)
+				return;
+
+			_assetCount = assets.Length;
 			// Copy old keys
 			var oldKeys = new HashSet<string> ();
 			foreach (string key in _dict.Keys) {
@@ -338,7 +343,8 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			}
 
 			// Update Dictionary
-			foreach (var asset in assets) {
+			for (int i = 0; i < assets.Length; ++i) {
+				var asset = assets [i];
 				if (asset.EndsWith (".unity")) {
 					var entity = GenerateEntity (asset);
 					if (_dict.ContainsKey (asset)) {
@@ -360,15 +366,14 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// <summary>
 		/// Adds the build data.
 		/// </summary>
-		private void AddBuildData()
+		private void AddBuildData ()
 		{
 			var scenes = EditorBuildSettings.scenes;
 			for (int i = 0; i < scenes.Length; ++i) {
-
 				var scene = scenes [i];
 				if (!_dict.ContainsKey (scene.path))
 					continue;
-				
+
 				var entity = _dict [scene.path];
 				entity.Scene = scene;
 				entity.InBuild = true;
@@ -383,7 +388,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 			}
 		}
 
-		private int SortByIndex(SceneEntity entityA, SceneEntity entityB)
+		private int SortByIndex (SceneEntity entityA, SceneEntity entityB)
 		{
 			if (entityA == null && entityB == null)
 				return 0;
@@ -400,7 +405,7 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// </summary>
 		/// <returns>The entity.</returns>
 		/// <param name="assetPath">Asset path.</param>
-		private SceneEntity GenerateEntity(string assetPath)
+		private SceneEntity GenerateEntity (string assetPath)
 		{
 			var entity = GetFromPool ();
 			entity.Name = Path.GetFileNameWithoutExtension (assetPath);
@@ -416,13 +421,13 @@ namespace TuxedoBerries.ScenePanel.Controllers
 		/// Returns to pool.
 		/// </summary>
 		/// <param name="entity">Entity.</param>
-		private void ReturnToPool(SceneEntity entity)
+		private void ReturnToPool (SceneEntity entity)
 		{
 			entity.Clear ();
 			_pool.Push (entity);
 		}
 
-		private SceneEntity GetFromPool()
+		private SceneEntity GetFromPool ()
 		{
 			if (_pool.Count <= 0) {
 				return new SceneEntity ();
